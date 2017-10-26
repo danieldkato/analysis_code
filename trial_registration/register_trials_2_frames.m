@@ -23,7 +23,7 @@ function [trial_matrix] = register_trials_2_frames(galvo_path, timer_path, ardul
 
 % This function requires the following software:
 % 1) The MATLAB function readContinuousDAT, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
-% 2) The MATLAB function LocalMinima, available at \\hsbruno05\Users\dan\Documents\MATLAB\clay\LocalMinima.m
+% 2) The MATLAB function LocalMinima, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 % 3) The MATLAB function read_ardulines, available at https://github.com/danieldkato/trial_registration/blob/master/read_ardulines.m
 
 
@@ -163,7 +163,7 @@ function [trial_matrix] = register_trials_2_frames(galvo_path, timer_path, ardul
     %% Match every trial to the frame within which it started
     trial_start_frames = cell(length(trial_start_samples), 1);
     
-    % For each trial start sample number, find the maximum frame start sample number below it:
+    % For each trial start sample, find the maximum frame start sample below it:
     for i = 1:length(trial_start_frames)
         [M, I] = max(frame_start_samples( frame_start_samples <= trial_start_samples(i) ));
         trial_start_frames{i} = I + 1; % have to add 1 because there's one frame that completes before the first local minimum
