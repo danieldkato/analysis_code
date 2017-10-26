@@ -6,7 +6,7 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-10-25
+% Last updated DDK 2017-10-26
 
 
 %% I. OVERVIEW:
@@ -38,7 +38,7 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 % controlling stimulus hardware. Should be saved as a LabView .dat file.
 % Contains information about trial start times.
 
-% 3) ardulines - path to a .txt file containing serial output received from
+% 3) ardu_path - path to a .txt file containing serial output received from
 % an Arduino over the course of the grab. Contains information about trial type.
 
 % 4) grab_path - string argument containing path to the raw TIFF of
@@ -63,8 +63,17 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 % processing, along with metadata about the registration itself.
 
 
-%% Read image grab and galvo metadata files to get the necessary data acquisition parameters:
+%% Load parameters:
     
+params = loadjson(params_file);
+
+grab_path = params.galvo_path;
+timer_path = params.timer_path;
+ardu_path = params.ardu_path;
+condition_settings = params.condition_settings;
+output_path = params.output_path;
+show_inflection_points = params.show_inflection_points;
+
 % Read image grab metadata to get framerate:
 [grab_directory, nm, ext] = fileparts(grab_path);
 list = dir(grab_directory);
@@ -108,7 +117,7 @@ end
 %% Load galvo, timer and Arduino data:
 galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from the raw .dat file into an s x 1 vector, where s is number of samples taken during grab 
 trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timer data from the raw .dat file into an s x 1 vector, where s is the number of samples taken during a grab
-trial_types = read_ardulines(ardulines, condition_settings); %% Get an ordered list of trial types from arudlines
+trial_types = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
     
     
 %% Get the galvo signal sample number of every frame start:
@@ -198,7 +207,7 @@ else
 end
 fprintf(fileID, strcat(['Galvanometer trace, ', strrep(galvo_path,'\','\\'), '\n']));
 fprintf(fileID, strcat(['Trial timer signal trace, ', strrep(timer_path,'\','\\'), '\n']));
-fprintf(fileID, strcat(['Arduino output, ', strrep(ardulines,'\','\\'), '\n']));
+fprintf(fileID, strcat(['Arduino output, ', strrep(ardu_path,'\','\\'), '\n']));
 fprintf(fileID, '\n');
 fprintf(fileID, 'Trial start frame number, Trial type, Trial duration (ms) \n');
 
@@ -216,7 +225,7 @@ fclose(fileID);
 %{
 inputs = {{'galvanometer trace', galvo_path};
           {'timer signal trace', timer_path};
-          {'arduino feedback', ardulines}
+          {'arduino feedback', ardu_path}
     };
 
 outputs = {{'trial matrix', strcat([output_path, 'triaMatrix.csv'])}};
