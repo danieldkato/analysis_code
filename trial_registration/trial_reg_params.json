@@ -1,8 +1,8 @@
-{"galvo_path":"",
- "timer_path":"",
- "ardu_path":"",
- "grab_path":"",
- "condition_settings":"",
- "output_path":"",
- "show_inflection_points":""
+{"galvo_path":"/mnt/nas2/homes/dan/MultiSens/data/5036-2/2017-09-26/site1/grab01/stim/170926-00-galvo.dat",
+ "timer_path":"/mnt/nas2/homes/dan/MultiSens/data/5036-2/2017-09-26/site1/grab01/stim/170926-00-trial_start.dat",
+ "ardu_path":"/mnt/nas2/homes/dan/MultiSens/data/5036-2/2017-09-26/site1/grab01/stim/ardulines.20170926120235",
+ "grab_path":"/mnt/nas2/homes/dan/MultiSens/data/5036-2/2017-09-26/site1/grab01/2P/file_00001.tif",
+ "condition_settings":"/mnt/nas2/homes/dan/MultiSens/analysis/condition_settings.json",
+ "output_path":"/mnt/nas2/homes/dan/MultiSens/data/5036-2/2017-09-26/site1/grab01/",
+ "show_inflection_points":1
 }
