@@ -213,6 +213,7 @@ function [trial_matrix] = register_trials_2_frames(galvo_path, timer_path, ardul
     
     %% Write metadata:
     
+    %{
     inputs = {{'galvanometer trace', galvo_path};
               {'timer signal trace', timer_path};
               {'arduino feedback', ardulines}
@@ -224,5 +225,6 @@ function [trial_matrix] = register_trials_2_frames(galvo_path, timer_path, ardul
     old = cd(output_path);
     writeMetadata('trial_registration', 'sampleDomain', inputs, outputs, parameters);
     cd(old);
+    %}
     
 end
