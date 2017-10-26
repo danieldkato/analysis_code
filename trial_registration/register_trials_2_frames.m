@@ -64,9 +64,7 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 
 
 %% Load parameters:
-    
 params = loadjson(params_file);
-
 grab_path = params.galvo_path;
 timer_path = params.timer_path;
 ardu_path = params.ardu_path;
@@ -77,22 +75,23 @@ show_inflection_points = params.show_inflection_points;
 % Read image grab metadata to get framerate:
 [grab_directory, nm, ext] = fileparts(grab_path);
 list = dir(grab_directory);
-grab_metadata_path = list(arrayfun(@(a) strcmp(a.name, 'meta.txt'), list)); % look for a file called 'meta.txt' in the same directory as the raw grab file
+grab_metadata_path = list(arrayfun(@(a) strcmp(a.name, '2p_metadata.json'), list)); % look for a file called '2p_metadata.json' in the same directory as the raw grab file
 
 % Raise an error if meta.txt is not found:
 if length(grab_metadata_path) == 0
-    error('Metadata file for grab not found; make sure that meta.txt is located in the same directory as raw multi-page TIFF.');
+    error('Metadata file for grab not found; make sure that 2p_metadata.json is located in the same directory as raw TIFF.');
 else
-    disp('grabMeta(1).name');
+    disp('metadata path name:');
     disp(grab_metadata_path(1).name);
     grab_metadata_fid = fopen(fullfile(grab_directory, grab_metadata_path(1).name), 'r');
     disp('grab_metadata_fid');
     disp(grab_metadata_fid);
-    content = fscanf(grab_metadata_fid, '%c');
-    eval(content);
+    grab_metadata = loadjson(grab_metadata_path);
 
     % Raise an error if meta.txt does not contain a variable called frame_rate:
-    if exist('frame_rate', 'var') == 0
+    if (isfield(grab_metadata,'frame_rate'))
+        frame_rate = grab_metadata.frame_rate;
+    else
         error('Frame rate not found; make sure that grab metadata file includes line ''frame_rate = <f>'', where <f> stands for frame rate in Hz.');
     end
 
