@@ -1,4 +1,4 @@
-function [trial_matrix] = register_trials_2_frames(galvo_path, timer_path, ardulines, grab_path, condition_settings, output_path, show_inflection_points)
+function [trial_matrix] = register_trials_2_frames(params_file)
 
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
