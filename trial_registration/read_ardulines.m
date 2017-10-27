@@ -53,84 +53,84 @@
 % worthwhile building more flexibility into this function. s
 
 %%
-function T = read_ardulines(lines, conditionSettings)
+function T = read_ardulines(txt, condition_settings)
     
     % Load data into an k x 1 cell array, where k is the number of lines:
-    linesFID = fopen(lines);
-    L = textscan(linesFID, '%s', 'Delimiter', '\r\n');
+    linesFID = fopen(txt);
+    txt = textscan(linesFID, '%s', 'Delimiter', '\r\n');
     fclose(linesFID);
-    L = L{1,1};
-    L = L(~cellfun(@isempty, L)); % For some reason L includes some empty lines; not sure why, but strip these
+    txt = txt{1,1};
+    txt = txt(~cellfun(@isempty, txt)); % For some reason txt includes some empty lines; not sure why, but strip these
     
     % Load a structure containing information about the conditions we're looking for:
-    condsFID = fopen(conditionSettings);
+    condsFID = fopen(condition_settings);
     content = fscanf(condsFID, '%c');
     eval(content);
     
     % (Might eventually want to include some code here to ensure that each line begins with a number)
     
     % Find all trial start lines:
-    startLineNumbers = find(~cellfun(@isempty, regexp(L, 'TRL_[0-9]*_START')));
+    trial_start_lines = find(~cellfun(@isempty, regexp(txt, 'TRL_[0-9]*_START')));
     
     % Initialize a t x 2 cell array, where t is the number of trials, to be returned to the calling function:
-    T = cell(length(startLineNumbers), 2);
+    T = cell(length(trial_start_lines), 2);
     
     % Determine the condition of each trial:
-    for t = 1:length(startLineNumbers)
+    for t = 1:length(trial_start_lines)
         
         % Get all lines associated with the current trial:
-        if t < length(startLineNumbers)
-            rangeEnd = startLineNumbers(t+1) - 1;
-        elseif t == length(startLineNumbers)
-            rangeEnd = length(L);
+        if t < length(trial_start_lines)
+            this_trial_last_line = trial_start_lines(t+1) - 1;
+        elseif t == length(trial_start_lines)
+            this_trial_last_line = length(txt);
         end
-        currTrialLines = L(startLineNumbers(t):rangeEnd);
+        this_trial_lines = txt(trial_start_lines(t):this_trial_last_line);
         
         % Extract trial parameter lines for current trial:
-        trlpLines = currTrialLines(~cellfun(@isempty, regexp(currTrialLines, 'TRLP')));
+        param_def_lines = this_trial_lines(~cellfun(@isempty, regexp(this_trial_lines, 'TRLP')));
         
         % Make a cell array of current trial parameters:
-        currTrlParams = cell(length(trlpLines), 2);
-        for p = 1:length(currTrlParams)
-           [trlp1, trlpEnd] = regexp(trlpLines{p}, 'TRLP [A-Z]+');
-           currTrlParams{p, 1} = trlpLines{p}(trlp1+5:trlpEnd); % parameter name
-           currTrlParams{p, 2} = str2double(trlpLines{p}(trlpEnd+2:end)); % parameter value
+        this_trial_params = cell(length(param_def_lines), 2);
+        for p = 1:length(this_trial_params)
+           [trlp1, trlpEnd] = regexp(param_def_lines{p}, 'TRLP [A-Z]+');
+           this_trial_params{p, 1} = param_def_lines{p}(trlp1+5:trlpEnd); % parameter name
+           this_trial_params{p, 2} = str2double(param_def_lines{p}(trlpEnd+2:end)); % parameter value
         end 
         
         % For each possible condition, check if the defining parameters match the known parameters of the current trial:
         for c = 1:length(Conditions)
             
-            nParamsCompared = 0;
-            nParamsMatching = 0;
+            n_params_compared = 0;
+            n_params_matching = 0;
             
-            fNames = fieldnames(Conditions{c});
+            field_names = fieldnames(Conditions{c});
             
             % Go through each parameter for the current possible condition under consideration...
-            for n = 1:length(fNames)
+            for n = 1:length(field_names)
                 
                 % ... and see if that parameter is specified for the current trial:
-                hit = cellfun(@(c) strcmp(fNames{n}, c), currTrlParams(:,1));
+                matches = cellfun(@(c) strcmp(field_names{n}, c), this_trial_params(:,1));
                 
                 % If so:
-                if any(hit) 
-                    nParamsCompared = nParamsCompared+1; 
-                    disp(eval(strcat('Conditions{',num2str(c),'}.',fNames{n})));
-                    if currTrlParams{hit,2} == eval(strcat('Conditions{',num2str(c),'}.',fNames{n}))
-                        nParamsMatching = nParamsMatching + 1;
+                if any(matches) 
+                    n_params_compared = n_params_compared+1; 
+                    disp(eval(strcat('Conditions{',num2str(c),'}.',field_names{n})));
+                    if this_trial_params{matches,2} == eval(strcat('Conditions{',num2str(c),'}.',field_names{n}))
+                        n_params_matching = n_params_matching + 1;
                     end
                 end
             end
             
             % If all compared parameters match:
-            if nParamsMatching/nParamsCompared == 1
+            if n_params_matching/n_params_compared == 1
                 
                 % Write the name of the matched condition into T{t,1}, where t is the current trial number:
                 T{t,1} = Conditions{c}.Name;
                 
                 % Try to get the trial duration:
-                durInd = cellfun(@(c) strcmp('STIMDUR', c), currTrlParams(:,1));
+                durInd = cellfun(@(c) strcmp('STIMDUR', c), this_trial_params(:,1));
                 if any(durInd)
-                    T{t,2} = currTrlParams{durInd, 2};
+                    T{t,2} = this_trial_params{durInd, 2};
                 end
                 
                 break
