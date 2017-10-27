@@ -25,31 +25,35 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 % 1) The MATLAB function readContinuousDAT, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
 % 2) The MATLAB function LocalMinima, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 % 3) The MATLAB function read_ardulines, available at https://github.com/danieldkato/trial_registration/blob/master/read_ardulines.m
+% 4) The MATLAB toolbox JSONlab, available at https://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files
 
 
 %% III. INPUTS:
-% 1) galvo_path - path to a trace of the analog voltage signal used to drive
-% the slow scan-mirror galvanometer during the grab. Should be saved as a
-% LabView .dat file. Contains information about frame start times.
+% 1) params_file - path to a JSON file defining trial registration
+%    parameters. These should include the following:
 
-% 2) timer_path - path to a trace of the analog trial timer signal recorded
-% during the grab. In the current protocol, trial onset is immediately
-% preceded by a 10 ms, 5 V TTL pulse sent from the Arduino responsible for
-% controlling stimulus hardware. Should be saved as a LabView .dat file.
-% Contains information about trial start times.
+%   a) galvo_path - path to a trace of the analog voltage signal used to drive
+%   the slow scan-mirror galvanometer during the grab. Should be saved as a
+%   LabView .dat file. Contains information about frame start times.
 
-% 3) ardu_path - path to a .txt file containing serial output received from
-% an Arduino over the course of the grab. Contains information about trial type.
+%   b) timer_path - path to a trace of the analog trial timer signal recorded
+%   during the grab. In the current protocol, trial onset is immediately
+%   preceded by a 10 ms, 5 V TTL pulse sent from the Arduino responsible for
+%   controlling stimulus hardware. Should be saved as a LabView .dat file.
+%   Contains information about trial start times.
 
-% 4) grab_path - string argument containing path to the raw TIFF of
-% the grab being analyzed.
+%   c) ardu_path - path to a .txt file containing serial output received from
+%   an Arduino over the course of the grab. Contains information about trial type.
 
-% 5) output_path - optional path to the directory where the output matrix should be
-% saved.
+%   d) grab_path - string argument containing path to the raw TIFF of
+%   the grab being analyzed.
 
-% 6) show_inflection_points - optional boolean argument controlling whether
-% or not to plot the galvo and timer traces along with identified frame and
-% trial start times. 
+%   e) output_path - optional path to the directory where the output matrix should be
+%   saved.
+
+%   f) show_inflection_points - optional boolean argument controlling whether
+%   or not to plot the galvo and timer traces along with identified frame and
+%   trial start times. 
 
 
 %% IV. OUTPUTS: 
