@@ -200,7 +200,9 @@ disp(size(Trials));
 trial_matrix(:, 2:3) = Trials; 
 %}    
     
-%% Write trialMatrix to a .csv: 
+%% Write Trials to secondary storage: 
+
+savejson('',Trials,'trial_info.json');
 
 %{
 % Check that the output path exists:
