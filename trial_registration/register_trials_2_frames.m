@@ -1,4 +1,4 @@
-function [trial_matrix] = register_trials_2_frames(params_file)
+function [Trials] = register_trials_2_frames(params_file)
 
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
@@ -189,8 +189,8 @@ end
 
     
 %% Add start frame to Trials struct:
-
 Trials = arrayfun(@(s,f) setfield(s,'start_frame',f),Trials,trial_start_frames);
+
 
 %{
 trial_matrix = cell(length(trial_start_samples), 3);
