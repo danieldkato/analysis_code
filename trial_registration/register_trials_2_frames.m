@@ -46,7 +46,9 @@ function [Trials] = register_trials_2_frames(params_file)
 %   an Arduino over the course of the grab. Contains information about trial type.
 
 %   d) grab_path - string argument containing path to the raw TIFF of
-%   the grab being analyzed.
+%   the grab being analyzed. This directory MUST contain a metadata JSON
+%   file called `2p_metadata.json` that includes the field `frame_rate`, 
+%   which gives the grab frame rate in frames per second.
 
 %   e) output_path - optional path to the directory where the output matrix should be
 %   saved.
