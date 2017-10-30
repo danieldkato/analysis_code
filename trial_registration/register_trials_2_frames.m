@@ -30,7 +30,7 @@ function [Trials] = register_trials_2_frames(params_file)
 
 %% III. INPUTS:
 % 1) params_file - path to a JSON file defining trial registration
-%    parameters. These should include the following:
+%    parameters. 
 
 %   a) galvo_path - path to a trace of the analog voltage signal used to drive
 %   the slow scan-mirror galvanometer during the grab. Should be saved as a
@@ -65,6 +65,12 @@ function [Trials] = register_trials_2_frames(params_file)
 % parameters.
 
 
+%% TODO:
+% 1) Add back in writing of metdata - I removed this because I wanted to
+% switch over to writing metadata as a JSON and had to deprecate old
+% writeMetadata fucntion, but now I have to replace it. 
+
+
 %% Load parameters:
 params = loadjson(params_file);
 grab_path = params.galvo_path;
@@ -94,7 +100,7 @@ else
     if (isfield(grab_metadata,'frame_rate'))
         frame_rate = grab_metadata.frame_rate;
     else
-        error('Frame rate not found; make sure that grab metadata file includes line ''frame_rate = <f>'', where <f> stands for frame rate in Hz.');
+        error('Frame rate not found; make sure that grab metadata file includes field ''frame_rate'' whose value is frame rate in Hz.');
     end
 
 end
