@@ -68,7 +68,9 @@ function [Trials] = register_trials_2_frames(params_file)
 
 
 %% TODO:
-% 1) Add back in writing of metdata - I removed this because I wanted to
+% 1) Also write Trials as a .mat file in addition to JSON?
+
+% 2) Add back in writing of metdata - I removed this because I wanted to
 % switch over to writing metadata as a JSON and had to deprecate old
 % writeMetadata fucntion, but now I have to replace it. 
 
