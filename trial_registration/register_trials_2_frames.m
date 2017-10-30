@@ -1,4 +1,4 @@
-function [Trials] = register_trials_2_frames(params_file)
+function [T] = register_trials_2_frames(params_file)
 
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
@@ -103,6 +103,7 @@ else
     % Raise an error if meta.txt does not contain a variable called frame_rate:
     if (isfield(grab_metadata,'frame_rate'))
         frame_rate = grab_metadata.frame_rate;
+        T.frame_rate = frame_rate;
     else
         error('Frame rate not found; make sure that grab metadata file includes field ''frame_rate'' whose value is frame rate in Hz.');
     end
@@ -128,7 +129,7 @@ end
 %% Load galvo, timer and Arduino data:
 galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from the raw .dat file into an s x 1 vector, where s is number of samples taken during grab 
 trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timer data from the raw .dat file into an s x 1 vector, where s is the number of samples taken during a grab
-Trials = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
+T.trials = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
     
     
 %% Get the galvo signal sample number of every frame start:
@@ -184,12 +185,12 @@ last_trial_in_movie = find(trial_start_samples<max(frame_start_samples),'last');
 
 % Omit trials that fall outside of the movie:
 trial_start_samples = trial_start_samples( trial_start_samples>=min(frame_start_samples) & trial_start_samples<=max(frame_start_samples) );
-Trials = Trials(first_trial_in_movie:last_trial_in_movie); % Also omit these trials from struct array Trials:
+T.trials = T.trials(first_trial_in_movie:last_trial_in_movie); % Also omit these trials from struct array Trials:
 
     
 %% Match every trial to the frame within which it started:
 
-trial_start_frames = NaN(length(Trials),1);
+trial_start_frames = NaN(length(T),1);
 
 % For each trial start sample, find the maximum frame start sample below it:
 for i = 1:length(trial_start_frames)
@@ -199,7 +200,7 @@ end
 
     
 %% Add start frame to Trials struct:
-Trials = arrayfun(@(s,f) setfield(s,'start_frame',f),Trials,trial_start_frames);
+T.trials = arrayfun(@(s,f) setfield(s,'start_frame',f),T.trials,trial_start_frames);
 
 
 %{
@@ -212,7 +213,7 @@ trial_matrix(:, 2:3) = Trials;
     
 %% Write Trials to secondary storage: 
 
-savejson('',Trials,'trial_info.json');
+savejson('',T,'trial_info.json');
 
 %{
 % Check that the output path exists:
