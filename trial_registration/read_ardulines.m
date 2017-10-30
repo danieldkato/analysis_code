@@ -1,4 +1,4 @@
-function T = read_ardulines(txt, condition_settings)
+function Trials = read_ardulines(txt, condition_settings)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -12,7 +12,7 @@ function T = read_ardulines(txt, condition_settings)
 %% I. OVERVIEW: 
 % This function takes a .txt file containing serial output read from an
 % Arduino running a given ArduFSM protocol for a single behavior session,
-% and returns a T x 2 cell array of the trial type of each trial delivered
+% and returns a T x 1 array of structs describing each trial delivered
 % during the session, where T is the number of trials delivered during the
 % session.
 
@@ -63,17 +63,12 @@ function T = read_ardulines(txt, condition_settings)
 
 
 %% IV. OUTPUTS:
-% 1) trialTypes - a T x 2 cell array of strings describing the trial type
-% of each trial delivered over the course of a behavior session, where T is
-% the number of trials. The first column contains the name of the trial
-% condition, and the second column contains the trial duration. Trial types
-% are listed in the order they are delivered.
+% 1) Trials - a T x 1 array of structs describing the trial type of each
+% trial delivered over the course of a behavior session, where T is the
+% number of trials. Each element includes fields corresponding to various
+% trial parameters as well as a concise, human-readable description of the
+% trial condition.
 
-
-% TODO: 
-% This function is currently hard-coded to look for trial parameters and
-% return trial types specific to the multiSens protocol. It may be
-% worthwhile building more flexibility into this function. s
 
 %%
 
@@ -93,9 +88,6 @@ function T = read_ardulines(txt, condition_settings)
     
     % Find all trial start lines:
     trial_start_lines = find(~cellfun(@isempty, regexp(txt, 'TRL_[0-9]*_START')));
-    
-    % Initialize a t x 2 cell array, where t is the number of trials, to be returned to the calling function:
-    T = cell(length(trial_start_lines), 2);
 
     % Create p x c binary matrix match_matrix, where p is the number of
     % parameters and c is the number of conditions. This matrix will be
@@ -104,6 +96,10 @@ function T = read_ardulines(txt, condition_settings)
     % condition n; the condition of the current trial is the condition
     % corresponding to the column of all 1's
     match_matrix = zeros(length(fieldnames(Conditions)),length(Conditions));
+    
+    % Initialize array of structs, each of which will represent one trial:
+    Tzero = struct();
+    Trials = repmat(Tzero,trial_start_lines,1);
     
     % Determine the condition of each trial:
     for t = 1:length(trial_start_lines)
@@ -124,17 +120,16 @@ function T = read_ardulines(txt, condition_settings)
             [start_idx, pName_end_idx] = regexp(trial_param_lines{tp}, 'TRLP [A-Z]+'); % get index of where parameter name ends
             param_name = trial_param_lines{tp}(start_idx+5:pName_end_idx); % get parameter name
             param_val = trial_param_lines{tp}(pName_end_idx+2:end); % get parameter value
-            this_trial.(param_name) = param_val;
+            Trials(t).(param_name) = param_val;
         end
         
         % For each parameter that defines the trial condition (again, recall that not every trial parameter is related to the trial condition; e.g. stimulus duration), check if the current trial matches it:
         for p = 1:length(condition_params)
             param_name = condition_params{p};
-            match_matrix(p,:) = C.(param_name) == this_trial.(param_name); % create a 1 x c vector, where c is the number of conditions, that is 1 if and only if param p of the current trial matches param p of the corresponding condition
+            match_matrix(p,:) = C.(param_name) == Trials(t).(param_name); % create a 1 x c vector, where c is the number of conditions, that is 1 if and only if param p of the current trial matches param p of the corresponding condition
         end
 
         all_params_match = sum(match_matrix,1); % find the index of the condition for which all parameters match those of the current trial
-        T{t,1} = Conditions(all_params_match == 1).name; % get the condition name of the current trial
-        T{t,2} = this_trial.STIMDUR;
+        Trials(t).condition = Conditions(all_params_match == 1).name; % get the condition name of the current trial
     end
 end

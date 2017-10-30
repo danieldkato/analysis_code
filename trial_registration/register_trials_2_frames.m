@@ -6,13 +6,13 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-10-26
+% Last updated DDK 2017-10-30
 
 
 %% I. OVERVIEW:
-% This function returns a T x 2 matrix containing the starting frame number
-% and condition for every trial delivered during a given grab, where T is
-% the number of trials delivered during the grab.
+% This function returns a T x 1 array of structs containing the starting
+% frame number and condition for every trial delivered during a given grab,
+% where T is the number of trials delivered during the grab.
 
 
 %% II. REQUIREMENTS:
@@ -57,14 +57,12 @@ function [trial_matrix] = register_trials_2_frames(params_file)
 
 
 %% IV. OUTPUTS: 
-% This function returns a T x 2 matrix containing the starting frame number
-% and condition of every trial delivered during the grab, where T is the
-% number of complete trials delivered during the grab. Each row represents
-% a trial; the first column gives the frame number during which the trial
-% starts, and the second column gives the trial condition.
-
-% This function also saves the output matrix as a .csv for future
-% processing, along with metadata about the registration itself.
+% This function returns a T x 1 struct array containing the starting frame
+% number and parameters for every trial delivered during the grab, where T
+% is the number of complete trials delivered during the grab. This
+% parameters information includes trial duration and a concise,
+% human-readable condition name, as well as other, protocol-specific
+% parameters.
 
 
 %% Load parameters:
@@ -120,7 +118,7 @@ end
 %% Load galvo, timer and Arduino data:
 galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from the raw .dat file into an s x 1 vector, where s is number of samples taken during grab 
 trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timer data from the raw .dat file into an s x 1 vector, where s is the number of samples taken during a grab
-trial_types = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
+Trials = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
     
     
 %% Get the galvo signal sample number of every frame start:
@@ -168,30 +166,43 @@ if show_inflection_points == 1
 end
     
     
-%% Omit any trials delivered before the first frame or after the last frame 
+%% Omit any trials delivered before the first frame or after the last frame: 
+
+% Find indices of first and last trials within movie:
+first_trial_in_movie = find(trial_start_samples>=min(frame_start_samples),'first');
+last_trial_in_movie = find(trial_start_samples<max(frame_start_samples),'last');
+
+% Omit trials that fall outside of the movie:
 trial_start_samples = trial_start_samples( trial_start_samples>=min(frame_start_samples) & trial_start_samples<=max(frame_start_samples) );
+Trials = Trials(first_trial_in_movie:last_trial_in_movie); % Also omit these trials from struct array Trials:
+
     
-    
-%% Match every trial to the frame within which it started
-trial_start_frames = cell(length(trial_start_samples), 1);
+%% Match every trial to the frame within which it started:
+
+trial_start_frames = NaN(length(Trials),1);
 
 % For each trial start sample, find the maximum frame start sample below it:
 for i = 1:length(trial_start_frames)
     [M, I] = max(frame_start_samples( frame_start_samples <= trial_start_samples(i) ));
-    trial_start_frames{i} = I + 1; % have to add 1 because there's one frame that completes before the first local minimum
+    trial_start_frames(i) = I + 1; % have to add 1 because there's one frame that completes before the first local minimum
 end
 
     
-%% Merge the trial start time and trial type information:
+%% Add start frame to Trials struct:
+
+Trials = arrayfun(@(s,f) setfield(s,'start_frame',f),Trials,trial_start_frames);
+
+%{
 trial_matrix = cell(length(trial_start_samples), 3);
 trial_matrix(:, 1) = trial_start_frames;
 disp(size(trial_start_samples));
-disp(size(trial_types));
-trial_matrix(:, 2:3) = trial_types; 
-    
+disp(size(Trials));
+trial_matrix(:, 2:3) = Trials; 
+%}    
     
 %% Write trialMatrix to a .csv: 
 
+%{
 % Check that the output path exists:
 status = exist(output_path);
 if status == 0
@@ -221,7 +232,7 @@ for i = 1:size(trial_matrix, 1)
 end
 
 fclose(fileID);
-    
+%}    
     
 %% Write metadata:
 
