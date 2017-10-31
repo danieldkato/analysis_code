@@ -81,7 +81,8 @@ function [T] = register_trials_2_frames(params_file)
 
 %% Load parameters:
 params = loadjson(params_file);
-grab_path = params.galvo_path;
+grab_path = params.grab_path;
+galvo_path = params.galvo_path;
 timer_path = params.timer_path;
 ardu_path = params.ardu_path;
 condition_settings = params.condition_settings;
@@ -254,6 +255,10 @@ fclose(fileID);
 %}    
     
 %% Write metadata:
+Metadata.inputs(1).path = grab_metadata_path;
+Metadata.inputs(2).path = ;
+
+
 
 %{
 inputs = {{'galvanometer trace', galvo_path};
