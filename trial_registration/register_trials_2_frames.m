@@ -121,6 +121,7 @@ sample_rate = str2double(header{7}(18:end));
     
 
 %% Set output display parameters:
+%{
 if nargin< 6
     show_inflection_points = 0;
 end
@@ -128,7 +129,7 @@ end
 if nargin < 5
     output_path = cd;
 end
-    
+%}    
     
 %% Load galvo, timer and Arduino data:
 galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from the raw .dat file into an s x 1 vector, where s is number of samples taken during grab 
@@ -180,7 +181,7 @@ if show_inflection_points == 1
     plot(trial_timer_signal);
     plot(t(trial_start_samples), trial_timer_signal(trial_start_samples), 'r.'); 
 end
-%}    
+%}
     
 %% Omit any trials delivered before the first frame or after the last frame: 
 
