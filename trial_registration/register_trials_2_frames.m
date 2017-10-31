@@ -170,6 +170,7 @@ trial_start_samples = LocalMinima(-trial_timer_signal, min_distance_timer, timer
 % have been chosen, but may be cumbersome if processing large batches
 % of data.
 
+%{
 if show_inflection_points == 1
     figure;
     hold on;
@@ -179,7 +180,7 @@ if show_inflection_points == 1
     plot(trial_timer_signal);
     plot(t(trial_start_samples), trial_timer_signal(trial_start_samples), 'r.'); 
 end
-    
+%}    
     
 %% Omit any trials delivered before the first frame or after the last frame: 
 
