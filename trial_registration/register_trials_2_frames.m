@@ -30,6 +30,7 @@ function [T] = register_trials_2_frames(params_file)
 % 2) The MATLAB function LocalMinima, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 % 3) The MATLAB function read_ardulines, available at https://github.com/danieldkato/trial_registration/blob/master/read_ardulines.m
 % 4) The MATLAB toolbox JSONlab, available at https://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files
+% 5) The MATLAB function writeMetadata, available at https://github.com/danieldkato/utilities/tree/master/metadata
 
 
 %% III. INPUTS:
@@ -220,7 +221,8 @@ trial_matrix(:, 2:3) = Trials;
     
 %% Write T to secondary storage: 
 
-savejson('',T,'trial_info.json');
+json_path = [output_path filesep 'trial_info.json'];
+savejson('',T,json_path);
 
 %{
 % Check that the output path exists:
@@ -255,10 +257,19 @@ fclose(fileID);
 %}    
     
 %% Write metadata:
+
+% Inputs:
 Metadata.inputs(1).path = grab_metadata_path;
-Metadata.inputs(2).path = ;
+Metadata.inputs(2).path = galvo_path;
+Metadata.inputs(3).path = timer_path;
+Metadata.inputs(4).path = ardu_path;
+Metadata.inputs(5).path = condition_settings;
 
+% Outputs:
+Metadata.inputs(1).path = json_path;
 
+metadata_path = [output_path filesep 'trial_registration_metadata.json'];
+writeMetadata(Metadata, metadata_path);
 
 %{
 inputs = {{'galvanometer trace', galvo_path};
