@@ -16,10 +16,14 @@ function [T] = register_trials_2_frames(params_file)
 
 
 %% II. REQUIREMENTS:
-% This function requires the following data:
+
+% This function requires the following data/metadata:
 % 1) A LabView .dat file of the analog voltage signal used to drive the slow scan-mirror galvanomter
 % 2) A LabView .dat file of an analog trial timer signal recorded during the grab 
 % 3) A text file containing Arduino feedback received over a serial port
+% 4) A metadata file named `2p_metadata.json` that includes a `frame_rate`
+%    field specifying the frame rate of the corresponding grab in frames per 
+%    second. Must be located in the same directory as the raw grab data.
 
 % This function requires the following software:
 % 1) The MATLAB function readContinuousDAT, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
@@ -30,7 +34,7 @@ function [T] = register_trials_2_frames(params_file)
 
 %% III. INPUTS:
 % 1) params_file - path to a JSON file defining trial registration
-%    parameters. 
+%    parameters. This file must minimally include the following fields: 
 
 %   a) galvo_path - path to a trace of the analog voltage signal used to drive
 %   the slow scan-mirror galvanometer during the grab. Should be saved as a
@@ -199,7 +203,7 @@ for i = 1:length(trial_start_frames)
 end
 
     
-%% Add start frame to Trials struct:
+%% Add start frame to T.trials struct:
 T.trials = arrayfun(@(s,f) setfield(s,'start_frame',f),T.trials,trial_start_frames);
 
 
@@ -211,7 +215,7 @@ disp(size(Trials));
 trial_matrix(:, 2:3) = Trials; 
 %}    
     
-%% Write Trials to secondary storage: 
+%% Write T to secondary storage: 
 
 savejson('',T,'trial_info.json');
 
