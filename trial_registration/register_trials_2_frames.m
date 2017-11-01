@@ -269,7 +269,7 @@ Metadata.inputs(5).path = condition_settings;
 Metadata.inputs(1).path = json_path;
 
 metadata_path = [output_path filesep 'trial_registration_metadata.json'];
-writeMetadata(Metadata, metadata_path);
+write_metadata(Metadata, metadata_path);
 
 %{
 inputs = {{'galvanometer trace', galvo_path};
