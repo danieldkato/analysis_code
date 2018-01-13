@@ -1,4 +1,4 @@
-function Trials = read_ardulines(txt, condition_settings)
+function T = read_ardulines(txt, condition_settings)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -99,7 +99,7 @@ function Trials = read_ardulines(txt, condition_settings)
     
     % Initialize array of structs, each of which will represent one trial:
     Tzero = struct();
-    Trials = repmat(Tzero,trial_start_lines,1);
+    T = repmat(Tzero,trial_start_lines,1);
     
     % Determine the condition of each trial:
     for t = 1:length(trial_start_lines)
@@ -120,16 +120,16 @@ function Trials = read_ardulines(txt, condition_settings)
             [start_idx, pName_end_idx] = regexp(trial_param_lines{tp}, 'TRLP [A-Z]+'); % get index of where parameter name ends
             param_name = trial_param_lines{tp}(start_idx+5:pName_end_idx); % get parameter name
             param_val = trial_param_lines{tp}(pName_end_idx+2:end); % get parameter value
-            Trials(t).(param_name) = param_val;
+            T(t).(param_name) = param_val;
         end
         
         % For each parameter that defines the trial condition (again, recall that not every trial parameter is related to the trial condition; e.g. stimulus duration), check if the current trial matches it:
         for p = 1:length(condition_params)
             param_name = condition_params{p};
-            match_matrix(p,:) = C.(param_name) == Trials(t).(param_name); % create a 1 x c vector, where c is the number of conditions, that is 1 if and only if param p of the current trial matches param p of the corresponding condition
+            match_matrix(p,:) = C.(param_name) == T(t).(param_name); % create a 1 x c vector, where c is the number of conditions, that is 1 if and only if param p of the current trial matches param p of the corresponding condition
         end
 
         all_params_match = sum(match_matrix,1); % find the index of the condition for which all parameters match those of the current trial
-        Trials(t).condition = Conditions(all_params_match == 1).name; % get the condition name of the current trial
+        T(t).condition = Conditions(all_params_match == 1).name; % get the condition name of the current trial
     end
 end
