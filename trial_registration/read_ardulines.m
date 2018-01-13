@@ -1,4 +1,4 @@
-function T = read_ardulines(txt, condition_settings)
+function T = read_ardulines(ardulines_path)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function T = read_ardulines(txt, condition_settings)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-10-30    
+% Last updated DDK 2018-01-12    
 
 
 %% I. OVERVIEW: 
@@ -30,37 +30,6 @@ function T = read_ardulines(txt, condition_settings)
 % signals the start of a trial. More information about the ArduFSM
 % framework can be found at https://github.com/cxrodgers/ArduFSM. 
 
-% 2) condition_settings - path to a JSON file contaning information about
-% the different trial conditions used in the current experiment. This file
-% should minimally include fields corresponding to whatever trial
-% parameters are necessary for defining a trial condition in the current
-% experiment, as well as a concise condition name that will be assigned to
-% each trial and that can be used later on to easily parse experiments by
-% condition. Example contents of a condisito_settings.json file might
-% include:
-
-%{"conditions":[
-%		{"STPRIDX":1,
-%		 "SPKRIDX":0,
-%		 "name":' stepper only',
-%		 "abbreviation":"W",
-%		 "color":[1.00,0.00,0.00]
-%		},
-%		{"STPRIDX":0,
-%		 "SPKRIDX":1,
-%		 "name": ' speaker only',
-%		 "abbreviation":"T",
-%		 "color":[0.00,0.00,1.00] 
-%		},
-%		{"STPRIDX":1,
-%		 "SPKRIDX":2,
-
-%         "name": ' stepper and speaker',
-%		 "color":[0.60,0.00,1.00]
-%		}	
-%	]
-%}
-
 
 %% IV. OUTPUTS:
 % 1) Trials - a T x 1 array of structs describing the trial type of each
@@ -74,21 +43,17 @@ function T = read_ardulines(txt, condition_settings)
 
     
     % Load data into an k x 1 cell array, where k is the number of lines:
-    linesFID = fopen(txt);
+    linesFID = fopen(ardulines_path);
     txt = textscan(linesFID, '%s', 'Delimiter', '\r\n');
     fclose(linesFID);
     txt = txt{1,1};
     txt = txt(~cellfun(@isempty, txt)); % For some reason txt includes some empty lines; not sure why, but strip these
     
+    %{
     % Load a structure containing information about the conditions we're looking for:
     Conditions = loadJSON(condition_settings);
     condition_params = fieldnames(Conditions); % get the names of all parameters that define the trial conditions (note that not all parameters of a given trial define its trial condition; e.g., stimulus duration)
     
-    % (Might eventually want to include some code here to ensure that each line begins with a number)
-    
-    % Find all trial start lines:
-    trial_start_lines = find(~cellfun(@isempty, regexp(txt, 'TRL_[0-9]*_START')));
-
     % Create p x c binary matrix match_matrix, where p is the number of
     % parameters and c is the number of conditions. This matrix will be
     % populated one time for each trial. Element m, n is 1 if and only if
@@ -100,6 +65,13 @@ function T = read_ardulines(txt, condition_settings)
     % Initialize array of structs, each of which will represent one trial:
     Tzero = struct();
     T = repmat(Tzero,trial_start_lines,1);
+    
+    %}
+    
+    % (Might eventually want to include some code here to ensure that each line begins with a number)
+    
+    % Find all trial start lines:
+    trial_start_lines = find(~cellfun(@isempty, regexp(txt, 'TRL_[0-9]*_START')));
     
     % Determine the condition of each trial:
     for t = 1:length(trial_start_lines)
@@ -123,6 +95,7 @@ function T = read_ardulines(txt, condition_settings)
             T(t).(param_name) = param_val;
         end
         
+        %{
         % For each parameter that defines the trial condition (again, recall that not every trial parameter is related to the trial condition; e.g. stimulus duration), check if the current trial matches it:
         for p = 1:length(condition_params)
             param_name = condition_params{p};
@@ -131,5 +104,6 @@ function T = read_ardulines(txt, condition_settings)
 
         all_params_match = sum(match_matrix,1); % find the index of the condition for which all parameters match those of the current trial
         T(t).condition = Conditions(all_params_match == 1).name; % get the condition name of the current trial
+        %}
     end
 end
