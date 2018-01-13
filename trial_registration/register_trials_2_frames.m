@@ -1,4 +1,4 @@
-function [T] = register_trials_2_frames(params_file)
+function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_inflection_points)
 
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function [T] = register_trials_2_frames(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-10-30
+% Last updated DDK 2018-01-13
 
 
 %% I. OVERVIEW:
@@ -81,21 +81,23 @@ function [T] = register_trials_2_frames(params_file)
 
 
 %% Load parameters:
+%{
 params = loadjson(params_file);
 grab_path = params.grab_path;
 galvo_path = params.galvo_path;
 timer_path = params.timer_path;
-ardu_path = params.ardu_path;
+ardu_path = params.ardu_path; 
 condition_settings = params.condition_settings;
 output_path = params.output_path;
 show_inflection_points = params.show_inflection_points;
+%}
 
 % Read image grab metadata to get framerate:
 [grab_directory, nm, ext] = fileparts(grab_path);
 list = dir(grab_directory);
 grab_metadata_path = list(arrayfun(@(a) strcmp(a.name, '2p_metadata.json'), list)); % look for a file called '2p_metadata.json' in the same directory as the raw grab file
 
-% Raise an error if meta.txt is not found:
+% Raise an error if metadata file is not found or frame rate is not defined within metadata file:
 if length(grab_metadata_path) == 0
     error('Metadata file for grab not found; make sure that 2p_metadata.json is located in the same directory as raw TIFF.');
 else
@@ -109,11 +111,10 @@ else
     % Raise an error if meta.txt does not contain a variable called frame_rate:
     if (isfield(grab_metadata,'frame_rate'))
         frame_rate = grab_metadata.frame_rate;
-        T.frame_rate = frame_rate;
+        F.frame_rate = frame_rate;
     else
         error('Frame rate not found; make sure that grab metadata file includes field ''frame_rate'' whose value is frame rate in Hz.');
     end
-
 end
 
 % Read galvo header to get sample rate:
@@ -133,10 +134,10 @@ if nargin < 5
 end
 %}    
     
-%% Load galvo, timer and Arduino data:
+%% Load galvo and timer data:
 galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from the raw .dat file into an s x 1 vector, where s is number of samples taken during grab 
 trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timer data from the raw .dat file into an s x 1 vector, where s is the number of samples taken during a grab
-T.trials = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
+% F.trials = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
     
     
 %% Get the galvo signal sample number of every frame start:
@@ -163,8 +164,7 @@ min_distance_timer = minITI * sample_rate;
 timer_threshold = -4; % timerTrace units (Volts, I think); I just eyeballed this for now, but I should probably find a way to get this dynamically.
 
 % Get a vector of every timer signal sample at which a trial begins: 
-trial_start_samples = LocalMinima(-trial_timer_signal, min_distance_timer, timer_threshold);
-    
+trial_start_samples = LocalMinima(-trial_timer_signal, min_distance_timer, timer_threshold);    
     
 %% Show traces if requested by user:
 
@@ -190,25 +190,24 @@ end
 % Find indices of first and last trials within movie:
 first_trial_in_movie = find(trial_start_samples>=min(frame_start_samples),'first');
 last_trial_in_movie = find(trial_start_samples<max(frame_start_samples),'last');
-
-% Omit trials that fall outside of the movie:
-trial_start_samples = trial_start_samples( trial_start_samples>=min(frame_start_samples) & trial_start_samples<=max(frame_start_samples) );
-T.trials = T.trials(first_trial_in_movie:last_trial_in_movie); % Also omit these trials from struct array Trials:
+is_in_movie = trial_start_samples>=min(frame_start_samples) & trial_start_samples<=max(frame_start_samples); % t-element binary vector specifying whether each trial falls within the movie
+movie_trials = find(is_in_movie); % q-element vector of indices into trial_start_samples correspoding to trials that fall within the movie
 
     
 %% Match every trial to the frame within which it started:
 
-trial_start_frames = NaN(length(T),1);
+trial_start_frames = NaN(size(trial_start_samples)); % initialize with NaNs; elements corresponding to trials within the movie will be populated, trials that occur before the beginning or after the end of the movie will remain NaNs
 
 % For each trial start sample, find the maximum frame start sample below it:
-for i = 1:length(trial_start_frames)
-    [M, I] = max(frame_start_samples( frame_start_samples <= trial_start_samples(i) ));
+for i = 1:length(movie_trials)
+    curr_trial = movie_trials(i);
+    [M, I] = max(frame_start_samples( frame_start_samples <= trial_start_samples(curr_trial) ));
     trial_start_frames(i) = I + 1; % have to add 1 because there's one frame that completes before the first local minimum
 end
 
     
 %% Add start frame to T.trials struct:
-T.trials = arrayfun(@(s,f) setfield(s,'start_frame',f),T.trials,trial_start_frames);
+%T.trials = arrayfun(@(s,f) setfield(s,'start_frame',f),T.trials,trial_start_frames);
 
 
 %{
@@ -221,8 +220,10 @@ trial_matrix(:, 2:3) = Trials;
     
 %% Write T to secondary storage: 
 
+%{
 json_path = [output_path filesep 'trial_info.json'];
 savejson('',T,json_path);
+%}
 
 %{
 % Check that the output path exists:
@@ -258,6 +259,7 @@ fclose(fileID);
     
 %% Write metadata:
 
+%{
 % Inputs:
 Metadata.inputs(1).path = grab_metadata_path;
 Metadata.inputs(2).path = galvo_path;
@@ -270,6 +272,7 @@ Metadata.inputs(1).path = json_path;
 
 metadata_path = [output_path filesep 'trial_registration_metadata.json'];
 write_metadata(Metadata, metadata_path);
+%}
 
 %{
 inputs = {{'galvanometer trace', galvo_path};
