@@ -10,9 +10,11 @@ function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_in
 
 
 %% I. OVERVIEW:
-% This function returns a T x 1 array of structs containing the starting
-% frame number and condition for every trial delivered during a given grab,
-% where T is the number of trials delivered during the grab.
+% This function returns an F-element vector containing the starting frame
+% number for every trial delivered during a given grab, where F is the
+% number of trials delivered over the coruse of the session. Any trials
+% that occur before the first frame or after the last frame of the movie
+% are represented by a NaN.
 
 
 %% II. REQUIREMENTS:
@@ -34,21 +36,18 @@ function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_in
 
 
 %% III. INPUTS:
-% 1) params_file - path to a JSON file defining trial registration
-%    parameters. This file must minimally include the following fields: 
+% 1) galvo_path - path to a trace of the analog voltage signal used to drive
+%    the slow scan-mirror galvanometer during the grab. Should be saved as a
+%    LabView .dat file. Contains information about frame start times.
 
-%   a) galvo_path - path to a trace of the analog voltage signal used to drive
-%   the slow scan-mirror galvanometer during the grab. Should be saved as a
-%   LabView .dat file. Contains information about frame start times.
+% 2) timer_path - path to a trace of the analog trial timer signal recorded
+%    during the grab. In the current protocol, trial onset is immediately
+%    preceded by a 10 ms, 5 V TTL pulse sent from the Arduino responsible for
+%    controlling stimulus hardware. Should be saved as a LabView .dat file.
+%    Contains information about trial start times.
 
-%   b) timer_path - path to a trace of the analog trial timer signal recorded
-%   during the grab. In the current protocol, trial onset is immediately
-%   preceded by a 10 ms, 5 V TTL pulse sent from the Arduino responsible for
-%   controlling stimulus hardware. Should be saved as a LabView .dat file.
-%   Contains information about trial start times.
-
-%   c) ardu_path - path to a .txt file containing serial output received from
-%   an Arduino over the course of the grab. Contains information about trial type.
+% 3) ardu_path - path to a .txt file containing serial output received from
+%    an Arduino over the course of the grab. Contains information about trial type.
 
 %   d) grab_path - string argument containing path to the raw TIFF of
 %   the grab being analyzed. This directory MUST contain a metadata JSON
@@ -101,11 +100,7 @@ grab_metadata_path = list(arrayfun(@(a) strcmp(a.name, '2p_metadata.json'), list
 if length(grab_metadata_path) == 0
     error('Metadata file for grab not found; make sure that 2p_metadata.json is located in the same directory as raw TIFF.');
 else
-    disp('metadata path name:');
-    disp(grab_metadata_path(1).name);
-    grab_metadata_fid = fopen(fullfile(grab_directory, grab_metadata_path(1).name), 'r');
-    disp('grab_metadata_fid');
-    disp(grab_metadata_fid);
+    disp(['metadata path name:' grab_metadata_path(1).name]);
     grab_metadata = loadjson(grab_metadata_path);
 
     % Raise an error if meta.txt does not contain a variable called frame_rate:
