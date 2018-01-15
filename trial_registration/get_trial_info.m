@@ -1,4 +1,4 @@
-function T = get_trial_info(galvo_path, timer_path, ardu_path, grab_path, show_inflection_points)
+function T = get_trial_info(galvo_path, timer_path, ardu_path, grab_metadata, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -92,7 +92,7 @@ T = read_ardulines(ardu_path);
 
 
 %% Get trial start frames:
-F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_inflection_points);
+F = register_trials_2_frames(galvo_path, timer_path, grab_metadata, show_inflection_points);
 
 
 %% Make sure that the number of trials extracted from read_ardulines matches that from register_trials_2_frames; if not, throw an error:
@@ -109,5 +109,5 @@ F = F(in_movie);
 
 %% Add the frame start numbers to T:
 for t = 1:length(T)
-    T.start_frame = F(t);
+    T(t).start_frame = F(t);
 end
