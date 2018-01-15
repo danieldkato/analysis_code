@@ -23,7 +23,7 @@ function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_in
 % 1) A LabView .dat file of the analog voltage signal used to drive the slow scan-mirror galvanomter
 % 2) A LabView .dat file of an analog trial timer signal recorded during the grab 
 % 3) A text file containing Arduino feedback received over a serial port
-% 4) A metadata file named `2p_metadata.json` that includes a `frame_rate`
+% 4) A metadata file named `2P_metadata.json` that includes a `frame_rate`
 %    field specifying the frame rate of the corresponding grab in frames per 
 %    second. Must be located in the same directory as the raw grab data.
 
@@ -68,16 +68,7 @@ function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_in
 
 
 %% Load parameters:
-%{
-params = loadjson(params_file);
-grab_path = params.grab_path;
-galvo_path = params.galvo_path;
-timer_path = params.timer_path;
-ardu_path = params.ardu_path; 
-condition_settings = params.condition_settings;
-output_path = params.output_path;
-show_inflection_points = params.show_inflection_points;
-%}
+
 
 % Read galvo header to get sample rate:
 galvo_fid = fopen(galvo_path, 'r', 'b');
