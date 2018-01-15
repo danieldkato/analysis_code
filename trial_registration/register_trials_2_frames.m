@@ -1,5 +1,4 @@
-function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_inflection_points)
-
+function F = register_trials_2_frames(galvo_path, timer_path, grab_metadata_path, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
 % II.REQUIREMENTS
@@ -43,10 +42,10 @@ function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_in
 %    controlling stimulus hardware. Should be saved as a LabView .dat file.
 %    Contains information about trial start times.
 
-% 3) grab_path - path to the raw TIFF of the movie being analyzed. The
-%    directory containing the raw TIFF must also contain a JSON file called
-%    '2P_metadata.json', which includes a field called 'frame_rate'
-%    specifying the frame rate of the movie in frames per second.
+% 3) grab_metadata_path - path to a JSON file containing metadata related
+%    to the movie being analyzed. This must include a field called
+%    'frame_rate', which sepcifies the frame rate of the movie in frames
+%    per second.
 
 % 4) show_inflection_points - boolean flag specifying whether or not to
 %    plot galvo trace, timer trace, and frame and trial start times. 
@@ -69,32 +68,20 @@ function F = register_trials_2_frames(galvo_path, timer_path, grab_path, show_in
 
 %% Load parameters:
 
-
 % Read galvo header to get sample rate:
 galvo_fid = fopen(galvo_path, 'r', 'b');
 [header_size, header] = SkipHeader(galvo_fid);
 sample_rate = str2double(header{7}(18:end));
 disp(sample_rate);
 
-% Read image grab metadata to get framerate:
-[grab_directory, nm, ext] = fileparts(grab_path);
-ls = dir(grab_directory);
-grab_metadata_path = ls(arrayfun(@(a) strcmp(a.name, '2P_metadata.json'), ls)); % look for a file called '2p_metadata.json' in the same directory as the raw grab file
-disp(grab_metadata_path)
+% Read grab metadata:
+grab_metadata = loadjson(grab_metadata_path);
 
-% Raise an error if metadata file is not found or frame rate is not defined within metadata file:
-if length(grab_metadata_path) == 0
-    error('Metadata file for grab not found; make sure that 2P_metadata.json is located in the same directory as raw TIFF.');
+% Raise an error if meta.txt does not contain a variable called frame_rate:
+if (isfield(grab_metadata,'frame_rate'))
+    frame_rate = grab_metadata.frame_rate;
 else
-    disp(['metadata path name: ' grab_metadata_path(1).name]);
-    grab_metadata = loadjson([grab_directory filesep grab_metadata_path(1).name]);
-
-    % Raise an error if meta.txt does not contain a variable called frame_rate:
-    if (isfield(grab_metadata,'frame_rate'))
-        frame_rate = grab_metadata.frame_rate;
-    else
-        error('Frame rate not found; make sure that grab metadata file includes field ''frame_rate'' whose value is frame rate in Hz.');
-    end
+    error('Frame rate not found; make sure that grab metadata file includes field ''frame_rate'' whose value is frame rate in Hz.');
 end
     
     
