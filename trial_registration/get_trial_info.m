@@ -1,4 +1,4 @@
-function T = get_trial_info(galvo_path, timer_path, grab_path, ardu_path, show_inflection_points)
+function T = get_trial_info(galvo_path, timer_path, ardu_path, grab_path, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -43,18 +43,18 @@ function T = get_trial_info(galvo_path, timer_path, grab_path, ardu_path, show_i
 %    controlling stimulus hardware. Should be saved as a LabView .dat file.
 %    Contains information about trial start times.
 
-% 3) grab_path - path to the raw TIFF of the movie being analyzed. The
-%    directory containing the raw TIFF must also contain a JSON file called
-%    '2P_metadata.json', which includes a field called 'frame_rate'
-%    specifying the frame rate of the movie in frames per second.
-
-% 4) ardu_path - a path to a .txt file containing serial output from an Arduino
+% 3) ardu_path - a path to a .txt file containing serial output from an Arduino
 %    running an ArduFSM protocol for a single behavior session. In accordance
 %    with the general ArduFSM framework, each line of output either
 %    acknowledges the receipt of instructions from the host PC, asserts
 %    upcoming trial parameters, reports recorded behavior parameters, or
 %    signals the start of a trial. More information about the ArduFSM
 %    framework can be found at https://github.com/cxrodgers/ArduFSM. 
+
+% 4) grab_path - path to the raw TIFF of the movie being analyzed. The
+%    directory containing the raw TIFF must also contain a JSON file called
+%    '2P_metadata.json', which includes a field called 'frame_rate'
+%    specifying the frame rate of the movie in frames per second.
 
 % 5) show_inflection_points - boolean flag specifying whether or not to
 %    plot galvo trace, timer trace, and frame and trial start times. 
