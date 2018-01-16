@@ -49,25 +49,6 @@ function T = read_ardulines(ardulines_path)
     txt = txt{1,1};
     txt = txt(~cellfun(@isempty, txt)); % For some reason txt includes some empty lines; not sure why, but strip these
     
-    %{
-    % Load a structure containing information about the conditions we're looking for:
-    Conditions = loadJSON(condition_settings);
-    condition_params = fieldnames(Conditions); % get the names of all parameters that define the trial conditions (note that not all parameters of a given trial define its trial condition; e.g., stimulus duration)
-    
-    % Create p x c binary matrix match_matrix, where p is the number of
-    % parameters and c is the number of conditions. This matrix will be
-    % populated one time for each trial. Element m, n is 1 if and only if
-    % parameter m of the current trial is the same as parameter m of
-    % condition n; the condition of the current trial is the condition
-    % corresponding to the column of all 1's
-    match_matrix = zeros(length(fieldnames(Conditions)),length(Conditions));
-    
-    % Initialize array of structs, each of which will represent one trial:
-    Tzero = struct();
-    T = repmat(Tzero,trial_start_lines,1);
-    
-    %}
-    
     % (Might eventually want to include some code here to ensure that each line begins with a number)
     
     % Find all trial start lines:
@@ -95,15 +76,5 @@ function T = read_ardulines(ardulines_path)
             T(t).(param_name) = str2double(param_val);
         end
         
-        %{
-        % For each parameter that defines the trial condition (again, recall that not every trial parameter is related to the trial condition; e.g. stimulus duration), check if the current trial matches it:
-        for p = 1:length(condition_params)
-            param_name = condition_params{p};
-            match_matrix(p,:) = C.(param_name) == T(t).(param_name); % create a 1 x c vector, where c is the number of conditions, that is 1 if and only if param p of the current trial matches param p of the corresponding condition
-        end
-
-        all_params_match = sum(match_matrix,1); % find the index of the condition for which all parameters match those of the current trial
-        T(t).condition = Conditions(all_params_match == 1).name; % get the condition name of the current trial
-        %}
     end
 end
