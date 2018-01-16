@@ -92,7 +92,7 @@ function T = read_ardulines(ardulines_path)
             [start_idx, pName_end_idx] = regexp(trial_param_lines{tp}, 'TRLP [A-Z]+'); % get index of where parameter name ends
             param_name = trial_param_lines{tp}(start_idx+5:pName_end_idx); % get parameter name
             param_val = trial_param_lines{tp}(pName_end_idx+2:end); % get parameter value
-            T(t).(param_name) = param_val;
+            T(t).(param_name) = str2double(param_val);
         end
         
         %{
