@@ -1,4 +1,4 @@
-function F = register_trials_2_frames(galvo_path, timer_path, grab_metadata_path, show_inflection_points)
+function F = get_start_frames(galvo_path, timer_path, grab_metadata_path, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
 % II.REQUIREMENTS
