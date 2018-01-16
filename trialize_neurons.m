@@ -182,14 +182,16 @@ for c = 1:length(Conditions)
     params = fieldnames(Conditions{c}.params);  
     for p = 1:length(params) 
         param_name = params{p};
-        disp(['param_name = ' param_name]);
         param_value = Conditions{c}.params.(param_name);
+        filter_update = [Trials.(param_name)] == param_value;
+        %{
+        disp(['param_name = ' param_name]);
         disp(['param value = ' num2str(param_value)]);
         disp('Trials.(param_name) :');
         disp(class([Trials.(param_name)]));
         disp([Trials.(param_name)]);
-        filter_update = [Trials.(param_name)] == param_value;
         disp(filter_update);
+        %}
         filter = filter & filter_update;
     end
     
