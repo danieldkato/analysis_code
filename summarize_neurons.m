@@ -10,9 +10,8 @@ function N = summarize_neurons(rawF_path, galvo_path, timer_path, ardu_path, con
 
 
 %% I. OVERVIEW: 
-% This function returns a struct called N containing trialized data for
-% each neuron from a given imaging session. See OUTPUT below for more
-% detail.
+% This function returns a struct N containing trialized data for each
+% neuron from a given imaging session. See OUTPUT below for more detail.
 
 
 %% II. REQUIREMENTS:
