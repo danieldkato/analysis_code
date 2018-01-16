@@ -120,7 +120,7 @@ function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, cond
 [rawF_dir, rawF_name, rawF_ext] = fileparts(rawF_path);
 
 if strcmp(rawF_ext, '.csv')
-    RawF = readcsv(rawF_path);
+    RawF = csvread(rawF_path);
 elseif strcmp(rawF_ext, '.h5')
     info = h5info(rawF_path);
     
@@ -200,6 +200,7 @@ end
 
 
 %% Iterate through each neuron:
+
 for n = 1:n_cells
     
     % We're going to summarize each condition for the current neuron:
