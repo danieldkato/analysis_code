@@ -1,4 +1,4 @@
-function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, conditions_path, grab_metadata, pre, post, show_inflection_points)
+function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, conditions_path, grab_metadata, pre_sec, post_sec, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -61,7 +61,13 @@ function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, cond
 %    about the movie being analyzed. This file should include a field called
 %    'frame_rate' specifying the frame rate of the movie in frames per second.
 
-% 7) show_inflection_points - boolean flag specifying whether or not to
+% 7) pre_frames - number of seconds before stimulus onset to include in
+%    peri-stimulus window.
+
+% 8) pre_frames - number of seconds after stimulus onset to include in
+%    peri-stimulus window.
+
+% 9) show_inflection_points - boolean flag specifying whether or not to
 %    plot galvo trace, timer trace, and frame and trial start times. 
 
 
@@ -135,8 +141,8 @@ n_cells = size(RawF, 1);
 %% Load grab metadata and compute trial window:
 Grab = loadjson(grab_metadata);
 frame_rate = Grab.frame_rate;
-pre_frames = ceil(pre * frame_rate);
-post_frames = ceil(post * frame_rate);
+pre_frames = ceil(pre_sec * frame_rate);
+post_frames = ceil(post_sec * frame_rate);
 
 N.frame_rate = frame_rate;
 N.pre_frames = pre_frames;
