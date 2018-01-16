@@ -27,9 +27,9 @@ function T = get_trial_info(galvo_path, timer_path, ardu_path, grab_metadata, sh
 
 % This function requires the following software:
 % 1) read_ardulines.m
-% 2) register_trials_2_frames.m, which in turn requires:
-%   a) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
-%   b) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
+% 2) get_start_frames.m
+% 3) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
+% 4) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 
 
 %% III. INPUTS: 
