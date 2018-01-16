@@ -90,7 +90,6 @@ galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from 
 galvo_signal = galvo_signal(galvo_signal>-5.0); % Need to filter out pre- and post-movie galvo signal here, otherwise LocalMinima will pick up local minima in the noise in the galvo signal outside of the actual movie
 
 trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timing data from the raw .dat file into an s x 1 vector, where s is the number of samples taken during a grab
-% F.trials = read_ardulines(ardu_path, condition_settings); %% Get an ordered list of trial types from arudlines
     
     
 %% Get the galvo signal sample number of every frame start:
@@ -169,76 +168,4 @@ trial_matrix(:, 1) = trial_start_frames;
 disp(size(trial_start_samples));
 disp(size(Trials));
 trial_matrix(:, 2:3) = Trials; 
-%}    
-    
-%% Write T to secondary storage: 
-
-%{
-json_path = [output_path filesep 'trial_info.json'];
-savejson('',T,json_path);
-%}
-
-%{
-% Check that the output path exists:
-status = exist(output_path);
-if status == 0
-    mkdir(output_path);
-end
-
-% Create and open the output file for writing:
-filename = fullfile(output_path, 'trialMatrix.csv');
-fileID = fopen(filename, 'w');
-
-% Write header:
-if exist('grabPath', 'var')
-    fprintf(fileID, strcat(['Grab,', strrep(grab_path,'\','\\'), '\n']));
-else
-    fprintf(fileID, strcat(['Grab, none specified \n']));
-end
-fprintf(fileID, strcat(['Galvanometer trace, ', strrep(galvo_path,'\','\\'), '\n']));
-fprintf(fileID, strcat(['Trial timer signal trace, ', strrep(timer_path,'\','\\'), '\n']));
-fprintf(fileID, strcat(['Arduino output, ', strrep(ardu_path,'\','\\'), '\n']));
-fprintf(fileID, '\n');
-fprintf(fileID, 'Trial start frame number, Trial type, Trial duration (ms) \n');
-
-% Write body:
-formatSpec = '%d, %s, %d \n';
-for i = 1:size(trial_matrix, 1)
-    fprintf(fileID, formatSpec, trial_matrix{i,:});
-end
-
-fclose(fileID);
-%}    
-    
-%% Write metadata:
-
-%{
-% Inputs:
-Metadata.inputs(1).path = grab_metadata_path;
-Metadata.inputs(2).path = galvo_path;
-Metadata.inputs(3).path = timer_path;
-Metadata.inputs(4).path = ardu_path;
-Metadata.inputs(5).path = condition_settings;
-
-% Outputs:
-Metadata.inputs(1).path = json_path;
-
-metadata_path = [output_path filesep 'trial_registration_metadata.json'];
-write_metadata(Metadata, metadata_path);
-%}
-
-%{
-inputs = {{'galvanometer trace', galvo_path};
-          {'timer signal trace', timer_path};
-          {'arduino feedback', ardu_path}
-    };
-
-outputs = {{'trial matrix', strcat([output_path, 'triaMatrix.csv'])}};
-parameters = {};
-
-old = cd(output_path);
-writeMetadata('trial_registration', 'sampleDomain', inputs, outputs, parameters);
-cd(old);
-%}
-    
-end
+%}   
