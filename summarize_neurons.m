@@ -17,7 +17,7 @@ function N = summarize_neurons(rawF_path, galvo_path, timer_path, ardu_path, con
 %% II. REQUIREMENTS:
 % 1) get_trial_info.m
 % 2) read_ardulines.m
-% 3) register_trials_2_frames.m
+% 3) get_start_frames.m
 % 4) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
 % 5) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 
