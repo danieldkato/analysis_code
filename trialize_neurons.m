@@ -90,6 +90,9 @@ function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, cond
 %       has the following fields:
 %
 %           Name - char array specifying human-readable condition name 
+%
+%           Abbreviation - char array specifying concise, human-readable
+%           condition name (useful for plotting)
 %       
 %           Mean - q x 1 vector of the mean dF/F trace for the current
 %           neuron for the current condition, where q is the number of
@@ -201,7 +204,7 @@ for n = 1:n_cells
     for c = 1:length(Conditions)
         
         Neurons(n).Conditions(c).Name = Conditions{c}.name;
-        
+        Neurons(n).Conditions(c).Abbreviation = Conditions{c}.abbreviation;
         
         % For each trial within the current condition, extract dF/F traces for the current neuron:
         for t = 1:length(Conditions{c}.Trials)
