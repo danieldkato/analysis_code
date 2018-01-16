@@ -1,4 +1,4 @@
-function N = summarize_neurons(rawF_path, galvo_path, timer_path, ardu_path, conditions_path, grab_metadata, pre, post, show_inflection_points)
+function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, conditions_path, grab_metadata, pre, post, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -75,29 +75,33 @@ function N = summarize_neurons(rawF_path, galvo_path, timer_path, ardu_path, con
 %
 %   post_frames - number of frames after trial start included in trial window
 %
-%   Neurons - n-element array of structs, where n is the number of neurons
+%   Neurons - n x 1 array of structs, where n is the number of neurons
 %   identified in the movie. Each element of Neurons has the following
 %   fields:
 %
-%       Conditions - c-element array of structs, where c is the number of
+%       Conditions - c x 1 array of structs, where c is the number of
 %       conditions being analyzed in the movie. Each element of Conditions
 %       has the following fields:
 %
-%           Name - human-readable condition name 
+%           Name - char array specifying human-readable condition name 
 %       
-%           Mean - mean dF/F trace for the current neuron for the current condition
+%           Mean - q x 1 vector of the mean dF/F trace for the current
+%           neuron for the current condition, where q is the number of
+%           frames in the peri-stimulus window
 %
-%           SEM - mean SEM trace for the current neuron for th current condition
+%           SEM - q x 1 vector of the SEM trace for the current neuron for
+%           the current condition, where q is the number of frames in the
+%           peri-stimulus window
 %
-%           Trial - p-element array of structs, where p is the number of
-%           trials of the current condition delivered during the movie.
+%           Trial - p x 1 array of structs, where p is the number of
+%           trials *of the current condition* delivered during the movie.
 %           Each element consists of the following fields:
 %
 %               dFF - q x 1 vector of the current neuron's dFF activity
-%               over the current trial, where q is the length of the trial
-%               window in frames
+%               over the current trial, where q is the length of the
+%               peri-stimulus window in frames
 %
-%               start_frame - start frame of the current trial
+%               start_frame - frame during which the stimulus was delivered
 %
 %           as well one field corresponding to each trial parameter
 %           reported in the Arduino serial output file.
