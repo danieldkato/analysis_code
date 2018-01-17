@@ -336,6 +336,7 @@ for n = 1:num_ROIs
         
         % Add the full path to the figure to Metadata struct:
         Metadata.outputs(n_figures).path = fig_full_path;
+        n_figures = n_figures + 1; 
     end
 end
 
