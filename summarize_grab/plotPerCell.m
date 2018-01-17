@@ -264,7 +264,7 @@ for n = 1:num_ROIs
         % Plot traces for every individual trial of current condition for current ROI:
         figure(raw_fig);
         hold on;
-        Trials = C(d).Trial;
+        Trials = C(d).Trials;
         for t = 1:length(Trials)
             h = plot(Trials(t).dFF, 'Color', color);
         end
