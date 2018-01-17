@@ -278,6 +278,7 @@ for n = 1:num_ROIs
     % Create legends:
     leg_text = arrayfun(@(y, z) strcat([y.Abbreviation, ', n=', num2str(z)]), C, trials_per_condition, 'UniformOutput', false);
     
+    %{
     figure(mean_fig);
     legend(mean_plot_handles, leg_text);
     legend('boxoff');
@@ -285,7 +286,8 @@ for n = 1:num_ROIs
     figure(raw_fig);
     legend(raw_plot_handles, leg_text);
     legend('boxoff');
-
+    %}
+    
     % Format and save both figures for the current ROI:
     for f = 1:length(figures)
 
@@ -318,6 +320,16 @@ for n = 1:num_ROIs
         xl = xlim;
         xlim([1 peri_stim_frames]);
 
+        % Add legend:
+        if mod(f,2) == 0
+            handles = raw_plot_handles;
+        else
+            handles = mean_plot_handles;
+        end                
+        legend(handles, leg_text);
+        legend('boxoff');
+        
+        
         % Save figure:
         num_str = pad(num2str(n), 3, 'left', '0');
         title_str = strcat(['ROI_', num_str, '_', titles{f}, '_traces.fig']);
