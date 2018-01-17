@@ -117,6 +117,8 @@ function N = trialize_neurons(rawF_path, galvo_path, timer_path, ardu_path, cond
 
 
 %% Load neural data:
+
+disp('Loading neural activity data...');
 [rawF_dir, rawF_name, rawF_ext] = fileparts(rawF_path);
 
 if strcmp(rawF_ext, '.csv')
@@ -139,9 +141,11 @@ elseif strcmp(rawF_ext, '.h5')
 end
 
 n_cells = size(RawF, 1);
-
+disp([num2str(n_cells) ' ROIs detected.']);
+   
 
 %% Load grab metadata and compute trial window:
+disp('Loading grab metadata...');
 Grab = loadjson(grab_metadata);
 frame_rate = Grab.frame_rate;
 pre_frames = ceil(pre_sec * frame_rate);
@@ -151,8 +155,13 @@ N.frame_rate = frame_rate;
 N.pre_frames = pre_frames;
 N.post_frames = post_frames;
 
+disp(['Frame rate = ' num2str(frame_rate)]);
+disp(['Frames before stim onset = ' num2str(pre_frames)]);
+disp(['Frames after stim onset = ' num2str(post_frames)]);
+
 
 %% Load condition info:
+disp('Loading condition definitions...');
 C = loadjson(conditions_path);
 
 % Create a c x 1 cell array, where c is the number of conditions. Each
@@ -170,11 +179,12 @@ Conditions = C.conditions;
 % occur during the movie. Each element has a field 'start_frame' that
 % specifies the start frame of the corresponding trial, as well as a field
 % for each trial parameter reported in the serial output from the Arduino.
+disp('Getting trial parameters and start frames...');
 Trials = get_trial_info(galvo_path, timer_path, ardu_path, grab_metadata, show_inflection_points); 
 
 
 %% Determine which trials belong to each condition:
-
+disp('Matching conditions to trials... ');
 for c = 1:length(Conditions)
     
     filter = ones(1, length(Trials));
@@ -198,7 +208,7 @@ for c = 1:length(Conditions)
 
     % Warn the user if no trials of the current condition are found:
     if isempty(Conditions{c}.Trials)
-        warning(['No trials of condition ' Conditions{c}.name ' found; will be excluded from analysis.']);
+        warning(['No trials of condition ' Conditions{c}.name ' found; condition ' Conditions{c}.name ' will be excluded from analysis.']);
     end
     
 end
@@ -211,6 +221,7 @@ Conditions = Conditions(condition_delivered);
 
 %% Iterate through each neuron:
 
+disp('Getting trialized data for each neuron...');
 for n = 1:n_cells
     
     % We're going to summarize each condition for the current neuron:
@@ -245,6 +256,7 @@ for n = 1:n_cells
         
         % Compute mean dF/F trace for this neuron for this condition:
         all_trials = vertcat(Neurons(n).Conditions(c).Trial.dFF);
+        disp(['Neuron ' num2str(n) ', condition ' num2str(c) ' number of trials: ' num2str(size(all_trials,1))]);
         Neurons(n).Conditions(c).Mean = mean(all_trials,1);
         
         % Compute SEM trace for this neuron for this condition:
