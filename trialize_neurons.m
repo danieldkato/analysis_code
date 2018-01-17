@@ -194,9 +194,19 @@ for c = 1:length(Conditions)
         %}
         filter = filter & filter_update;
     end
+    Conditions{c}.Trials = find(filter);   
+
+    % Warn the user if no trials of the current condition are found:
+    if isempty(Conditions{c}.Trials)
+        warning(['No trials of condition ' Conditions{c}.name ' found; will be excluded from analysis.']);
+    end
     
-    Conditions{c}.Trials = find(filter);    
 end
+
+% Filter out any conditions that are not delivered during this movie:
+condition_delivered = cellfun(@(x) ~isempty(x.Trials), Conditions);
+Conditions = Conditions(condition_delivered);
+
 
 
 %% Iterate through each neuron:
