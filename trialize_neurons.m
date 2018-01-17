@@ -242,20 +242,20 @@ for n = 1:n_cells
             baseline = mean(RawF(n, start_frame-pre_frames:start_frame-1),2);
             
             % Compute the dFF trace for the trial:
-            Neurons(n).Conditions(c).Trial(t).dFF = (raw-baseline)/baseline;
+            Neurons(n).Conditions(c).Trials(t).dFF = (raw-baseline)/baseline;
            
             % Add current trial parameters to N; this is redundant, but it
             % might be convenient to have the data in this format at some
             % point later on:
             curr_trial_params = fieldnames(Trials(trial_num));
             for p = 1:length(curr_trial_params)
-                Neurons(n).Conditions(c).Trial(t).(curr_trial_params{p}) = Trials(trial_num).(curr_trial_params{p});
+                Neurons(n).Conditions(c).Trials(t).(curr_trial_params{p}) = Trials(trial_num).(curr_trial_params{p});
             end
             
         end
         
         % Compute mean dF/F trace for this neuron for this condition:
-        all_trials = vertcat(Neurons(n).Conditions(c).Trial.dFF);
+        all_trials = vertcat(Neurons(n).Conditions(c).Trials.dFF);
         disp(['Neuron ' num2str(n) ', condition ' num2str(c) ' number of trials: ' num2str(size(all_trials,1))]);
         Neurons(n).Conditions(c).Mean = mean(all_trials,1);
         

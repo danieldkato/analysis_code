@@ -160,7 +160,7 @@ for n = 1:length(N.Neurons)
     Neuron = N.Neurons(n);
     for c = 1:length(Neuron.Conditions)
         Condition = Neuron.Conditions(c);
-        all_trial_durations = [all_trial_durations Condition.Trial.STIMDUR];
+        all_trial_durations = [all_trial_durations Condition.Trials.STIMDUR];
     end
 end
 equal_stimdurs = isempty(find(all_trial_durations ~= all_trial_durations(1), 1)); % test whether each reported STIMDUR matches the first
@@ -225,6 +225,8 @@ old = cd(output_directory);
 % 2) a figure plotting traces for all individual trials (color coded by condition)
 n_figures = 1;
 for n = 1:num_ROIs
+    
+    disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
     Neuron = N.Neurons(n);
     C = Neuron.Conditions;
