@@ -342,11 +342,12 @@ end
 
 
 %% Write metadata:
-Metadata.inputs(1).path = params.galvo_path;
-Metadata.inputs(2).path = params.timer_path;
-Metadata.inputs(3).path = params.ardu_path;
-Metadata.inputs(4).path = params.conditions_path;
-Metadata.inputs(5).path = params.grab_metadata;
+Metadata.inputs(1).path = params.rawF_path;
+Metadata.inputs(2).path = params.galvo_path;
+Metadata.inputs(3).path = params.timer_path;
+Metadata.inputs(4).path = params.ardu_path;
+Metadata.inputs(5).path = params.conditions_path;
+Metadata.inputs(6).path = params.grab_metadata;
 Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 
