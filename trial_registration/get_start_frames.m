@@ -102,7 +102,7 @@ galvo_threshold = -1.6; % Whatever units gavloTrace is expressed in (Volts, I th
 
 % Get a vector of every galvo signal sample at which a frame begins:
 frame_start_samples = LocalMinima(galvo_signal, min_distance_galvo, galvo_threshold);
-disp([num2str(length(frame_start_samples)) ' frames detected']);       
+disp([num2str(length(frame_start_samples)) ' frames detected from galvo trace.']);       
 
 
 %% Get the trial timer signal sample number of every trial start:
@@ -135,17 +135,30 @@ if show_inflection_points == 1
     plot(galvo_signal);
     plot(t(frame_start_samples), galvo_signal(frame_start_samples), 'r.');
     plot(trial_timer_signal);
-    plot(t(trial_start_samples), trial_timer_signal(trial_start_samples), 'r.'); 
+    plot(t(trial_start_samples), trial_timer_signal(trial_start_samples), 'g.'); 
 end
 
     
 %% Omit any trials delivered before the first frame or after the last frame: 
 
 % Find indices of first and last trials within movie:
-is_in_movie = trial_start_samples>=min(frame_start_samples) & trial_start_samples<=max(frame_start_samples); % t-element binary vector specifying whether each trial falls within the movie
+after_first_frame = trial_start_samples>min(frame_start_samples);
+before_last_frame = trial_start_samples<max(frame_start_samples); 
+is_in_movie = after_first_frame & before_last_frame; % t-element binary vector specifying whether each trial falls within the movie
 movie_trials = find(is_in_movie); % q-element vector of indices into trial_start_samples correspoding to trials that fall within the movie
 
-    
+n_trials_too_early = length(find(~after_first_frame));
+n_trials_too_late = length(find(before_last_frame));
+
+if n_trials_too_early > 0
+    disp(['Omitting ' num2str(n_trials_too_early) ' trials that occur before first frame.']);    
+end
+
+if n_trials_too_late > 0
+    disp(['Omitting ' num2str(n_trials_too_late) ' trials that occur after last frame.'])    
+end
+
+
 %% Match every trial to the frame within which it started:
 
 F = NaN(size(trial_start_samples)); % initialize with NaNs; elements corresponding to trials within the movie will be populated, trials that occur before the beginning or after the end of the movie will remain NaNs
