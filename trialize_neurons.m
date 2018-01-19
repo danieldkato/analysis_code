@@ -141,6 +141,7 @@ elseif strcmp(rawF_ext, '.h5')
 end
 
 n_cells = size(RawF, 1);
+n_frames = size(RawF, 2);
 disp([num2str(n_cells) ' ROIs detected.']);
    
 
@@ -183,6 +184,10 @@ disp('Getting trial parameters and start frames...');
 Trials = get_trial_info(galvo_path, timer_path, ardu_path, grab_metadata, show_inflection_points); 
 
 
+%% Omit trials that are too close to the first or last frames:
+Trials = Trials([Trials.start_frame] > pre_frames + 1 & [Trials.start_frame] < n_frames - post_frames);
+
+
 %% Determine which trials belong to each condition:
 disp('Matching conditions to trials... ');
 for c = 1:length(Conditions)
@@ -216,7 +221,6 @@ end
 % Filter out any conditions that are not delivered during this movie:
 condition_delivered = cellfun(@(x) ~isempty(x.Trials), Conditions);
 Conditions = Conditions(condition_delivered);
-
 
 
 %% Iterate through each neuron:
