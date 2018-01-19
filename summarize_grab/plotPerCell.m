@@ -206,9 +206,9 @@ meanPaths = cell(num_ROIs, 1);
 rawPaths = cell(num_ROIs, 1);
 
 % Create figure windows (these will be erased then reused between ROIs):
-mean_fig = figure(); % one for mean traces
-raw_fig = figure(); % one for raw traces
-figures = {mean_fig, raw_fig};
+%mean_fig = figure(); % one for mean traces
+%raw_fig = figure(); % one for raw traces
+%figures = {mean_fig, raw_fig};
 titles = {'mean', 'individual'};
 outputs = {meanPaths, rawPaths};
 
@@ -225,6 +225,10 @@ old = cd(output_directory);
 % 2) a figure plotting traces for all individual trials (color coded by condition)
 n_figures = 1;
 for n = 1:num_ROIs
+    
+    mean_fig = figure(); % one for mean traces
+    raw_fig = figure(); % one for raw traces
+    figures = {mean_fig, raw_fig};
     
     disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
@@ -300,7 +304,7 @@ for n = 1:num_ROIs
             recY = [yl fliplr(yl)];
             %h = fill([stimPeriod(1) stimPeriod(1) stimPeriod(2) stimPeriod(2)], recY, [0.01 0.01 0.01], 'FaceAlpha', 0.1, 'EdgeAlpha', 0.1);
             p = patch([stim_period(1) stim_period(1) stim_period(2) stim_period(2)], recY, [0.75 0.75 0.75], 'FaceAlpha', 0.1, 'EdgeColor', 'none');
-            uistack(h, 'bottom');
+            uistack(p, 'bottom');
             ylim(yl);
         end
         
@@ -344,12 +348,15 @@ for n = 1:num_ROIs
         end
 
         % Clear figure for the next ROI:
-        clf(gcf)
+        %clf(gcf)
         
         % Add the full path to the figure to Metadata struct:
         Metadata.outputs(n_figures).path = fig_full_path;
         n_figures = n_figures + 1; 
     end
+    
+    close all;
+    
 end
 
 
