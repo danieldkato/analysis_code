@@ -143,7 +143,7 @@ end
 n_cells = size(RawF, 1);
 n_frames = size(RawF, 2);
 disp([num2str(n_cells) ' ROIs detected.']);
-   
+disp([num2str(n_frames) ' detected from imaging data.']);   
 
 %% Load grab metadata and compute trial window:
 disp('Loading grab metadata...');
@@ -184,8 +184,13 @@ disp('Getting trial parameters and start frames...');
 Trials = get_trial_info(galvo_path, timer_path, ardu_path, grab_metadata, show_inflection_points); 
 
 
-%% Omit trials that are too close to the first or last frames:
-Trials = Trials([Trials.start_frame] > pre_frames + 1 & [Trials.start_frame] < n_frames - post_frames);
+%% Omit trials whose pre-stimulus period extends before the first frame of the movie or whose post-stimulus period extends beyond the last frame of the movie:
+too_close_to_start = [Trials.start_frame] < (1 + pre_frames);
+too_close_to_end = [Trials.start_frame] > (n_frames - post_frames);
+Trials = Trials(~too_close_to_start & ~too_close_to_end);
+
+disp(['Omitting ' num2str(length(find(too_close_to_start))) ' trial(s) whose pre-stimulus period extends before the beginning of the movie.']);
+disp(['Omitting ' num2str(length(find(too_close_to_end))) ' trial(s) whose post-stimulus period extends beyond the end of the movie.']);
 
 
 %% Determine which trials belong to each condition:
@@ -260,7 +265,7 @@ for n = 1:n_cells
         
         % Compute mean dF/F trace for this neuron for this condition:
         all_trials = vertcat(Neurons(n).Conditions(c).Trials.dFF);
-        disp(['Neuron ' num2str(n) ', condition ' num2str(c) ' number of trials: ' num2str(size(all_trials,1))]);
+        %disp(['Neuron ' num2str(n) ', condition ' num2str(c) ' number of trials: ' num2str(size(all_trials,1))]);
         Neurons(n).Conditions(c).Mean = mean(all_trials,1);
         
         % Compute SEM trace for this neuron for this condition:
