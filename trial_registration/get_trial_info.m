@@ -93,13 +93,13 @@ T = read_ardulines(ardu_path);
 
 %% Get trial start frames:
 F = get_start_frames(galvo_path, timer_path, grab_metadata, show_inflection_points);
-disp('trial start frames:');
-disp(F');
+disp('Trial start frames:');
+disp(F);
 
 
 %% Make sure that the number of trials extracted from read_ardulines matches that from register_trials_2_frames; if not, throw an error:
 if length(T) ~= length(F)
-    error(['Number of trials in ardulines file (' num2str(length(T)) ') does not match number of trials detected in timer signal (' num2str(F) '). Please check data integrity and parameters used to detect trial starts in register_trials_2_frames.']);
+    error(['Number of trials in ardulines file (' num2str(length(T)) ') does not match number of trials detected in timer signal (' num2str(length(F)) '). Please check data integrity and parameters used to detect trial starts in register_trials_2_frames.']);
 end
 
 
