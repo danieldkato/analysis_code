@@ -85,14 +85,20 @@ else
 end
     
     
-%% Load galvo and timer data:
+%% Load galvo data:
 galvo_signal = readContinuousDAT(galvo_path); % Load the galvanometer data from the raw .dat file into an s x 1 vector, where s is number of samples taken during grab 
-galvo_signal = galvo_signal(galvo_signal>-5.0); % Need to filter out pre- and post-movie galvo signal here, otherwise LocalMinima will pick up local minima in the noise in the galvo signal outside of the actual movie
 
+% Need to filter out pre- and post-movie galvo signal here, otherwise LocalMinima will pick up local minima in the noise in the galvo signal outside of the actual movie
+useable_galvo = galvo_signal>-5.0;
+galvo_signal = galvo_signal(useable_galvo);
+
+
+%% Load timer data:
 trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timing data from the raw .dat file into an s x 1 vector, where s is the number of samples taken during a grab
+trial_timer_signal = trial_timer_signal(useable_galvo); % need to exclude samples already excluded from galvo_signal so that galvo and timer signals have the same offset
+
     
-    
-%% Get the galvo signal sample number of every frame start:
+%% Get the sample number of every frame start:
 
 % Compute some input parameters for LocalMinima, called below:
 frame_period = 1/frame_rate;
@@ -105,7 +111,7 @@ frame_start_samples = LocalMinima(galvo_signal, min_distance_galvo, galvo_thresh
 disp([num2str(length(frame_start_samples)) ' frames detected from galvo trace.']);       
 
 
-%% Get the trial timer signal sample number of every trial start:
+%% Get the sample number of every trial start:
 
 % Get every sample index in timerTrace corresponding to the onset of a
 % new trial; trial onsets are indicated by local maxima, so run
