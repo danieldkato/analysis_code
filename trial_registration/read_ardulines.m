@@ -1,4 +1,4 @@
-function Trials = read_ardulines(txt, condition_settings)
+function T = read_ardulines(ardulines_path)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function Trials = read_ardulines(txt, condition_settings)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-10-30    
+% Last updated DDK 2018-01-12    
 
 
 %% I. OVERVIEW: 
@@ -22,7 +22,7 @@ function Trials = read_ardulines(txt, condition_settings)
 
 
 %% III. INPUTS: 
-% 1) txt - a path to a .txt file containing serial output from an Arduino
+% 1) ardulines_path - a path to a .txt file containing serial output from an Arduino
 % running an ArduFSM protocol for a single behavior session. In accordance
 % with the general ArduFSM framework, each line of output either
 % acknowledges the receipt of instructions from the host PC, asserts
@@ -30,106 +30,48 @@ function Trials = read_ardulines(txt, condition_settings)
 % signals the start of a trial. More information about the ArduFSM
 % framework can be found at https://github.com/cxrodgers/ArduFSM. 
 
-% 2) condition_settings - path to a JSON file contaning information about
-% the different trial conditions used in the current experiment. This file
-% should minimally include fields corresponding to whatever trial
-% parameters are necessary for defining a trial condition in the current
-% experiment, as well as a concise condition name that will be assigned to
-% each trial and that can be used later on to easily parse experiments by
-% condition. Example contents of a condisito_settings.json file might
-% include:
-
-%{"conditions":[
-%		{"STPRIDX":1,
-%		 "SPKRIDX":0,
-%		 "name":' stepper only',
-%		 "abbreviation":"W",
-%		 "color":[1.00,0.00,0.00]
-%		},
-%		{"STPRIDX":0,
-%		 "SPKRIDX":1,
-%		 "name": ' speaker only',
-%		 "abbreviation":"T",
-%		 "color":[0.00,0.00,1.00] 
-%		},
-%		{"STPRIDX":1,
-%		 "SPKRIDX":2,
-
-%         "name": ' stepper and speaker',
-%		 "color":[0.60,0.00,1.00]
-%		}	
-%	]
-%}
-
 
 %% IV. OUTPUTS:
-% 1) Trials - a T x 1 array of structs describing the trial type of each
-% trial delivered over the course of a behavior session, where T is the
-% number of trials. Each element includes fields corresponding to various
-% trial parameters as well as a concise, human-readable description of the
-% trial condition.
+% 1) T - a T x 1 array of structs describing the trial type of each trial
+% delivered over the course of a behavior session, where T is the number of
+% trials. Each element includes fields corresponding to various trial
+% parameters as well as a concise, human-readable description of the trial
+% condition.
 
 
-%%
+%%    
+% Load raw text data into an k x 1 cell array, where k is the number of lines:
+linesFID = fopen(ardulines_path);
+txt = textscan(linesFID, '%s', 'Delimiter', '\r\n');
+fclose(linesFID);
+txt = txt{1,1};
+txt = txt(~cellfun(@isempty, txt)); % For some reason txt includes some empty lines; not sure why, but strip these
 
-    
-    % Load data into an k x 1 cell array, where k is the number of lines:
-    linesFID = fopen(txt);
-    txt = textscan(linesFID, '%s', 'Delimiter', '\r\n');
-    fclose(linesFID);
-    txt = txt{1,1};
-    txt = txt(~cellfun(@isempty, txt)); % For some reason txt includes some empty lines; not sure why, but strip these
-    
-    % Load a structure containing information about the conditions we're looking for:
-    Conditions = loadJSON(condition_settings);
-    condition_params = fieldnames(Conditions); % get the names of all parameters that define the trial conditions (note that not all parameters of a given trial define its trial condition; e.g., stimulus duration)
-    
-    % (Might eventually want to include some code here to ensure that each line begins with a number)
-    
-    % Find all trial start lines:
-    trial_start_lines = find(~cellfun(@isempty, regexp(txt, 'TRL_[0-9]*_START')));
+% (Might eventually want to include some code here to ensure that each line begins with a number)
 
-    % Create p x c binary matrix match_matrix, where p is the number of
-    % parameters and c is the number of conditions. This matrix will be
-    % populated one time for each trial. Element m, n is 1 if and only if
-    % parameter m of the current trial is the same as parameter m of
-    % condition n; the condition of the current trial is the condition
-    % corresponding to the column of all 1's
-    match_matrix = zeros(length(fieldnames(Conditions)),length(Conditions));
-    
-    % Initialize array of structs, each of which will represent one trial:
-    Tzero = struct();
-    Trials = repmat(Tzero,trial_start_lines,1);
-    
-    % Determine the condition of each trial:
-    for t = 1:length(trial_start_lines)
-        
-        % Get all lines associated with the current trial:
-        if t < length(trial_start_lines)
-            this_trial_last_line = trial_start_lines(t+1) - 1;
-        elseif t == length(trial_start_lines)
-            this_trial_last_line = length(txt);
-        end
-        this_trial_lines = txt(trial_start_lines(t):this_trial_last_line);
-        
-        % Extract the lines that define the current trial parameters:
-        trial_param_lines = this_trial_lines(~cellfun(@isempty, regexp(this_trial_lines, 'TRLP')));
-        
-        % For each current trial parameter, get its name and value:
-        for tp = 1:length(trial_param_lines)
-            [start_idx, pName_end_idx] = regexp(trial_param_lines{tp}, 'TRLP [A-Z]+'); % get index of where parameter name ends
-            param_name = trial_param_lines{tp}(start_idx+5:pName_end_idx); % get parameter name
-            param_val = trial_param_lines{tp}(pName_end_idx+2:end); % get parameter value
-            Trials(t).(param_name) = param_val;
-        end
-        
-        % For each parameter that defines the trial condition (again, recall that not every trial parameter is related to the trial condition; e.g. stimulus duration), check if the current trial matches it:
-        for p = 1:length(condition_params)
-            param_name = condition_params{p};
-            match_matrix(p,:) = C.(param_name) == Trials(t).(param_name); % create a 1 x c vector, where c is the number of conditions, that is 1 if and only if param p of the current trial matches param p of the corresponding condition
-        end
+% Find all trial start lines:
+trial_start_lines = find(~cellfun(@isempty, regexp(txt, 'TRL_[0-9]*_START')));
 
-        all_params_match = sum(match_matrix,1); % find the index of the condition for which all parameters match those of the current trial
-        Trials(t).condition = Conditions(all_params_match == 1).name; % get the condition name of the current trial
+% Determine the condition of each trial:
+for t = 1:length(trial_start_lines)
+
+    % Get all lines associated with the current trial:
+    if t < length(trial_start_lines)
+        this_trial_last_line = trial_start_lines(t+1) - 1;
+    elseif t == length(trial_start_lines)
+        this_trial_last_line = length(txt);
     end
+    this_trial_lines = txt(trial_start_lines(t):this_trial_last_line);
+
+    % Extract the lines that define the current trial parameters:
+    trial_param_lines = this_trial_lines(~cellfun(@isempty, regexp(this_trial_lines, 'TRLP')));
+
+    % For each current trial parameter, get its name and value:
+    for tp = 1:length(trial_param_lines)
+        [start_idx, pName_end_idx] = regexp(trial_param_lines{tp}, 'TRLP [A-Z]+'); % get index of where parameter name ends
+        param_name = trial_param_lines{tp}(start_idx+5:pName_end_idx); % get parameter name
+        param_val = trial_param_lines{tp}(pName_end_idx+2:end); % get parameter value
+        T(t).(param_name) = str2double(param_val);
+    end
+
 end

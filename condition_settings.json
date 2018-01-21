@@ -1,21 +1,34 @@
 {"conditions":[
-		{"STPRIDX":1,
-		 "SPKRIDX":0,
-		 "name":" stepper only",
+		{"params":{"STPRIDX":1,
+		 	   "SPKRIDX":0},
+		 "name":"stepper only",
 		 "abbreviation":"W",
 		 "color":[1.00,0.00,0.00]
 		},
-		{"STPRIDX":0,
-		 "SPKRIDX":1,
-		 "name": " speaker only",
-		 "abbreviation":"T",
+		{"params":{"STPRIDX":0,
+		           "SPKRIDX":1},
+		 "name": "test tone only",
+		 "abbreviation":"T1",
 		 "color":[0.00,0.00,1.00] 
 		},
-		{"STPRIDX":1,
-		 "SPKRIDX":2,
-		 "name": " stepper and speaker",
-		 "abbreviation":"W+T",
+		{"params":{"STPRIDX":0,
+		           "SPKRIDX":2},
+		 "name": "control tone only",
+		 "abbreviation":"T2",
+		 "color":[0.00,1.00,0.00] 
+		},
+		{"params":{"STPRIDX":1,
+		           "SPKRIDX":1},
+		 "name": "stepper and test tone",
+		 "abbreviation":"W+T1",
 		 "color":[0.60,0.00,1.00]
+		},
+		{"params":{"STPRIDX":1,
+		           "SPKRIDX":2},
+		 "abbreviation":"W+T2",
+		 "name": "stepper and control tone",
+		 "color":[0.60,1.00,0.00]
 		}	
+			
 	]
 }
