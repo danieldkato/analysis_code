@@ -1,4 +1,4 @@
-function M = neuron_condtn_means(N, Conditions)
+function M = neuron_trials_by_condition(N, Conditions)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -78,7 +78,7 @@ function M = neuron_condtn_means(N, Conditions)
 %       conditions in which the current neuron was observed. Each element
 %       of Conditions has the following fields:
 %
-%           Trials - p x 1 array of structs, where p is the number of
+%           Trials - u x 1 array of structs, where u is the number of
 %           trials *of the current condition* delivered during the movie.
 %           Each element consists of the following fields:
 %
