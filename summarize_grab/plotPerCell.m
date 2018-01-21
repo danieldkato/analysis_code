@@ -127,6 +127,12 @@ params = loadjson(params_file);
 output_directory = params.output_directory;
 
 
+%% Get some basic information about imaging session that will be included in figures:
+session_metadata = loadjson(params.grab_metadata);
+mouse = session_metadata.mouse;
+date = session_metadata.date;
+
+
 %% Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
 Conditions = C_struct.conditions;
@@ -209,7 +215,7 @@ rawPaths = cell(num_ROIs, 1);
 %mean_fig = figure(); % one for mean traces
 %raw_fig = figure(); % one for raw traces
 %figures = {mean_fig, raw_fig};
-titles = {'mean', 'individual'};
+titles = {'Mean', 'Individual'};
 outputs = {meanPaths, rawPaths};
 
 % Make sure the output directory exists, create it if it doesn't then cd into it:
@@ -319,7 +325,7 @@ for n = 1:num_ROIs
         xlabel('Time rel. to stim onset (s)');
 
         % Print title:
-        title(strcat(['ROI #', num2str(n), ' ', titles{f}, ' dF/F traces by condition']));
+        title({[titles{f}, ' dF/F traces by condition']; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]});
 
         xl = xlim;
         xlim([1 peri_stim_frames]);
