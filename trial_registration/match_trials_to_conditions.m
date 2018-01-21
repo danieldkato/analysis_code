@@ -7,7 +7,7 @@ function Conditions = match_trials_to_conditions(Trials, Conditions)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-15 
+% Last updated DDK 2018-01-21
 
 
 %% I. OVERVIEW: 
@@ -31,12 +31,26 @@ function Conditions = match_trials_to_conditions(Trials, Conditions)
 %       Trials(t).STPRIDX = 1;
 %       Trials(t).SPKRIDX = 0;
 
-% 2) Conditions
+% 2) Conditions - c x 1 cell array of structs, where c is the number of
+%    stimulus or trial conditions being analyzed. Each element should
+%    minimimally include a "name" field that states the name of the
+%    condition, as well as a "params" field. The "params" field should
+%    itself have one sub-field for each parameter that defines the
+%    condition; each of these sub-fields should be named after the
+%    corresponding trial parameter reported in the arduino serial output
+%    file. For example, an element of Conditions might be as follows:
+
+%       Conditions{1}.name = 'stepper only';
+%       Conditions{1}.abbreviation = 'W';
+%       Conditions(1).params.STPRIDX = 1;
+%       Conditions{1}.params.SPKRDX = 0;
 
 
 %% IV. OUTPUTS:
-
-
+% 2) Conditions - same as input struct Conditions, but each element
+% includes an additional field called matching_trials, a u x 1 vector
+% specifying the indices into Trials that specifies which trials belong to
+% the corresponding condition.
 
 
 %%
