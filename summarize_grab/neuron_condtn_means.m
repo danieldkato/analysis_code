@@ -15,7 +15,7 @@ function M = neuron_condtn_means(N)
 
 
 %% II. REQUIREMENTS:
-% 1) match_trials_to_conditions.m
+% 1) MATLAB v >= ???
 
 
 %% III. INPUTS: 
