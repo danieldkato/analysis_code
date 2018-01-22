@@ -112,7 +112,7 @@ for n = 1:length(N.Neurons)
     % For each condition in which the current neuron was observed:
     for c = 1:length(curr_neuron_conditions)
     
-        curr_condition = curr_neuron_conditions{c};
+        curr_condition = curr_neuron_conditions(c);
             
         % Compute the mean dFF trace and the SEM trace for the current condition for the current neuron:
         data = vertcat(curr_neuron_conditions.Trials.dFF);
