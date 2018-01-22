@@ -79,6 +79,7 @@ hold on;
 
 
 %% Compute some quantities that will be useful for plotting later on:
+peri_stim_frames = pre_stim_frames + post_stim_frames;
 
 % Compute appropriate x-tick coordinates (in data units) so that there is one tick at stimulus onset and ticks marks every 2 sec:
 seconds_per_tick = 2;     
