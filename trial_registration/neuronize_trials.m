@@ -101,7 +101,7 @@ N.post_frames = T.post_frames;
 %% Get the number of neurons in the dataset:
 
 % Create a t x 1 vector stating the number of neurons in each trial; SHOULD BE THE SAME FOR ALL TRIALS:
-n_per_trial = arrayfun(@(x) size(x.dFF, 1), T); 
+n_per_trial = arrayfun(@(x) size(x.dFF, 1), T.Trials); 
 
 % Confirm that all trials have the same number of neurons; if not, throw an error:
 n_per_trial_shift = circshift(n_per_trial, 1);
