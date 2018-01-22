@@ -136,6 +136,7 @@ session_metadata = loadjson(params.grab_metadata);
 mouse = session_metadata.mouse;
 date = session_metadata.date;
 
+
 %% Load grab metadata:
 grab_metadata = loadjson(params.grab_metadata);
 
@@ -187,6 +188,7 @@ end
 if equal_stimdurs
     stim_dur = all_trial_durations(1)/1000; % convert from milliseconds to seconds
 else    
+    stim_dir = [];
     warning('Not all stimuli have the same duration; stimulus period windows will be ommitted from plots.');
 end
 
@@ -245,6 +247,34 @@ old = cd(output_directory);
 % 1) a figure plotting mean traces (with SEM bars) for each condition
 % 2) a figure plotting traces for all individual trials (color coded by condition)
 n_figures = 1;
+
+for n = 1:num_ROIs
+    
+    num_str = pad(num2str(n), 3, 'left', '0');
+    
+    % Plot mean dFF trace and SEM for each condition for the current neuron:
+    mean_data = neurons_conditions_means.Neurons(n);
+    mean_fig_name =  [mouse '_' date '_ROI_', num_str, '_mean_traces.fig'];
+    mean_fig_full_path =  fullfile(output_directory, mean_fig_name);
+    mean_fig_title = {'Mean dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
+    plot_mean_peristim_trace(mean_data, frame_rate, pre_stim_frames, post_stim_frames, Conditions, mean_fig_full_path, stim_dur, mean_fig_title);
+    meanPaths{n} = mean_fig_full_path;
+    n_figures = n_figures + 1;
+    Metadata.outputs(n_figures).path = mean_fig_full_path;
+    
+    % Plot individual traces for each condition for the current neuron:
+    individual_data = neurons_conditions_trials.Neurons(n);
+    individual_fig_name =  [mouse '_' date '_ROI_', num_str, '_individual_traces.fig'];
+    individual_fig_full_path =  fullfile(output_directory, individual_fig_name);
+    individual_fig_title = {'Individual dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
+    plot_individual_peristim_traces(individual_data, frame_rate, pre_stim_frames, post_stim_frames, Conditions, individual_fig_full_path, stim_dur, individual_fig_title);
+    meanPaths{n} = individual_fig_full_path;
+    n_figures = n_figures + 1;
+    Metadata.outputs(n_figures).path = individual_fig_full_path;
+end 
+
+
+%{
 for n = 1:num_ROIs
     
     mean_fig = figure(); % one for mean traces
@@ -379,7 +409,7 @@ for n = 1:num_ROIs
     close all;
     
 end
-
+%}
 
 %% Write metadata:
 Metadata.inputs(1).path = params.rawF_path;
