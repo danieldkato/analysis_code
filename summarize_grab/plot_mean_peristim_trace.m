@@ -114,7 +114,7 @@ for c = 1:n_conditions
         curr_condition = data.Conditions(c);
     
         % Get the color code for the current condition:
-        cond_idx = find(arrayfun(@(x) strcmp(curr_condition.name, x.name)));
+        cond_idx = find(arrayfun(@(x) strcmp(curr_condition.name, x.name), conditions));
         color = conditions(cond_idx).color;
         
         % Retrieve mean and SEM:
