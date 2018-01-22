@@ -33,11 +33,15 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 
 
 %% REQUIREMENTS:
-% This function should only be used on datasets where the stimulus period
-% for all trials is the same. This function draws a shaded rectangle over
-% the area corresponding to the stimulus period on every plot, so the
-% figures are really only sensible if the stimulus period for all trials is
-% the same.
+% 1) trialize_data.m
+% 2) read_ardulines.m
+% 3) get_start_frames.m
+% 4) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
+% 5) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
+% 6) neuronize_trials.m
+% 7) neuron_trials_by_condition.m
+% 8) neuron_condtn_means.m
+% 9) match_trials_2_conditions.m
 
 
 %% INPUTS:
@@ -150,11 +154,11 @@ T = trialize_data(params.rawF_path, ...
     params.show_inflection_points);
 
 % Split the trialized data up by neuron:
-neurons_trials = neuronize_trials(T);
+neurons_trials = neuron_trial(T);
 
 % Split the trialized and neuronized data up by condition:
-neurons_conditions_trials = neuron_trials_by_condition(neurons_trials, Conditions);
-neurons_conditions_means = neuron_condtn_means(neurons_conditions_trials);
+neurons_conditions_trials = neuron_condtn_trial(neurons_trials, Conditions);
+neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials);
 
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
