@@ -289,7 +289,7 @@ for n = 1:num_ROIs
     end
 
     % Create legends:
-    leg_text = arrayfun(@(y, z) strcat([y.Abbreviation, ', n=', num2str(z)]), C, trials_per_condition, 'UniformOutput', false);
+    leg_text = arrayfun(@(y, z) strcat([y.abbreviation, ', n=', num2str(z)]), C, trials_per_condition, 'UniformOutput', false);
     
     %{
     figure(mean_fig);
