@@ -44,7 +44,7 @@ function plot_mean_peristim_trace(data, frame_rate, pre_stim_frames, post_stim_f
 % 4) post_stim_frames - number of frames within peri-stimulus period
 %    including and after stimulus onset
 %
-% 5) conditions - c x 1 cell array of structs, where c is the number of
+% 5) conditions - c x 1 array of structs, where c is the number of
 %    stimulus or trial conditions being analyzed. Each element should
 %    minimimally include the following fields: 
 %       Name - char array specifying human-readable condition name 
@@ -114,8 +114,8 @@ for c = 1:n_conditions
         curr_condition = data.Conditions(c);
     
         % Get the color code for the current condition:
-        cond_idx = find(cell2mat(cellfun(@(x) strcmp(C(d).name, x.name), conditions, 'UniformOutput', false)));
-        color = conditions{cond_idx}.color;
+        cond_idx = find(arrayfun(@(x) strcmp(curr_condition.name, x.name)));
+        color = conditions(cond_idx).color;
         
         % Retrieve mean and SEM:
         Mean = curr_condition.Mean;
