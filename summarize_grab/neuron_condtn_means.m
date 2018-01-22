@@ -125,8 +125,6 @@ for n = 1:length(N.Neurons)
         
         % Copy over any other condition parameters to output struct:
         curr_condition_params = fieldnames(curr_condition);
-        is_Trials = arrayfun(@(x) strcmp(x, 'Trials'), curr_condition_params);
-        curr_condition_params = curr_condition_params(~is_Trials); % exclude the 'Trials' field, which we've already copied
         for pp = 1:length(curr_condition_params)
             M.Neurons(n).Conditions(c).(curr_condition_params{pp}) = N.Neurons(n).Conditions(c).(curr_condition_params{pp});
         end
