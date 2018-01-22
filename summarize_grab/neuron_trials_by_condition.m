@@ -122,7 +122,7 @@ for n = 1:length(N.Neurons)
         
         % Fetch any trials that belong to the current condition:
         curr_cond_trial_indices = curr_condition.matching_trials;
-        curr_cond_trials = Neurons(n).Trials(curr_cond_trial_indices); 
+        curr_cond_trials = N.Neurons(n).Trials(curr_cond_trial_indices); 
         
         % If the current neuron was not observed in ANY trials of the
         % current condition, then make M.Neurons(n).Conditions(c).Trials an
