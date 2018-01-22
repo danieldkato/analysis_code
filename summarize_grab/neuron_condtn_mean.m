@@ -1,4 +1,4 @@
-function M = neuron_condtn_means(N)
+function M = neuron_condtn_mean(N)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
