@@ -154,7 +154,7 @@ is_in_movie = after_first_frame & before_last_frame; % t-element binary vector s
 movie_trials = find(is_in_movie); % q-element vector of indices into trial_start_samples correspoding to trials that fall within the movie
 
 n_trials_too_early = length(find(~after_first_frame));
-n_trials_too_late = length(find(before_last_frame));
+n_trials_too_late = length(find(~before_last_frame));
 
 if n_trials_too_early > 0
     disp(['Omitting ' num2str(n_trials_too_early) ' trials that occur before first frame.']);    
