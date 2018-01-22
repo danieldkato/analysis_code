@@ -42,6 +42,8 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % 7) neuron_trials_by_condition.m
 % 8) neuron_condtn_means.m
 % 9) match_trials_2_conditions.m
+% 10) plot_mean_peristim_trace.m
+% 11) plot_individual_peristim_traces.m
 
 
 %% INPUTS:
@@ -193,47 +195,12 @@ else
 end
 
 
-%% Compute some variables that will be useful for plotting:
-
-% Compute appropriate x-tick coordinates (in data units) so that there is one tick at stimulus onset and ticks marks every 2 sec:
-seconds_per_tick = 2;     
-frames_per_tick = frame_rate*seconds_per_tick;
-
-n_ticks_before_onset = floor((pre_stim_frames)/frames_per_tick);     
-ticks_before_onset = (pre_stim_frames+1) - fliplr(frames_per_tick*(0:1:n_ticks_before_onset)); % remember, pre_stim_frames + 1 is the frame where the stim actually starts 
-
-n_ticks_after_onset = floor((post_stim_frames)/frames_per_tick);    
-ticks_after_onset = (pre_stim_frames+1) + frames_per_tick*(1:1:n_ticks_after_onset);
-
-xticks = [ticks_before_onset ticks_after_onset];
-
-% Write x-tick labels into a cell array:
-labels = (xticks - (pre_stim_frames+1))/frame_rate;
-labels = arrayfun(@(a) num2str(a), labels, 'UniformOutput', 0);
-
-% Define some vectors that will be used for plotting shaded SEM areas:
-domain = (1:1:pre_stim_frames+post_stim_frames);
-sem_X = [domain fliplr(domain)]; 
-
-% Define vectors that will be used for plotting shaded stim period rectangle (recall, stim begins at index preStim + 1):
-if equal_stimdurs
-    stim_period = [pre_stim_frames+1 pre_stim_frames+1+stim_dur*frame_rate];
-end
-
-
-%% Prepare figure windows and file paths for plotting: 
+%% Prepare output directory and output structs to catch paths to figures: 
 
 % Create cell arrays that will contain full paths to created figures; these will be returned to calling function:
 num_ROIs = length(neurons_trials.Neurons);
 meanPaths = cell(num_ROIs, 1);
 rawPaths = cell(num_ROIs, 1);
-
-% Create figure windows (these will be erased then reused between ROIs):
-%mean_fig = figure(); % one for mean traces
-%raw_fig = figure(); % one for raw traces
-%figures = {mean_fig, raw_fig};
-titles = {'Mean', 'Individual'};
-outputs = {meanPaths, rawPaths};
 
 % Make sure the output directory exists, create it if it doesn't then cd into it:
 status = exist(output_directory, 'dir');
@@ -268,148 +235,11 @@ for n = 1:num_ROIs
     individual_fig_full_path =  fullfile(output_directory, individual_fig_name);
     individual_fig_title = {'Individual dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
     plot_individual_peristim_traces(individual_data, frame_rate, pre_stim_frames, post_stim_frames, Conditions, individual_fig_full_path, stim_dur, individual_fig_title);
-    meanPaths{n} = individual_fig_full_path;
+    rawPaths{n} = individual_fig_full_path;
     n_figures = n_figures + 1;
     Metadata.outputs(n_figures).path = individual_fig_full_path;
 end 
 
-
-%{
-for n = 1:num_ROIs
-    
-    mean_fig = figure(); % one for mean traces
-    raw_fig = figure(); % one for raw traces
-    figures = {mean_fig, raw_fig};
-    
-    disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
-    
-    Neuron = neurons_conditions_means.Neurons(n);
-    C = Neuron.Conditions;
-    
-    % Initialize empty vector that will state how many trials of each
-    % condition were delivered:
-    trials_per_condition = NaN(1,length(C));
-    
-    % Initialize empty vectors for storing numeric handles to plots; these
-    % will be necessary for creating legends later on
-    mean_plot_handles = NaN(1,length(C)); 
-    raw_plot_handles = NaN(1,length(C)); 
-
-    % For current ROI, plot data from each condition:
-    for d = 1:length(C)
-        
-        Mean = C(d).Mean;
-        SEM = C(d).SEM;
-
-        % Get the color code for the current condition:
-        cond_idx = find(arrayfun(@(x) strcmp(C(d).name, x.name), Conditions));
-        color = Conditions(cond_idx).color;
-        
-        % Plot mean of current condition for current ROI:
-        figure(mean_fig);
-        hold on;
-        mean_plot_handles(d) = plot(Mean, 'Color', color, 'LineWidth', 1.25);
-
-        % Plot SEM bars of current condition for current ROI:
-        sem_over = [Mean fliplr(Mean + SEM)];
-        sem_under = [Mean fliplr(Mean - SEM)];
-        sem_over_patch = patch(sem_X, sem_over, color, 'EdgeColor', 'none', 'FaceAlpha', 0.2, 'EdgeAlpha', 0.2);
-        sem_under_patch = patch(sem_X, sem_under, color, 'EdgeColor', 'none', 'FaceAlpha', 0.2, 'EdgeAlpha', 0.2);
-
-        % Plot traces for every individual trial of current condition for current ROI:
-        figure(raw_fig);
-        hold on;
-        Trials = C(d).Trials;
-        for t = 1:length(Trials)
-            h = plot(Trials(t).dFF, 'Color', color);
-        end
-        raw_plot_handles(d) = h(1);
-        
-        % Record how many trials there were of this condition:
-        trials_per_condition(d) = length(Trials);
-        
-    end
-
-    % Create legends:
-    leg_text = arrayfun(@(y, z) strcat([y.abbreviation, ', n=', num2str(z)]), C, trials_per_condition, 'UniformOutput', false);
-    
-    %{
-    figure(mean_fig);
-    legend(mean_plot_handles, leg_text);
-    legend('boxoff');
-
-    figure(raw_fig);
-    legend(raw_plot_handles, leg_text);
-    legend('boxoff');
-    %}
-    
-    % Format and save both figures for the current ROI:
-    for f = 1:length(figures)
-
-        figure(figures{f});
-        hold on;
-        
-        % If we know the stimulus duration and it's the same for every stimulus delivery, draw a rectangle covering the stimulus period:
-        if equal_stimdurs
-            yl = ylim;
-            recY = [yl fliplr(yl)];
-            %h = fill([stimPeriod(1) stimPeriod(1) stimPeriod(2) stimPeriod(2)], recY, [0.01 0.01 0.01], 'FaceAlpha', 0.1, 'EdgeAlpha', 0.1);
-            p = patch([stim_period(1) stim_period(1) stim_period(2) stim_period(2)], recY, [0.75 0.75 0.75], 'FaceAlpha', 0.1, 'EdgeColor', 'none');
-            uistack(p, 'bottom');
-            ylim(yl);
-        end
-        
-        % Plot y = 0 for reference:
-        plot(zeros(1,peri_stim_frames), 'Color', [0.75 0.75 0.75], 'LineWidth', 0.1);
-
-        % Position and label x-ticks appropriately:
-        set(gca, 'XTick', xticks, 'XTickLabel', labels);            
-
-        % Label x- and y- axes:
-        ylabel('dF/F (a.u.)');
-        xlabel('Time rel. to stim onset (s)');
-
-        % Print title:
-        title({[titles{f}, ' dF/F traces by condition']; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]});
-
-        xl = xlim;
-        xlim([1 peri_stim_frames]);
-
-        % Add legend:
-        if mod(f,2) == 0
-            handles = raw_plot_handles;
-        else
-            handles = mean_plot_handles;
-        end                
-        legend(handles, leg_text);
-        legend('boxoff');
-        
-        
-        % Save figure:
-        num_str = pad(num2str(n), 3, 'left', '0');
-        title_str = strcat(['ROI_', num_str, '_', titles{f}, '_traces.fig']);
-        fig_full_path = fullfile(output_directory, title_str);
-        saveas(gcf, title_str);
-
-        % Add the name of the figure to the appropriate outputs structure
-        if mod(f,2) == 0
-            rawPaths{n} = fig_full_path;
-        else
-            meanPaths{n} = fig_full_path;
-        end
-
-        % Clear figure for the next ROI:
-        %clf(gcf)
-        
-        % Add the full path to the figure to Metadata struct:
-        Metadata.outputs(n_figures).path = fig_full_path;
-        n_figures = n_figures + 1; 
-    end
-    
-    close all;
-    
-end
-%}
 
 %% Write metadata:
 Metadata.inputs(1).path = params.rawF_path;
