@@ -243,7 +243,7 @@ for c = 1:length(Conditions)
     
     for m = 1:length(matching_trials)
         trial_num = matching_trials(m);
-        Trials(trial_num).Conditions = Conditions(c}.name;
+        Trials(trial_num).Conditions = Conditions(c).name;
     end
     
 end
