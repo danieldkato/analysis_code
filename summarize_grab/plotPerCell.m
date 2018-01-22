@@ -170,6 +170,9 @@ peri_stim_frames = pre_stim_frames + post_stim_frames;
 all_trial_durations = [T.Trials.STIMDUR];
 all_trial_durations_check = circshift(all_trial_durations, 1);
 if isequal(all_trial_durations, all_trial_durations_check)
+    equal_stimdurs = true;
+end    
+if equal_stimdurs
     stim_dur = all_trial_durations(1)/1000; % convert from milliseconds to seconds
 else    
     warning('Not all stimuli have the same duration; stimulus period windows will be ommitted from plots.');
