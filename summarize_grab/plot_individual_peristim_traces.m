@@ -121,8 +121,8 @@ for c = 1:n_conditions
         color = conditions(cond_idx).color;
         
         % Plot individual traces:
-        for t = 1:length(curr_conditions.Trials)
-            handles(c) = plot(curr_conditions.Trials(t).dFF, 'Color', color, 'LineWidth', 1.25);
+        for t = 1:length(curr_condition.Trials)
+            handles(c) = plot(curr_condition.Trials(t).dFF, 'Color', color, 'LineWidth', 1.25);
         end
 
         % Record how many trials there were of this condition:
