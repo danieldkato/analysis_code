@@ -1,4 +1,4 @@
-function M = neuron_trials_by_condition(N, Conditions)
+function M = neuron_condtn_trial(N, Conditions)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
