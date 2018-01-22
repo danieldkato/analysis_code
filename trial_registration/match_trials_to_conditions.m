@@ -70,7 +70,7 @@ for c = 1:length(Conditions)
         filter = filter & filter_update;
     end
     matching_trials = find(filter);
-    Conditions{c}.Trials = matching_trials;
+    Conditions{c}.matching_trials = matching_trials;
     
     % Warn the user if no trials of the current condition are found:
     if isempty(matching_trials)
