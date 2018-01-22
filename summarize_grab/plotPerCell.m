@@ -6,7 +6,7 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-16
+% Last updated DDK 2018-01-21
 
 
 %% OVERVIEW:
@@ -33,11 +33,15 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 
 
 %% REQUIREMENTS:
-% This function should only be used on datasets where the stimulus period
-% for all trials is the same. This function draws a shaded rectangle over
-% the area corresponding to the stimulus period on every plot, so the
-% figures are really only sensible if the stimulus period for all trials is
-% the same.
+% 1) trialize_data.m
+% 2) read_ardulines.m
+% 3) get_start_frames.m
+% 4) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
+% 5) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
+% 6) neuronize_trials.m
+% 7) neuron_trials_by_condition.m
+% 8) neuron_condtn_means.m
+% 9) match_trials_2_conditions.m
 
 
 %% INPUTS:
@@ -132,6 +136,10 @@ session_metadata = loadjson(params.grab_metadata);
 mouse = session_metadata.mouse;
 date = session_metadata.date;
 
+%% Load grab metadata:
+grab_metadata = loadjson(params.grab_metadata);
+
+
 
 %% Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
@@ -139,7 +147,9 @@ Conditions = C_struct.conditions;
 
 
 %% Trialize data for each neuron:
-N = trialize_neurons(params.rawF_path, ... 
+
+% Split all the data up by trial:
+T = trialize_data(params.rawF_path, ... 
     params.galvo_path, ...
     params.timer_path, ...
     params.ardu_path, ...
@@ -149,27 +159,27 @@ N = trialize_neurons(params.rawF_path, ...
     params.post_sec, ...
     params.show_inflection_points);
 
+% Reorganize the data in a way that will be easy to iterate through and plot on a neuron-by-neuron basis: 
+neurons_trials = neuron_trial(T); % Create a struct with the form neuron > trial
+neurons_conditions_trials = neuron_condtn_trial(neurons_trials, Conditions); % Create a struct with the form neuron > condition > individual trial
+neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials); % Create a struct with the form neuron > condition > mean & SEM
+
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
-num_ROIs = length(N.Neurons);
-frame_rate = N. frame_rate;
-pre_stim_frames = N.pre_frames;
+frame_rate = neurons_trials.frame_rate;
+pre_stim_frames = neurons_trials.pre_frames;
 disp(['pre_stim_frames = ' num2str(pre_stim_frames)]);
-post_stim_frames = N.post_frames;
+post_stim_frames = neurons_trials.post_frames;
 disp(['post_stim_frames = ' num2str(post_stim_frames)]);
 peri_stim_frames = pre_stim_frames + post_stim_frames;
 
 % Confirm that the stimulus duration is the same for every trial, and if
 % not, throw a warning and skip drawing stimulus window:
-all_trial_durations = [];
-for n = 1:length(N.Neurons)
-    Neuron = N.Neurons(n);
-    for c = 1:length(Neuron.Conditions)
-        Condition = Neuron.Conditions(c);
-        all_trial_durations = [all_trial_durations Condition.Trials.STIMDUR];
-    end
-end
-equal_stimdurs = isempty(find(all_trial_durations ~= all_trial_durations(1), 1)); % test whether each reported STIMDUR matches the first
+all_trial_durations = [T.Trials.STIMDUR];
+all_trial_durations_check = circshift(all_trial_durations, 1);
+if isequal(all_trial_durations, all_trial_durations_check)
+    equal_stimdurs = true;
+end    
 if equal_stimdurs
     stim_dur = all_trial_durations(1)/1000; % convert from milliseconds to seconds
 else    
@@ -208,6 +218,7 @@ end
 %% Prepare figure windows and file paths for plotting: 
 
 % Create cell arrays that will contain full paths to created figures; these will be returned to calling function:
+num_ROIs = length(neurons_trials.Neurons);
 meanPaths = cell(num_ROIs, 1);
 rawPaths = cell(num_ROIs, 1);
 
@@ -238,7 +249,7 @@ for n = 1:num_ROIs
     
     disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
-    Neuron = N.Neurons(n);
+    Neuron = neurons_conditions_means.Neurons(n);
     C = Neuron.Conditions;
     
     % Initialize empty vector that will state how many trials of each
@@ -257,7 +268,7 @@ for n = 1:num_ROIs
         SEM = C(d).SEM;
 
         % Get the color code for the current condition:
-        cond_idx = find(cell2mat(cellfun(@(x) strcmp(C(d).Name, x.name), Conditions, 'UniformOutput', false)));
+        cond_idx = find(cell2mat(cellfun(@(x) strcmp(C(d).name, x.name), Conditions, 'UniformOutput', false)));
         color = Conditions{cond_idx}.color;
         
         % Plot mean of current condition for current ROI:
@@ -286,7 +297,7 @@ for n = 1:num_ROIs
     end
 
     % Create legends:
-    leg_text = arrayfun(@(y, z) strcat([y.Abbreviation, ', n=', num2str(z)]), C, trials_per_condition, 'UniformOutput', false);
+    leg_text = arrayfun(@(y, z) strcat([y.abbreviation, ', n=', num2str(z)]), C, trials_per_condition, 'UniformOutput', false);
     
     %{
     figure(mean_fig);

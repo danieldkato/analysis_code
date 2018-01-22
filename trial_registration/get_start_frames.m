@@ -5,7 +5,7 @@ function F = get_start_frames(galvo_path, timer_path, grab_metadata_path, show_i
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-13
+% Last updated DDK 2018-01-21
 
 
 %% I. OVERVIEW:
@@ -17,18 +17,8 @@ function F = get_start_frames(galvo_path, timer_path, grab_metadata_path, show_i
 
 
 %% II. REQUIREMENTS:
-
-% This function requires the following data/metadata:
-% 1) A LabView .dat file of the analog voltage signal used to drive the slow scan-mirror galvanomter
-% 2) A LabView .dat file of an analog trial timer signal recorded during the grab 
-% 3) A text file containing Arduino feedback received over a serial port
-% 4) A metadata file named `2P_metadata.json` that includes a `frame_rate`
-%    field specifying the frame rate of the corresponding grab in frames per 
-%    second. Must be located in the same directory as the raw grab data.
-
-% This function requires the following software:
-% 1) The MATLAB function readContinuousDAT, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
-% 2) The MATLAB function LocalMinima, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
+% 1) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
+% 2) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 
 
 %% III. INPUTS:
@@ -154,7 +144,7 @@ is_in_movie = after_first_frame & before_last_frame; % t-element binary vector s
 movie_trials = find(is_in_movie); % q-element vector of indices into trial_start_samples correspoding to trials that fall within the movie
 
 n_trials_too_early = length(find(~after_first_frame));
-n_trials_too_late = length(find(before_last_frame));
+n_trials_too_late = length(find(~before_last_frame));
 
 if n_trials_too_early > 0
     disp(['Omitting ' num2str(n_trials_too_early) ' trials that occur before first frame.']);    
