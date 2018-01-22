@@ -272,8 +272,8 @@ for n = 1:num_ROIs
         SEM = C(d).SEM;
 
         % Get the color code for the current condition:
-        cond_idx = find(cell2mat(cellfun(@(x) strcmp(C(d).name, x.name), Conditions, 'UniformOutput', false)));
-        color = Conditions{cond_idx}.color;
+        cond_idx = find(arrayfun(@(x) strcmp(C(d).name, x.name), Conditions));
+        color = Conditions(cond_idx).color;
         
         % Plot mean of current condition for current ROI:
         figure(mean_fig);
