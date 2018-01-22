@@ -140,7 +140,6 @@ date = session_metadata.date;
 grab_metadata = loadjson(params.grab_metadata);
 
 
-
 %% Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
 Conditions = C_struct.conditions;
@@ -166,12 +165,16 @@ neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials); % Crea
 
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
+
 frame_rate = neurons_trials.frame_rate;
 pre_stim_frames = neurons_trials.pre_frames;
-disp(['pre_stim_frames = ' num2str(pre_stim_frames)]);
 post_stim_frames = neurons_trials.post_frames;
-disp(['post_stim_frames = ' num2str(post_stim_frames)]);
 peri_stim_frames = pre_stim_frames + post_stim_frames;
+
+%{
+disp(['pre_stim_frames = ' num2str(pre_stim_frames)]);
+disp(['post_stim_frames = ' num2str(post_stim_frames)]);
+%}
 
 % Confirm that the stimulus duration is the same for every trial, and if
 % not, throw a warning and skip drawing stimulus window:
