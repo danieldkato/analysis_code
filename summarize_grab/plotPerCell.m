@@ -6,7 +6,7 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-16
+% Last updated DDK 2018-01-21
 
 
 %% OVERVIEW:
@@ -127,13 +127,19 @@ params = loadjson(params_file);
 output_directory = params.output_directory;
 
 
+%% Load grab metadata:
+grab_metadata = loadjson(params.grab_metadata);
+
+
 %% Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
 Conditions = C_struct.conditions;
 
 
 %% Trialize data for each neuron:
-N = trialize_neurons(params.rawF_path, ... 
+
+% Split all the data up by trial:
+T = trialize_data(params.rawF_path, ... 
     params.galvo_path, ...
     params.timer_path, ...
     params.ardu_path, ...
@@ -143,28 +149,27 @@ N = trialize_neurons(params.rawF_path, ...
     params.post_sec, ...
     params.show_inflection_points);
 
+% Split the trialized data up by neuron:
+neurons_trials = neuronize_trials(T);
+
+% Split the trialized and neuronized data up by condition:
+neurons_conditions_trials = neuron_trials_by_condition(neurons_trials, Conditions);
+neurons_conditions_means = neuron_condtn_means(neurons_conditions_trials);
+
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
-num_ROIs = length(N.Neurons);
-frame_rate = N. frame_rate;
-pre_stim_frames = N.pre_frames;
+frame_rate = neurons_trials.frame_rate;
+pre_stim_frames = neurons_trials.pre_frames;
 disp(['pre_stim_frames = ' num2str(pre_stim_frames)]);
-post_stim_frames = N.post_frames;
+post_stim_frames = neurons_trials.post_frames;
 disp(['post_stim_frames = ' num2str(post_stim_frames)]);
 peri_stim_frames = pre_stim_frames + post_stim_frames;
 
 % Confirm that the stimulus duration is the same for every trial, and if
 % not, throw a warning and skip drawing stimulus window:
-all_trial_durations = [];
-for n = 1:length(N.Neurons)
-    Neuron = N.Neurons(n);
-    for c = 1:length(Neuron.Conditions)
-        Condition = Neuron.Conditions(c);
-        all_trial_durations = [all_trial_durations Condition.Trials.STIMDUR];
-    end
-end
-equal_stimdurs = isempty(find(all_trial_durations ~= all_trial_durations(1), 1)); % test whether each reported STIMDUR matches the first
-if equal_stimdurs
+all_trial_durations = [T.Trials.STIMDUR];
+all_trial_durations_check = circshift(all_trial_durations, 1);
+if isequal(all_trial_durations, all_trial_durations_check)
     stim_dur = all_trial_durations(1)/1000; % convert from milliseconds to seconds
 else    
     warning('Not all stimuli have the same duration; stimulus period windows will be ommitted from plots.');
@@ -224,6 +229,7 @@ old = cd(output_directory);
 % 1) a figure plotting mean traces (with SEM bars) for each condition
 % 2) a figure plotting traces for all individual trials (color coded by condition)
 n_figures = 1;
+num_ROIs = length(neurons_trials.Neurons);
 for n = 1:num_ROIs
     
     mean_fig = figure(); % one for mean traces
@@ -232,7 +238,7 @@ for n = 1:num_ROIs
     
     disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
-    Neuron = N.Neurons(n);
+    Neuron = neurons_condtions_means.Neurons(n);
     C = Neuron.Conditions;
     
     % Initialize empty vector that will state how many trials of each
