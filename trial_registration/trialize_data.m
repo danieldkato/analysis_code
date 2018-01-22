@@ -131,8 +131,7 @@ end
 % Get number of neurons and frames:
 n_cells = size(RawF, 1);
 n_frames = size(RawF, 2);
-disp([num2str(n_cells) ' ROIs detected in imaging data.']);
-disp([num2str(n_frames) ' frames detected from imaging data.']);   
+disp([num2str(n_cells) ' ROIs detected in imaging data.']);   
 
 % Load grab metadata and compute trial window:
 disp('Loading grab metadata...');
@@ -170,15 +169,18 @@ Trials = read_ardulines(ardu_path);
 
 % Get trial start frames from galvo and timer signals:
 Frames = get_start_frames(galvo_path, timer_path, grab_metadata, show_inflection_points);
-disp('Trial start frames:');
-disp(Frames);
 
-% Make sure that the number of trials extracted from read_ardulines matches that from register_trials_2_frames; if not, throw an error:
+% Throw some debug messages confirming whether the number of frames and trials from different sources match:
+disp([num2str(n_frames) ' frames detected from imaging data.']);
+disp([num2str(length(Trials)) ' trials detected from Arduino.']);
+disp([num2str(length(find(~isnan(Frames)))) ' trials detected in timer signal.']);
+
+% Make sure that the number of trials extracted from read_ardulines matches that from get_start_frames; if not, throw an error:
 if length(Trials) ~= length(Frames)
     error(['Number of trials in ardulines file (' num2str(length(Trials)) ') does not match number of trials detected in timer signal (' num2str(length(Frames)) '). Please check data integrity and parameters used to detect trial starts in register_trials_2_frames.']);
 end
 
-% Filter out any trials delivered before the first frame or after the last frame of the movie (represented by NaNs in F):
+% Omit trials delivered before the first frame or after the last frame of the movie (represented by NaNs in F):
 in_movie = ~isnan(Frames);
 Trials = Trials(in_movie);
 Frames = Frames(in_movie);
@@ -192,8 +194,15 @@ end
 too_close_to_start = [Trials.start_frame] < (1 + pre_frames);
 too_close_to_end = [Trials.start_frame] > (n_frames - post_frames);
 Trials = Trials(~too_close_to_start & ~too_close_to_end);
-disp(['Omitting ' num2str(length(find(too_close_to_start))) ' trial(s) whose pre-stimulus period extends before the beginning of the movie.']);
-disp(['Omitting ' num2str(length(find(too_close_to_end))) ' trial(s) whose post-stimulus period extends beyond the end of the movie.']);
+
+% Throw some debug messages stating if any trials were ommitted:
+pre_vid_nans = find(~isnan(Frames), 1, 'first') - 1;
+post_vid_nans = find(~isnan(fliplr(Frames)), 1, 'first') - 1;
+n_too_close_to_start = length(find(too_close_to_start));
+n_too_close_to_end = length(find(too_close_to_end));
+
+disp(['Omitting ' num2str(pre_vid_nans + n_too_close_to_start) ' trial(s) whose pre-stimulus period extends before the beginning of the movie.']);
+disp(['Omitting ' num2str(post_vid_nans + n_too_close_to_end) ' trial(s) whose post-stimulus period extends beyond the end of the movie.']);
 
 
 %% Add neural data to each trial:

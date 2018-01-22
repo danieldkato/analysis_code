@@ -88,19 +88,6 @@ trial_timer_signal = readContinuousDAT(timer_path); % Load the trial timing data
 trial_timer_signal = trial_timer_signal(useable_galvo); % need to exclude samples already excluded from galvo_signal so that galvo and timer signals have the same offset
 
     
-%% Get the sample number of every frame start:
-
-% Compute some input parameters for LocalMinima, called below:
-frame_period = 1/frame_rate;
-min_distance_galvo = frame_period * sample_rate; % The function LocalMinima will include only the lowest of any local minima found within this many samples of each other
-min_distance_galvo = min_distance_galvo * .9; % Fudge factor; the true number of samples between certain pairs of frame-start times is slightly less than the theoretical value
-galvo_threshold = -1.6; % Whatever units gavloTrace is expressed in (Volts, I think); the function LocalMinima will exclude any local minima higher than this value; for the time being, I just got this from eyeballing a sample galvo trace, but I may ultimately need more sophisticated ways of getting this if there's any variability
-
-% Get a vector of every galvo signal sample at which a frame begins:
-frame_start_samples = LocalMinima(galvo_signal, min_distance_galvo, galvo_threshold);
-disp([num2str(length(frame_start_samples)) ' frames detected from galvo trace.']);       
-
-
 %% Get the sample number of every trial start:
 
 % Get every sample index in timerTrace corresponding to the onset of a
@@ -115,6 +102,19 @@ timer_threshold = -4; % timerTrace units (Volts, I think); I just eyeballed this
 % Get a vector of every timer signal sample at which a trial begins: 
 trial_start_samples = LocalMinima(-trial_timer_signal, min_distance_timer, timer_threshold);    
 disp([num2str(length(trial_start_samples)) ' trials detected']);    
+
+
+%% Get the sample number of every frame start:
+
+% Compute some input parameters for LocalMinima, called below:
+frame_period = 1/frame_rate;
+min_distance_galvo = frame_period * sample_rate; % The function LocalMinima will include only the lowest of any local minima found within this many samples of each other
+min_distance_galvo = min_distance_galvo * .9; % Fudge factor; the true number of samples between certain pairs of frame-start times is slightly less than the theoretical value
+galvo_threshold = -1.6; % Whatever units gavloTrace is expressed in (Volts, I think); the function LocalMinima will exclude any local minima higher than this value; for the time being, I just got this from eyeballing a sample galvo trace, but I may ultimately need more sophisticated ways of getting this if there's any variability
+
+% Get a vector of every galvo signal sample at which a frame begins:
+frame_start_samples = LocalMinima(galvo_signal, min_distance_galvo, galvo_threshold);
+disp([num2str(length(frame_start_samples)) ' frames detected from galvo trace.']);       
 
 
 %% Show traces if requested by user:
@@ -143,6 +143,7 @@ before_last_frame = trial_start_samples<max(frame_start_samples);
 is_in_movie = after_first_frame & before_last_frame; % t-element binary vector specifying whether each trial falls within the movie
 movie_trials = find(is_in_movie); % q-element vector of indices into trial_start_samples correspoding to trials that fall within the movie
 
+%{
 n_trials_too_early = length(find(~after_first_frame));
 n_trials_too_late = length(find(~before_last_frame));
 
@@ -153,7 +154,7 @@ end
 if n_trials_too_late > 0
     disp(['Omitting ' num2str(n_trials_too_late) ' trials that occur after last frame.'])    
 end
-
+%}
 
 %% Match every trial to the frame within which it started:
 
