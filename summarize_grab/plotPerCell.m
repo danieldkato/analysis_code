@@ -153,12 +153,10 @@ T = trialize_data(params.rawF_path, ...
     params.post_sec, ...
     params.show_inflection_points);
 
-% Split the trialized data up by neuron:
-neurons_trials = neuron_trial(T);
-
-% Split the trialized and neuronized data up by condition:
-neurons_conditions_trials = neuron_condtn_trial(neurons_trials, Conditions);
-neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials);
+% Reorganize the data in a way that will be easy to iterate through and plot on a neuron-by-neuron basis: 
+neurons_trials = neuron_trial(T); % Create a struct with the form neuron > trial
+neurons_conditions_trials = neuron_condtn_trial(neurons_trials, Conditions); % Create a struct with the form neuron > condition > individual trial
+neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials); % Create a struct with the form neuron > condition > mean & SEM
 
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
