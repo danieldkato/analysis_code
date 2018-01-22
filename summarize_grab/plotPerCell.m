@@ -143,6 +143,7 @@ grab_metadata = loadjson(params.grab_metadata);
 %% Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
 Conditions = C_struct.conditions;
+Conditions = cell2mat(Conditions);
 
 
 %% Trialize data for each neuron:

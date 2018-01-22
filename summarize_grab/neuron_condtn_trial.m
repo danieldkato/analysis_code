@@ -46,7 +46,7 @@ function M = neuron_condtn_trial(N, Conditions)
 %           as well one field corresponding to each trial parameter
 %           reported in the Arduino serial output file.
 
-% 2) Conditions - c x 1 cell array of structs, where c is the number of
+% 2) Conditions - c x 1 array of structs, where c is the number of
 %    stimulus or trial conditions being analyzed. Each element should
 %    minimimally include a "name" field that states the name of the
 %    condition, as well as a "params" field. The "params" field should
@@ -119,7 +119,7 @@ for n = 1:length(N.Neurons)
     % For each condition:
     for c = 1:length(matching_conditions)
         
-        curr_condition = matching_conditions{c};
+        curr_condition = matching_conditions(c);
         
         % Fetch any trials that belong to the current condition:
         curr_cond_trial_indices = curr_condition.matching_trials;

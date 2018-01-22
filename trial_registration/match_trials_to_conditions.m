@@ -31,7 +31,7 @@ function Conditions = match_trials_to_conditions(Trials, Conditions)
 %       Trials(t).STPRIDX = 1;
 %       Trials(t).SPKRIDX = 0;
 
-% 2) Conditions - c x 1 cell array of structs, where c is the number of
+% 2) Conditions - c x 1 array of structs, where c is the number of
 %    stimulus or trial conditions being analyzed. Each element should
 %    minimimally include a "name" field that states the name of the
 %    condition, as well as a "params" field. The "params" field should
@@ -62,18 +62,18 @@ for c = 1:length(Conditions)
     
     % Go through every trial parameter that defines the current condition
     % and find the trials that match ~all~ of them:
-    params = fieldnames(Conditions{c}.params);  
+    params = fieldnames(Conditions(c).params);  
     for p = 1:length(params) 
         param_name = params{p};
-        param_value = Conditions{c}.params.(param_name);
+        param_value = Conditions(c).params.(param_name);
         filter_update = [Trials.(param_name)] == param_value;
         filter = filter & filter_update;
     end
     matching_trials = find(filter);
-    Conditions{c}.matching_trials = matching_trials;
+    Conditions(c).matching_trials = matching_trials;
     
     % Warn the user if no trials of the current condition are found:
     if isempty(matching_trials)
-        warning(['No trials of condition ' Conditions{c}.name ' found.']);
+        warning(['No trials of condition ' Conditions(c).name ' found.']);
     end
 end

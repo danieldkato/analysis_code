@@ -152,7 +152,7 @@ disp(['Frames after stim onset = ' num2str(post_frames)]);
 disp('Loading condition definitions...');
 C = loadjson(conditions_path);
 
-% Create Conditions, a c x 1 cell array, where c is the number of
+% Create Conditions, a c x 1 array, where c is the number of
 % conditions. Each element is a struct describing one of the conditions to
 % be analyzed. Each struct includes the fields 'name', 'abbreviation', and
 % 'color'. Most importantly, each struct also includes a field called
@@ -160,6 +160,7 @@ C = loadjson(conditions_path);
 % each trial parameter that defines the condition:
 disp('trialize_data.m');
 Conditions = C.conditions;  
+Conditions = cell2mat(Conditions);
 
 
 %% Extract and assemble trial info:
@@ -225,10 +226,10 @@ for c = 1:length(Conditions)
     
     filter = ones(1, length(Trials));
     
-    params = fieldnames(Conditions{c}.params);  
+    params = fieldnames(Conditions(c).params);  
     for p = 1:length(params) 
         param_name = params{p};
-        param_value = Conditions{c}.params.(param_name);
+        param_value = Conditions(c).params.(param_name);
         filter_update = [Trials.(param_name)] == param_value;
         filter = filter & filter_update;
     end
@@ -237,12 +238,12 @@ for c = 1:length(Conditions)
 
     % Warn the user if no trials of the current condition are found:
     if isempty(matching_trials)
-        warning(['No trials of condition ' Conditions{c}.name ' found.']);
+        warning(['No trials of condition ' Conditions(c).name ' found.']);
     end
     
     for m = 1:length(matching_trials)
         trial_num = matching_trials(m);
-        Trials(trial_num).Conditions = Conditions{c}.name;
+        Trials(trial_num).Conditions = Conditions(c}.name;
     end
     
 end
