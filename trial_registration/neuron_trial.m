@@ -1,4 +1,4 @@
-function N = neuronize_trials(T)
+function N = neuron_trial(T)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
