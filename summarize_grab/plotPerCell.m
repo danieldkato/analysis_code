@@ -210,6 +210,7 @@ end
 %% Prepare figure windows and file paths for plotting: 
 
 % Create cell arrays that will contain full paths to created figures; these will be returned to calling function:
+num_ROIs = length(neurons_trials.Neurons);
 meanPaths = cell(num_ROIs, 1);
 rawPaths = cell(num_ROIs, 1);
 
@@ -232,7 +233,6 @@ old = cd(output_directory);
 % 1) a figure plotting mean traces (with SEM bars) for each condition
 % 2) a figure plotting traces for all individual trials (color coded by condition)
 n_figures = 1;
-num_ROIs = length(neurons_trials.Neurons);
 for n = 1:num_ROIs
     
     mean_fig = figure(); % one for mean traces
@@ -241,7 +241,7 @@ for n = 1:num_ROIs
     
     disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
-    Neuron = neurons_condtions_means.Neurons(n);
+    Neuron = neurons_conditions_means.Neurons(n);
     C = Neuron.Conditions;
     
     % Initialize empty vector that will state how many trials of each
@@ -260,7 +260,7 @@ for n = 1:num_ROIs
         SEM = C(d).SEM;
 
         % Get the color code for the current condition:
-        cond_idx = find(cell2mat(cellfun(@(x) strcmp(C(d).Name, x.name), Conditions, 'UniformOutput', false)));
+        cond_idx = find(cell2mat(cellfun(@(x) strcmp(C(d).name, x.name), Conditions, 'UniformOutput', false)));
         color = Conditions{cond_idx}.color;
         
         % Plot mean of current condition for current ROI:
