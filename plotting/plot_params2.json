@@ -1,0 +1,11 @@
+{"rawF_path":"/mnt/nas2/homes/dan/MultiSens/data/5037-1/2P/2017-12-14/site2/grab01/2P/motion_correction/motion_correction005/segmentation/manual/rawF.h5",
+"galvo_path":"/mnt/nas2/homes/dan/MultiSens/data/5037-1/2P/2017-12-14/site2/grab01/stim/171214-01-galvo.dat",
+"timer_path":"/mnt/nas2/homes/dan/MultiSens/data/5037-1/2P/2017-12-14/site2/grab01/stim/171214-01-punish.dat",
+"ardu_path":"/mnt/nas2/homes/dan/MultiSens/data/5037-1/2P/2017-12-14/site2/grab01/stim/ardulines.20171214143609",
+"conditions_path":"/mnt/nas2/homes/dan/MultiSens/analysis/condition_settings.json",
+"grab_metadata":"/mnt/nas2/homes/dan/MultiSens/data/5037-1/2P/2017-12-14/site2/grab01/2P/metadata.json",
+"pre_sec":2,
+"post_sec":4,
+"show_inflection_points":true,
+"output_directory":"/mnt/nas2/homes/dan/MultiSens/data/5037-1/2P/2017-12-14/site2/grab01/2P/motion_correction/motion_correction005/segmentation/manual/plots3"
+}
