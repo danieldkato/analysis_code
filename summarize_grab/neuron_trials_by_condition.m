@@ -113,7 +113,7 @@ M.post_frames = N.post_frames;
 for n = 1:length(N.Neurons)
     
     % Get the indices of which trials belong to each condition:
-    matching_conditions = match_trials_to_conditions(Conditions, N.Neurons(n).Trials);
+    matching_conditions = match_trials_to_conditions(N.Neurons(n).Trials, Conditions);
     
     % For each condition:
     for c = 1:length(matching_conditions)
