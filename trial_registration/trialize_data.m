@@ -6,7 +6,7 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-15 
+% Last updated DDK 2018-01-21
 
 
 %% I. OVERVIEW: 
@@ -15,11 +15,10 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 
 
 %% II. REQUIREMENTS:
-% 1) get_trial_info.m
-% 2) read_ardulines.m
-% 3) get_start_frames.m
-% 4) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
-% 5) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
+% 1) read_ardulines.m
+% 2) get_start_frames.m
+% 3) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
+% 4) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
 
 
 %% III. INPUTS: 
@@ -160,6 +159,7 @@ C = loadjson(conditions_path);
 % 'color'. Most importantly, each struct also includes a field called
 % 'params', itself a struct that in turn has one sub-field corresponding to
 % each trial parameter that defines the condition:
+disp('trialize_data.m');
 Conditions = C.conditions;  
 
 

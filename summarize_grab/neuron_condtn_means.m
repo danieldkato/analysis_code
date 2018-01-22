@@ -10,8 +10,9 @@ function M = neuron_condtn_means(N)
 
 
 %% I. OVERVIEW: 
-% This function returns a struct N containing trialized data for each
-% neuron from a given imaging session. See OUTPUT below for more detail.
+% This function returns a struct N containing the mean dFF trace and SEM
+% over some peri-stimulus period for each neuron for each condition from a
+% given imaging session. See OUTPUT below for more detail.
 
 
 %% II. REQUIREMENTS:

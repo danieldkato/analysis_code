@@ -11,7 +11,8 @@ function M = neuron_trials_by_condition(N, Conditions)
 
 %% I. OVERVIEW: 
 % This function returns a struct N containing trialized data for each
-% neuron from a given imaging session. See OUTPUT below for more detail.
+% neuron from a given imaging session, orgniazed by trial or stimulus
+% condition. See OUTPUT below for more detail.
 
 
 %% II. REQUIREMENTS:
