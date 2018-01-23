@@ -93,13 +93,13 @@ for t = 1:length(T_in.Trials)
     T_out.Trials(t).dFF = T_in.Trials(t).dFF(n, :);
     
     % Find all non-dFF trial params:
-    trial_params = fieldnames(T_in.Trials(t));
-    not_dFF = cellfun(@(c) ~strcmp(c, 'dFF'), trial_field_names);
-    trial_params = trial_params(not_dFF);
+    trial_fields = fieldnames(T_in.Trials(t));
+    not_dFF = cellfun(@(c) ~strcmp(c, 'dFF'), trial_fields);
+    trial_fields = trial_fields(not_dFF);
     
     % Copy all non-dF trial params to T_out.Trials(t):
-    for p = 1:length(trial_params)
-        param_name = trial_params{p};
+    for p = 1:length(trial_fields)
+        param_name = trial_fields{p};
         T_out.Trials(t).(param_name) = T_in.Trials(t).(param_name);
     end
     
