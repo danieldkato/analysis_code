@@ -6,7 +6,7 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-21
+% Last updated DDK 2018-01-22
 
 
 %% OVERVIEW:
@@ -162,11 +162,12 @@ T = trialize_data(params.rawF_path, ...
     params.post_sec, ...
     params.show_inflection_points);
 
+%{
 % Reorganize the data in a way that will be easy to iterate through and plot on a neuron-by-neuron basis: 
 neurons_trials = neuron_trial(T); % Create a struct with the form neuron > trial
 neurons_conditions_trials = neuron_condtn_trial(neurons_trials, Conditions); % Create a struct with the form neuron > condition > individual trial
 neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials); % Create a struct with the form neuron > condition > mean & SEM
-
+%}
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
 
@@ -217,24 +218,26 @@ n_figures = 1;
 
 for n = 1:num_ROIs
     
+    curr_n_trials = get_neuron_from_trials(T, n); % Get trialized data just for current neuron:
+    curr_n_conditions = split_trials_by_condition(curr_n_trials.Trials, Conditions); % split trialized data for current neuron by condition
+    curr_n_conditions_means = get_condition_means(curr_n_conditions);
+    
     num_str = pad(num2str(n), 3, 'left', '0');
     
     % Plot mean dFF trace and SEM for each condition for the current neuron:
-    mean_data = neurons_conditions_means.Neurons(n);
     mean_fig_name =  [mouse '_' date '_ROI_', num_str, '_mean_traces.fig'];
     mean_fig_full_path =  fullfile(output_directory, mean_fig_name);
     mean_fig_title = {'Mean dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
-    plot_mean_peristim_trace(mean_data, frame_rate, pre_stim_frames, post_stim_frames, Conditions, mean_fig_full_path, stim_dur, mean_fig_title);
+    plot_mean_peristim_trace(curr_n_conditions_means, frame_rate, pre_stim_frames, post_stim_frames, Conditions, mean_fig_full_path, stim_dur, mean_fig_title);
     meanPaths{n} = mean_fig_full_path;
     n_figures = n_figures + 1;
     Metadata.outputs(n_figures).path = mean_fig_full_path;
     
     % Plot individual traces for each condition for the current neuron:
-    individual_data = neurons_conditions_trials.Neurons(n);
     individual_fig_name =  [mouse '_' date '_ROI_', num_str, '_individual_traces.fig'];
     individual_fig_full_path =  fullfile(output_directory, individual_fig_name);
     individual_fig_title = {'Individual dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
-    plot_individual_peristim_traces(individual_data, frame_rate, pre_stim_frames, post_stim_frames, Conditions, individual_fig_full_path, stim_dur, individual_fig_title);
+    plot_individual_peristim_traces(curr_n_conditions, frame_rate, pre_stim_frames, post_stim_frames, Conditions, individual_fig_full_path, stim_dur, individual_fig_title);
     rawPaths{n} = individual_fig_full_path;
     n_figures = n_figures + 1;
     Metadata.outputs(n_figures).path = individual_fig_full_path;
