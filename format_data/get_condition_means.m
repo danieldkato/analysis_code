@@ -69,7 +69,7 @@ for c = 1:length(Conditions_in)
     end
     
     % Compute the mean dFF trace and the SEM trace for the current condition for the current neuron:
-    data = vertcat(Conditions_in.Trials.dFF);
+    data = vertcat(Conditions_in(c).Trials.dFF);
     mean_dFF_trace = mean(data, 1);
     sem_trace = std(data, 1) / sqrt(size(data,1));
     
