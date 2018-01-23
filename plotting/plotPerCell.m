@@ -38,9 +38,9 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % 3) get_start_frames.m
 % 4) readContinuousDAT.m, available at https://github.com/gpierce5/BehaviorAnalysis/blob/master/readContinuousDAT.m (commit 71b3a3c)
 % 5) LocalMinima.m, available at //10.112.43.46/mnt/homes/dan/code_libraries/clay/LocalMinima.m
-% 6) neuronize_trials.m
-% 7) neuron_trials_by_condition.m
-% 8) neuron_condtn_means.m
+% 6) get_neuron_from_trials.m
+% 7) split_trials_by_condition.m
+% 8) get_condition_means.m
 % 9) match_trials_2_conditions.m
 % 10) plot_mean_peristim_trace.m
 % 11) plot_individual_peristim_traces.m
