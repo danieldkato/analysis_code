@@ -109,7 +109,7 @@ trials_per_condition = nan(1, n_conditions);
 
 for c = 1:n_conditions
     
-        curr_condition = data.Conditions(c);
+        curr_condition = data(c);
     
         % Get the color code for the current condition:
         cond_idx = find(arrayfun(@(x) strcmp(curr_condition.name, x.name), conditions));
