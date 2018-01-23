@@ -87,7 +87,7 @@ T_out.frame_rate = T_in.frame_rate;
 T_out.pre_frames = T_in.pre_frames;
 T_out.post_frames = T_in.post_frames;
 
-for t = 1:length(Trials)
+for t = 1:length(T_in.Trials)
     
     % Copy dFF just for selected neuron to output struct:
     T_out.Trials(t).dFF = T_in.Trials(t).dFF(n, :);
