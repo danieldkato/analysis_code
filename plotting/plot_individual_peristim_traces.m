@@ -20,12 +20,9 @@ function plot_individual_peristim_traces(data, frame_rate, pre_stim_frames, post
 
 
 %% III. INPUTS: 
-% 1) data - struct containing trialized data for a given neuron, split by
-% condition. This struct must minimally include the following fields:
-%
-%   Conditions - c x 1 array of structs, where c is the number of
-%   conditions in which the current neuron was observed. Each element
-%   of Conditions must minimally include the following fields:
+% 1) data - c x 1 array of structs, where c is the number of
+%    conditions in which the current neuron was observed. Each element
+%    of Conditions must minimally include the following fields:
 %
 %       Name - char array specifying human-readable condition name 
 %
@@ -109,12 +106,12 @@ end
 
 
 %% Plot data for each condition:
-n_conditions = length(data.Conditions);
+n_conditions = length(data);
 trials_per_condition = nan(1, n_conditions);
 
 for c = 1:n_conditions
     
-        curr_condition = data.Conditions(c);
+        curr_condition = data(c);
     
         % Get the color code for the current condition:
         cond_idx = find(arrayfun(@(x) strcmp(curr_condition.name, x.name), conditions));
