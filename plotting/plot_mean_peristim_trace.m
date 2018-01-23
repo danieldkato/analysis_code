@@ -19,12 +19,9 @@ function plot_mean_peristim_trace(data, frame_rate, pre_stim_frames, post_stim_f
 
 
 %% III. INPUTS: 
-% 1) data - struct containing trialized data for a given neuron, split by
-% condition. This struct must minimally include the following fields:
-%
-%   Conditions - c x 1 array of structs, where c is the number of
-%   conditions in which the current neuron was observed. Each element
-%   of Conditions has the following fields:
+% 1) Conditions - c x 1 array of structs, where c is the number of
+%    conditions in which the current neuron was observed. Each element
+%    of Conditions has the following fields:
 %           
 %       Mean - 1 x p vector specifying the mean peri-stimulus dFF trace
 %       for the corresponding neuron and condition, where p is the
@@ -107,7 +104,7 @@ end
 
 
 %% Plot data for each condition:
-n_conditions = length(data.Conditions);
+n_conditions = length(data);
 trials_per_condition = nan(1, n_conditions);
 
 for c = 1:n_conditions
