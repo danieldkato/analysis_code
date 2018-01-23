@@ -162,6 +162,15 @@ T = trialize_data(params.rawF_path, ...
     params.post_sec, ...
     params.show_inflection_points);
 
+% Validate that all trials include measurements from same number of ROIs; if so, define the number of ROIs:
+n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), T.Trials);
+check_n_ROIs = circshift(n_ROIs_each_trial, 1);
+if isequal(n_ROIs_each_trial, check_n_ROIs)
+    num_ROIs = n_ROIs_each_trial(1);
+else
+    error('Not all trials include observations from the same number of ROIs. Please check integrity of input data');
+end
+
 %{
 % Reorganize the data in a way that will be easy to iterate through and plot on a neuron-by-neuron basis: 
 neurons_trials = neuron_trial(T); % Create a struct with the form neuron > trial
@@ -171,9 +180,9 @@ neurons_conditions_means = neuron_condtn_mean(neurons_conditions_trials); % Crea
 
 %% Get some parameters from trialized neural data that will be useful for plotting :
 
-frame_rate = neurons_trials.frame_rate;
-pre_stim_frames = neurons_trials.pre_frames;
-post_stim_frames = neurons_trials.post_frames;
+frame_rate = grab_metadata.frame_rate;
+pre_stim_frames = ceil(frame_rate * params.pre_sec);
+post_stim_frames = ceil(frame_rate * params.post_sec);
 peri_stim_frames = pre_stim_frames + post_stim_frames;
 
 %{
@@ -199,7 +208,6 @@ end
 %% Prepare output directory and output structs to catch paths to figures: 
 
 % Create cell arrays that will contain full paths to created figures; these will be returned to calling function:
-num_ROIs = length(neurons_trials.Neurons);
 meanPaths = cell(num_ROIs, 1);
 rawPaths = cell(num_ROIs, 1);
 
