@@ -81,5 +81,5 @@ for c = 1:length(Conditions_matched)
     
     % Copy over the trials data from the matching condition:
     matching_trials = Conditions_matched(c).matching_trials;
-    Conditons_out(c).Trials = Trials(matching_trials);
+    Conditions_out(c).Trials = Trials(matching_trials);
 end
