@@ -25,12 +25,6 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % mapping defined either in the data file itself or in a condition settings
 % file specified in the function call (see below for detail).
 
-% Note that this function itself is ONLY responsible for taking the mean
-% and SEM of the data passed as input and plotting it. It dos NOT perform
-% any other analysis, e.g. compute dF/F from raw fluorescence values.
-% Thus, if the data passed as input are raw fluorescence values, then
-% the values plotted will be raw fluorescence values. 
-
 
 %% REQUIREMENTS:
 % 1) trialize_data.m
@@ -47,49 +41,77 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 
 
 %% INPUTS:
-% 1) activity - path to an HDF5 file containing the data to be plotted.
-% Data must be parsed as follows: the HDF5 must include one dataset for
-% each trial condition or stimulus condition to be analyzed. Each dataset
-% should be an N x T x P activity matrix, where N is the number of ROIs to
-% be analyzed, T is the number of samples in the peri-stimulus period to be
-% plotted, and P is the number of presentations of the corresponding trial
-% or stimulus condition. N and and T must be the same for all datasets, but
-% P may be different for each.
+% 1) params_file - path to a JSON-formatted parameters file. The encoded
+%    JSON object should include the following fields:
+%
+%       raw_path - path to a file containing an n x f raw activity matrix for the
+%       imaging session being analyzed, where n is the number of neurons
+%       identified and f is the number of frames recorded in the session. Can
+%       be either a CSV or an HDF5. If the latter, the activity matrix must be
+%       saved in the first dataset.
+%
+%       galvo_path - path to a LabView .dat file containing a trace of the
+%       analog voltage signal used to drive the slow scan-mirror galvanometer
+%       during the grab. Contains information about frame start times.
+%
+%       timer_path - path to a LabView .dat file containing a trace of the
+%       analog trial timer signal recorded during the grab. In the current
+%       protocol, trial onset is immediately preceded by a 50 ms, 5 V TTL
+%       pulse sent from the Arduino responsible for controlling stimulus
+%       hardware. Contains information about trial start times.
 
-% In order to properly lay out figure objects like shaded rectangles for
-% stimulus epochs, the HDF5 root must have the following attributes:
-    
-%   a) num_samples_pre_stim: the number of frames before stimulus onset
-%   included in the trace for each trial
+%       ardu_path - a path to a .txt file containing serial output from an Arduino
+%       running an ArduFSM protocol for a single behavior session. In accordance
+%       with the general ArduFSM framework, each line of output either
+%       acknowledges the receipt of instructions from the host PC, asserts
+%       upcoming trial parameters, reports recorded behavior parameters, or
+%       signals the start of a trial. More information about the ArduFSM
+%       framework can be found at https://github.com/cxrodgers/ArduFSM. 
 
-%   b) num_samples_post_stim: the number of frames after stimulus onset
-%   included in the trace for each trial
+%       conditions_path - path to a JSON file containing information about the
+%       trial conditions to be analyzed. This should contain one top-level
+%       list called "conditions", each element of which should itself be a
+%       JSON object. Each of these objects should minimimally include a the
+%       following fields:
+%
+%           name - char vector specifying a human-readable condition name
+%
+%           abbreviation - char vector specifying an abbreviated condition
+%           name (useful for plotting)
+%
+%           color - RGB triple specifying the color code for the
+%           corresponding condition
+%
+%           params - a struct with one sub-field for each parameter that
+%           defines the condition; each of these sub-fields should be named
+%           after the corresponding trial parameter reported in the arduino
+%           serial output file.
+%
+%       An example element of conditions might be as follows:
+%
+%           {"name":"stepper only",
+%           "abbreviation": "W",
+%           "color": [1.00, 0.00, 0.00],
+%           "params": {
+%               "STPRIDX": 1,
+%               "SPKRIDX": 0
+%               }
+%           }
 
-% In addition to the required attributes described above, the HDF5 may also
-% have the following optional attributes for specifying the appearance of
-% figures:
+%   grab_metadata_path - path to the a JSON file containing metadata file
+%   about the movie being analyzed. This file should include a field called
+%   'frame_rate' specifying the frame rate of the movie in frames per second.
 
+%   pre_sec - number of seconds before stimulus onset to include in
+%   peri-stimulus window.
 
-% 2) outputDirectory - directory where all created figures should be saved.
+%   post_frames - number of seconds after stimulus onset to include in
+%   peri-stimulus window.
 
-% 3) grabMetadata - path to a MATLAB-evaluable .txt file containing
-% information about the acquisition session. This must include the
-% data acquisition rate in samples per second. 
+%   show_inflection_points - boolean flag specifying whether or not to
+%   plot galvo trace, timer trace, and frame and trial start times. 
 
-% 4) conditionSettings - path to a MATLAB-evaluable .txt file defining a 
-% C x 1 cell array of structs, where C is the number of distinct trial
-% conditions presented during throughout the course of the trials to be
-% analyzed. Each struct must have at least the following three fields:
-
-%   a) Name - the name of the trial condition. This must exactly match the
-%   trial condition descriptions in the second column of trials, described
-%   above.
-
-%   b) Color - color code for the given condition, in any valid MATLAB
-%   format for encoding color. Will be used in plotting. 
-
-%   c) abbreviation - abbreviation for the given trial condition. Will be
-%   used in creating legends for each figure.
+%   outputDirectory - directory where all created figures should be saved.
 
 
 %% OUTPUTS:
