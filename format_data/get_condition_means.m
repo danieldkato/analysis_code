@@ -104,14 +104,14 @@ for c = 1:length(Conditions_in)
     if n_cells == 1
         data = vertcat(curr_cond_trials.dFF);
         mean_dFF_trace = mean(data, 1);
-        sem_trace = std(data, 1) / sqrt(size(data,1));
+        sem_trace = std(data, 0) / sqrt(size(data,1));
     elseif n_cells > 1
         data = NaN(n_cells, n_frames, n_trials);
         for t = 1:n_trials
             data(:,:,t) = curr_cond_trials(t).dFF(:,:);
         end 
         mean_dFF_trace = mean(data, 3);
-        sem_trace = std(data, 3) / sqrt(size(data,3));
+        sem_trace = std(data, 0, 3) / sqrt(size(data,3));
     end
     
     % Copy mean dFF trace and SEM trace to output struct:
