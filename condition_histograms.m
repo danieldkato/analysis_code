@@ -54,7 +54,9 @@ Conditions = get_condition_means(Conditions); % Get means for each condition
 
 % Get the max projection of each mean dF/F traces after stimulus onset:
 for c = 1:length(Conditions)
-    Conditions(c).max_project = max(Conditions(c).Mean, 2);
+    disp(['size(Conditions(' num2str(c) ').Mean)']);
+    disp(size(Conditions(c).Mean));
+    Conditions(c).max_project = max(Conditions(c).Mean, [], 2);
 end
 
 
@@ -71,10 +73,12 @@ for cc = 1:length(Conditions)
     end_idx = cc * num_ROIs;
     
     % Populate data vector:
-    y(start_idx:end_idx) = Conditions(c).max_project(:);
+    disp('size(max_project)');
+    disp(num2str(size(Conditions(cc).max_project)));
+    y(start_idx:end_idx) = Conditions(cc).max_project(:);
     
     % Populate groups vector:
-    groups(start_idx:end_idx) = repmat({Conditions(c).name}, num_ROIs, 1);
+    groups(start_idx:end_idx) = repmat({Conditions(cc).name}, num_ROIs, 1);
 end
 
 % Perform the ANOVA:
