@@ -90,7 +90,7 @@ for c = 1:length(Conditions_in)
     dFF_dim2 = arrayfun(@(x) size(x.dFF, 2), curr_cond_trials);    
     check_dim2 = circshift(dFF_dim2, 1);
     if isequal(dFF_dim2, check_dim2)
-        n_cells = size(curr_cond_trials(1).dFF, 2);
+        n_frames = size(curr_cond_trials(1).dFF, 2);
     else
         error(['Different numbers of frames observed in different trials of condition ' Conditions_in(c).Name '; cannot compute mean peri-stimulus dFF trace.']);
     end
