@@ -234,4 +234,4 @@ for t = 1:length(Trials)
     Trials(t).Condition = [];
 end
 
-
+T.Trials = Trials;
