@@ -108,7 +108,7 @@ for c = 1:length(Conditions_in)
     elseif n_cells > 1
         data = NaN(n_cells, n_frames, n_trials);
         for t = 1:n_trials
-            data(:,:,t) = conditions_trials(t).dFF(:,:);
+            data(:,:,t) = curr_cond_trials(t).dFF(:,:);
         end 
         mean_dFF_trace = mean(data, 3);
         sem_trace = std(data, 3) / sqrt(size(data,3));
