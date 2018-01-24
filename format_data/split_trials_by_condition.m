@@ -38,13 +38,17 @@ function Conditions_out = split_trials_by_condition(Trials, Conditions_in)
 
 % 2) Conditions_in - c x 1 array of structs, where c is the number of
 %    stimulus or trial conditions being analyzed. Each element should
-%    minimimally include a "name" field that states the name of the
-%    condition, as well as a "params" field. The "params" field should
-%    itself have one sub-field for each parameter that defines the
-%    condition; each of these sub-fields should be named after the
-%    corresponding trial parameter reported in the arduino serial output
-%    file. For example, an element of Conditions might be as follows:
-
+%    minimimally include the following fields:
+%
+%       name - char vectory specifying a human-readable condition name
+%
+%       params - a struct with one sub-field for each parameter that
+%       defines the condition; each of these sub-fields should be named
+%       after the corresponding trial parameter reported in the arduino
+%       serial output file.
+%
+%       For example, an element of Conditions might be as follows:
+%
 %       Conditions(1).name = 'stepper only';
 %       Conditions(1).abbreviation = 'W';
 %       Conditions(1).params.STPRIDX = 1;
