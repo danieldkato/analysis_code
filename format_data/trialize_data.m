@@ -49,12 +49,27 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 % 5) conditions_path - path to a JSON file containing information about the
 %    trial conditions to be analyzed. This should contain one top-level
 %    list called "conditions", each element of which should itself be a
-%    JSON object. Each of these objects should minimimally include a "name"
-%    field that states the name of the condition, as well as a "params"
-%    field. The "params" field should itself have one sub-field for each
-%    parameter that defines the condition; each of these sub-fields should
-%    be named after the corresponding trial parameter reported in the
-%    arduino serial output file. For an example, see
+%    JSON object. Each of these objects should minimimally include a the
+%    following fields:
+%
+%       name - char vectory specifying a human-readable condition name
+%
+%       params - a struct with one sub-field for each parameter that
+%       defines the condition; each of these sub-fields should be named
+%       after the corresponding trial parameter reported in the arduino
+%       serial output file.
+%
+%    Each element may include other fields that may be useful for plotting,
+%    etc., as well. An example element of conditions might be as follows:
+%
+%       {"name":"stepper only",
+%        "abbreviation": "W",
+%        "color": [1.00, 0.00, 0.00],
+%        "params": {
+%           "STPRIDX": 1,
+%           "SPKRIDX": 0
+%           }
+%       }
 
 % 6) grab_metadata_path - path to the a JSON file containing metadata file
 %    about the movie being analyzed. This file should include a field called
