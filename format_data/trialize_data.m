@@ -75,10 +75,10 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 %    about the movie being analyzed. This file should include a field called
 %    'frame_rate' specifying the frame rate of the movie in frames per second.
 
-% 7) pre_frames - number of seconds before stimulus onset to include in
+% 7) pre_sec - number of seconds before stimulus onset to include in
 %    peri-stimulus window.
 
-% 8) pre_frames - number of seconds after stimulus onset to include in
+% 8) post_sec - number of seconds after stimulus onset to include in
 %    peri-stimulus window.
 
 % 9) show_inflection_points - boolean flag specifying whether or not to
