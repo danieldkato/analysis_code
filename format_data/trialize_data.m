@@ -220,32 +220,3 @@ for t = 1:length(Trials)
 end
 
 
-%% Determine which trials belong to each condition:
-disp('Matching conditions to trials... ');
-for c = 1:length(Conditions)
-    
-    filter = ones(1, length(Trials));
-    
-    params = fieldnames(Conditions(c).params);  
-    for p = 1:length(params) 
-        param_name = params{p};
-        param_value = Conditions(c).params.(param_name);
-        filter_update = [Trials.(param_name)] == param_value;
-        filter = filter & filter_update;
-    end
-
-    matching_trials = find(filter);
-
-    % Warn the user if no trials of the current condition are found:
-    if isempty(matching_trials)
-        warning(['No trials of condition ' Conditions(c).name ' found.']);
-    end
-    
-    for m = 1:length(matching_trials)
-        trial_num = matching_trials(m);
-        Trials(trial_num).Conditions = Conditions(c).name;
-    end
-    
-end
-
-T.Trials = Trials;
