@@ -62,7 +62,7 @@ function F = get_start_frames(galvo_path, timer_path, grab_metadata_path, show_i
 galvo_fid = fopen(galvo_path, 'r', 'b');
 [header_size, header] = SkipHeader(galvo_fid);
 sample_rate = str2double(header{7}(18:end));
-disp(sample_rate);
+disp(['Galvo and timer sample rate = ' num2str(sample_rate)]);
 
 % Read grab metadata:
 grab_metadata = loadjson(grab_metadata_path);
@@ -101,7 +101,6 @@ timer_threshold = -4; % timerTrace units (Volts, I think); I just eyeballed this
 
 % Get a vector of every timer signal sample at which a trial begins: 
 trial_start_samples = LocalMinima(-trial_timer_signal, min_distance_timer, timer_threshold);    
-disp([num2str(length(trial_start_samples)) ' trials detected']);    
 
 
 %% Get the sample number of every frame start:
@@ -143,18 +142,6 @@ before_last_frame = trial_start_samples<max(frame_start_samples);
 is_in_movie = after_first_frame & before_last_frame; % t-element binary vector specifying whether each trial falls within the movie
 movie_trials = find(is_in_movie); % q-element vector of indices into trial_start_samples correspoding to trials that fall within the movie
 
-%{
-n_trials_too_early = length(find(~after_first_frame));
-n_trials_too_late = length(find(~before_last_frame));
-
-if n_trials_too_early > 0
-    disp(['Omitting ' num2str(n_trials_too_early) ' trials that occur before first frame.']);    
-end
-
-if n_trials_too_late > 0
-    disp(['Omitting ' num2str(n_trials_too_late) ' trials that occur after last frame.'])    
-end
-%}
 
 %% Match every trial to the frame within which it started:
 
