@@ -196,20 +196,19 @@ if length(Trials) ~= length(Frames)
     error(['Number of trials in ardulines file (' num2str(length(Trials)) ') does not match number of trials detected in timer signal (' num2str(length(Frames)) '). Please check data integrity and parameters used to detect trial starts in register_trials_2_frames.']);
 end
 
-% Omit trials delivered before the first frame or after the last frame of the movie (represented by NaNs in F):
-in_movie = ~isnan(Frames);
-Trials = Trials(in_movie);
-Frames = Frames(in_movie);
-
 % Add the frame start numbers to T:
 for t = 1:length(Trials)
     Trials(t).start_frame = Frames(t);
 end
 
+
+%% Filter out trials or peri-stimulus periods that extend beyond the beginning or end of the movie:
+
 % Omit trials whose pre-stimulus period extends before the first frame of the movie or whose post-stimulus period extends beyond the last frame of the movie:
 too_close_to_start = [Trials.start_frame] < (1 + pre_frames);
 too_close_to_end = [Trials.start_frame] > (n_frames - post_frames);
-Trials = Trials(~too_close_to_start & ~too_close_to_end);
+exclude = isnan(Trials.start_frame) || too_close_to_start || too_close_to_end;
+Trials = Trials(~exclude);
 
 % Throw some debug messages stating if any trials were ommitted:
 pre_vid_nans = find(~isnan(Frames), 1, 'first') - 1;

@@ -1,4 +1,4 @@
-function plot_mean_peristim_trace(data, frame_rate, pre_stim_frames, post_stim_frames, conditions, output_path, stim_duration, figtitle)
+function plot_mean_peristim_trace(Conditions, frame_rate, pre_stim_frames, post_stim_frames, output_path, stim_duration, figtitle)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function plot_mean_peristim_trace(data, frame_rate, pre_stim_frames, post_stim_f
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-22 
+% Last updated DDK 2018-01-25 
 
 
 %% I. OVERVIEW: 
@@ -104,16 +104,15 @@ end
 
 
 %% Plot data for each condition:
-n_conditions = length(data);
+n_conditions = length(Conditions);
 trials_per_condition = nan(1, n_conditions);
 
 for c = 1:n_conditions
     
-        curr_condition = data(c);
+        curr_condition = Conditions(c);
     
         % Get the color code for the current condition:
-        cond_idx = find(arrayfun(@(x) strcmp(curr_condition.name, x.name), conditions));
-        color = conditions(cond_idx).color;
+        color = curr_condition.color;
         
         % Retrieve mean and SEM:
         Mean = curr_condition.Mean;
@@ -165,7 +164,7 @@ xl = xlim;
 xlim([1 peri_stim_frames]);
 
 % Add legend:     
-leg_text = arrayfun(@(y, z) strcat([y.abbreviation, ', n=', num2str(z)]), conditions, trials_per_condition, 'UniformOutput', false);
+leg_text = arrayfun(@(y, z) strcat([y.abbreviation, ', n=', num2str(z)]), Conditions, trials_per_condition, 'UniformOutput', false);
 legend(handles, leg_text);
 legend('boxoff');
 
