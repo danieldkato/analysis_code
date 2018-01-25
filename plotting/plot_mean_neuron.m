@@ -6,7 +6,7 @@ function plot_mean_neuron(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-23
+% Last updated DDK 2018-01-25
 
 
 %% OVERVIEW:
@@ -107,7 +107,7 @@ function plot_mean_neuron(params_file)
 %   show_inflection_points - boolean flag specifying whether or not to
 %   plot galvo trace, timer trace, and frame and trial start times. 
 
-%   outputDirectory - directory where all created figures should be saved.
+%   outputDirectory - directory where output figure should be saved.
 
 
 %% OUTPUTS:
@@ -138,7 +138,7 @@ pre_frames = ceil(frame_rate * params.pre_sec);
 post_frames = ceil(frame_rate * params.post_sec);
 
 
-%% For each condition, get the peak responses of all neurons:
+%% Trialize data and split by condition:
 
 % Split all the data up by trial:
 T = trialize_data(params.rawF_path, ... 
@@ -176,10 +176,13 @@ else
 end
 
 Conditions = split_trials_by_condition(T.Trials, Conditions); % Split trials by condition
-Conditions = get_condition_means(Conditions); % Get means for each condition
 
 
 %% Compute the "mean neuron" for each condition:
+
+Conditions = get_condition_means(Conditions); % Get mean dFF trace for each neuron for each condition:
+
+% Average across neurons for each condition:
 for c = 1:length(Conditions)
     Conditions(c).SEM = std(Conditions(c).Mean, 0, 1) / sqrt(size(Conditions(c).Mean, 1));
     Conditions(c).Mean = mean(Conditions(c).Mean, 1);
@@ -187,9 +190,11 @@ end
 
 
 %% Plot:
-fig_full_path = [output_directory filesep mouse '_' date 'mean_neuron_dFF_response.tif'];
-fig_full_title = {'Mean dF/F response by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-plot_mean_peristim_trace(Conditions, frame_rate, pre_frames, post_frames, Conditions, fig_full_path, stim_dur, fig_full_title);
+fig_full_path = [output_directory filesep mouse '_' date '_mean_neuron_dFF_response.fig'];
+fig_full_title = {'Mean neuron dF/F response by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['\fontsize{10}Num ROIS = ' num2str(num_ROIs)]};
+mean_neuron_fig= plot_mean_peristim_trace(Conditions, pre_frames, post_frames, stim_dur, frame_rate, fig_full_title);
+savefig(mean_neuron_fig, fig_full_path);
+close(mean_neuron_fig);
 
 
 %% Write metadata:
@@ -203,4 +208,4 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = fig_full_path;
 
-write_metadata(Metadata, 'plot_mean_response_metadata.json');
+write_metadata(Metadata, 'plot_mean_neuron_metadata.json');
