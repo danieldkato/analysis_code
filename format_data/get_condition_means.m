@@ -99,7 +99,7 @@ for c = 1:length(Conditions)
     if n_cells == 1
         data = vertcat(curr_cond_trials.dFF);
         mean_dFF_trace = mean(data, 1);
-        sem_trace = std(data, 0, 2) / sqrt(size(data,1));
+        sem_trace = std(data, 0, 1) / sqrt(size(data,1));
     elseif n_cells > 1
         data = NaN(n_cells, n_frames, n_trials);
         for t = 1:n_trials
