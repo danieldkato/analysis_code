@@ -10,7 +10,12 @@ function compare_condition_distributions(params_file)
 
 
 %% OVERVIEW:
-% This function 
+% This function compares distributions of peak responses to each
+% stimulus/trial condition within a single imaging session by regressing
+% peak dF/F responses against condition (see OUTPUT for more detail). In
+% addition, this functions plots histograms of peak responses to each
+% condition side-by-side. It saves both the results of the regression and
+% the figure to secondary storage.
 
 
 %% REQUIREMENTS:
