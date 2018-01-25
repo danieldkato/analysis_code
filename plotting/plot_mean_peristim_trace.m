@@ -1,4 +1,4 @@
-function plot_mean_peristim_trace(Conditions, frame_rate, pre_stim_frames, post_stim_frames, output_path, stim_duration, figtitle)
+function plot_mean_peristim_trace(Conditions, output_path, pre_stim_frames, post_stim_frames, stim_duration, frame_rate, figtitle)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -10,8 +10,8 @@ function plot_mean_peristim_trace(Conditions, frame_rate, pre_stim_frames, post_
 
 
 %% I. OVERVIEW: 
-% This function plots the mean dFF trace with SEM bars over some peri-stimulus
-% period for a given neuron.
+% This function plots and saves to storage the mean dFF trace with SEM bars
+% over some peri-stimulus period for a given neuron.
 
 
 %% II. REQUIREMENTS:
@@ -36,10 +36,10 @@ function plot_mean_peristim_trace(Conditions, frame_rate, pre_stim_frames, post_
 %       Abbreviation - char array specifying concise, human-readable
 %       condition name (useful for plotting)
 %
-%      Color - 1 x 3 RBG vector specifying the color code for the
+%       Color - 1 x 3 RBG vector specifying the color code for the
 %       corresponding condition.
 %
-% 2) frame_rate - rate at which data was acquired, in frames per second
+% 2) output_path - path where figures should be saved to secondary storage
 %
 % 3) pre_stim_frames - number of frames within peri-stimulus period before
 %    stimulus onset
@@ -47,10 +47,7 @@ function plot_mean_peristim_trace(Conditions, frame_rate, pre_stim_frames, post_
 % 4) post_stim_frames - number of frames within peri-stimulus period
 %    including and after stimulus onset
 %
-% 5) conditions - c x 1 array of structs, where c is the number of
-%    stimulus or trial conditions being analyzed. Each element should
-%    minimimally include the following fields: 
-%       Name - char array specifying human-readable condition name 
+% 5) frame_rate - rate at which data was acquired, in frames per second
 %
 % 6) stim_duration (optional)- stimulus duration in seconds
 %
@@ -59,7 +56,9 @@ function plot_mean_peristim_trace(Conditions, frame_rate, pre_stim_frames, post_
 
 
 %% IV. OUTPUTS:
-
+% This function has no formal return but plots and saves to secondary
+% storage the mean dFF trace with SEM bars over some peri-stimulus period
+% for a given neuron.
 
 
 %% Create figure:
