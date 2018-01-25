@@ -26,6 +26,12 @@ function plot_individual_peristim_traces(Conditions, output_path, pre_stim_frame
 %
 %       Name - char array specifying human-readable condition name 
 %
+%       Abbreviation - char array specifying concise, human-readable
+%       condition name (useful for plotting)
+%
+%       Color - 1 x 3 RBG vector specifying the color code for the
+%       corresponding condition.
+%
 %       Trials - 1 x u array of structs, where u is the
 %       number of trials of the corresponding conditions. Each element of
 %       Trials must minimally include the following fields:
@@ -35,7 +41,7 @@ function plot_individual_peristim_traces(Conditions, output_path, pre_stim_frame
 %           the peri-stimulus window in frames.
 %
 %
-% 2) frame_rate - rate at which data was acquired, in frames per second
+% 2) output_path - path where figures should be saved to secondary storage
 %
 % 3) pre_stim_frames - number of frames within peri-stimulus period before
 %    stimulus onset
@@ -43,24 +49,7 @@ function plot_individual_peristim_traces(Conditions, output_path, pre_stim_frame
 % 4) post_stim_frames - number of frames within peri-stimulus period
 %    including and after stimulus onset
 %
-% 5) conditions - c x 1 array of structs, where c is the number of
-%    stimulus or trial conditions being analyzed. Each element should
-%    minimimally include the following fields: 
-%       Name - char array specifying human-readable condition name 
-%
-%       Abbreviation - char array specifying concise, human-readable
-%       condition name (useful for plotting)
-%
-%       Color - 1 x 3 RBG vector specifying the color code for the
-%       corresponding condition.
-%
-%     For example, an element of Conditions might be as follows:
-%
-%       Conditions{1}.name = 'stepper only';
-%       Conditions{1}.abbreviation = 'W';
-%       Conditions{1}.color = [1.00 0.00 0.00];
-%       Conditions(1).params.STPRIDX = 1;
-%       Conditions{1}.params.SPKRDX = 0;
+% 5) frame_rate - rate at which data was acquired, in frames per second
 %
 % 6) stim_duration (optional)- stimulus duration in seconds
 %
