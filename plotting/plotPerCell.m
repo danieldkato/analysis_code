@@ -6,7 +6,7 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-22
+% Last updated DDK 2018-01-23
 
 
 %% OVERVIEW:
@@ -150,22 +150,18 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % default to the current working directory.
 
 
-%% Get params from params file:
+%% Load data and metadata
+
+% Load params from params file:
 params = loadjson(params_file);
 output_directory = params.output_directory;
 
-
-%% Get some basic information about imaging session that will be included in figures:
-session_metadata = loadjson(params.grab_metadata);
-mouse = session_metadata.mouse;
-date = session_metadata.date;
-
-
-%% Load grab metadata:
+% Load grab metadata:
 grab_metadata = loadjson(params.grab_metadata);
+mouse = grab_metadata.mouse;
+date = grab_metadata.date;
 
-
-%% Load condition information like color codes, etc:
+% Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
 Conditions = C_struct.conditions;
 Conditions = cell2mat(Conditions);
@@ -206,11 +202,6 @@ frame_rate = grab_metadata.frame_rate;
 pre_stim_frames = ceil(frame_rate * params.pre_sec);
 post_stim_frames = ceil(frame_rate * params.post_sec);
 peri_stim_frames = pre_stim_frames + post_stim_frames;
-
-%{
-disp(['pre_stim_frames = ' num2str(pre_stim_frames)]);
-disp(['post_stim_frames = ' num2str(post_stim_frames)]);
-%}
 
 % Confirm that the stimulus duration is the same for every trial, and if
 % not, throw a warning and skip drawing stimulus window:
