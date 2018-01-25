@@ -1,4 +1,4 @@
-function Conditions_out = split_trials_by_condition(Trials, Conditions_in)
+function Conditions = split_trials_by_condition(Trials, Conditions)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -66,24 +66,9 @@ function Conditions_out = split_trials_by_condition(Trials, Conditions_in)
 
 
 %%
-Conditions_matched = match_trials_to_conditions(Trials, Conditions_in);
+Conditions = match_trials_to_conditions(Trials, Conditions);
 
-C = struct();
-Conditions_out = repmat(C, 1, length(Conditions_in));
-
-for c = 1:length(Conditions_matched)
-    
-    % Find all Condition metadata fields (name, abbreviation, color code):
-    condition_fields = fieldnames(Conditions_in);
-    not_Trials = cellfun(@(c) ~strcmp(c, 'Trials'), condition_fields);
-    condition_fields = condition_fields(not_Trials);
-    
-    % Copy all Condition metadata fields to output struct:
-    for f = 1:length(condition_fields)
-        Conditions_out(c).(condition_fields{f}) = Conditions_in(c).(condition_fields{f});
-    end
-    
-    % Copy over the trials data from the matching condition:
-    matching_trials = Conditions_matched(c).matching_trials;
-    Conditions_out(c).Trials = Trials(matching_trials);
+for c = 1:length(Conditions)
+    matching_trials = Conditions(c).matching_trials;
+    Conditions(c).Trials = Trials(matching_trials);
 end
