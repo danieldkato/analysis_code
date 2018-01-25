@@ -6,7 +6,7 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-21
+% Last updated DDK 2018-01-25
 
 
 %% I. OVERVIEW: 
@@ -230,6 +230,7 @@ for t = 1:length(Trials)
     baseline = mean(RawF(:, start_frame-pre_frames:start_frame-1),2);
     dFF = (raw-baseline)./baseline;
     
+    Trials(t).trial_num = t;
     Trials(t).dFF = dFF;
     Trials(t).Condition = [];
 end
