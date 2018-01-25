@@ -1,4 +1,4 @@
-function single_trials_figure = plot_individual_peristim_traces(Conditions, output_path, pre_stim_frames, post_stim_frames, stim_duration, frame_rate, figtitle)
+function single_trials_figure = plot_individual_peristim_traces(Conditions, pre_stim_frames, post_stim_frames, stim_duration, frame_rate, figtitle)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -29,7 +29,7 @@ function single_trials_figure = plot_individual_peristim_traces(Conditions, outp
 %       Abbreviation - char array specifying concise, human-readable
 %       condition name (useful for plotting)
 %
-%       Color - 1 x 3 RBG vector specifying the color code for the
+%       Color - 1 x 3 RGB vector specifying the color code for the
 %       corresponding condition.
 %
 %       Trials - 1 x u array of structs, where u is the
@@ -40,20 +40,17 @@ function single_trials_figure = plot_individual_peristim_traces(Conditions, outp
 %           the corresponding neuron and trial, where p is the duration of
 %           the peri-stimulus window in frames.
 %
-%
-% 2) output_path - path where figures should be saved to secondary storage
-%
-% 3) pre_stim_frames - number of frames within peri-stimulus period before
+% 2) pre_stim_frames - number of frames within peri-stimulus period before
 %    stimulus onset
 %
-% 4) post_stim_frames - number of frames within peri-stimulus period
+% 3) post_stim_frames - number of frames within peri-stimulus period
 %    including and after stimulus onset
 %
-% 5) frame_rate - rate at which data was acquired, in frames per second
+% 4) frame_rate - rate at which data was acquired, in frames per second
 %
-% 6) stim_duration (optional)- stimulus duration in seconds
+% 5) stim_duration (optional)- stimulus duration in seconds
 %
-% 7) title (optional) - char vector or cell array of char vectors
+% 6) title (optional) - char vector or cell array of char vectors
 %    specifying figure title
 
 
