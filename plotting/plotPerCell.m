@@ -6,7 +6,7 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-23
+% Last updated DDK 2018-01-25
 
 
 %% OVERVIEW:
@@ -251,7 +251,7 @@ for n = 1:num_ROIs
     mean_fig_name =  [mouse '_' date '_ROI_', num_str, '_mean_traces.fig'];
     mean_fig_full_path =  [output_directory filesep mean_fig_name];
     mean_fig_title = {'Mean dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
-    plot_mean_peristim_trace(curr_n_conditions_means, frame_rate, pre_stim_frames, post_stim_frames, Conditions, mean_fig_full_path, stim_dur, mean_fig_title);
+    plot_mean_peristim_trace(curr_n_conditions_means, mean_fig_full_path, pre_stim_frames, post_stim_frames, stim_dur, frame_rate, mean_fig_title);
     meanPaths{n} = mean_fig_full_path;
     n_figures = n_figures + 1;
     Metadata.outputs(n_figures).path = mean_fig_full_path;
@@ -260,7 +260,7 @@ for n = 1:num_ROIs
     individual_fig_name =  [mouse '_' date '_ROI_', num_str, '_individual_traces.fig'];
     individual_fig_full_path =  [output_directory filesep individual_fig_name];
     individual_fig_title = {'Individual dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
-    plot_individual_peristim_traces(curr_n_conditions, frame_rate, pre_stim_frames, post_stim_frames, Conditions, individual_fig_full_path, stim_dur, individual_fig_title);
+    plot_individual_peristim_traces(curr_n_conditions, individual_fig_full_path, pre_stim_frames, post_stim_frames, stim_dur, frame_rate, individual_fig_title);
     rawPaths{n} = individual_fig_full_path;
     n_figures = n_figures + 1;
     Metadata.outputs(n_figures).path = individual_fig_full_path;
