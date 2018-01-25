@@ -207,12 +207,6 @@ end
 % Omit trials whose pre-stimulus period extends before the first frame of the movie or whose post-stimulus period extends beyond the last frame of the movie:
 too_close_to_start = [Trials.start_frame] < (1 + pre_frames);
 too_close_to_end = [Trials.start_frame] > (n_frames - post_frames);
-disp('isnan([Trials.start_frame])');
-disp(class(isnan([Trials.start_frame])));
-disp(isnan([Trials.start_frame]));
-disp('too_close_to_start');
-disp(class(too_close_to_start));
-disp(too_close_to_start);
 exclude = isnan([Trials.start_frame]) | (too_close_to_start | too_close_to_end);
 Trials = Trials(~exclude);
 
