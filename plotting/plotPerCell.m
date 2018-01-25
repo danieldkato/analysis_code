@@ -213,7 +213,7 @@ end
 if equal_stimdurs
     stim_dur = all_trial_durations(1)/1000; % convert from milliseconds to seconds
 else    
-    stim_dir = [];
+    stim_dur = [];
     warning('Not all stimuli have the same duration; stimulus period windows will be ommitted from plots.');
 end
 
