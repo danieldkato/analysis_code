@@ -1,4 +1,4 @@
-function plot_individual_peristim_traces(Conditions, output_path, pre_stim_frames, post_stim_frames, stim_duration, frame_rate, figtitle)
+function single_trials_figure = plot_individual_peristim_traces(Conditions, output_path, pre_stim_frames, post_stim_frames, stim_duration, frame_rate, figtitle)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -58,11 +58,11 @@ function plot_individual_peristim_traces(Conditions, output_path, pre_stim_frame
 
 
 %% IV. OUTPUTS:
-
+% 1) single_trials_figure - handle to created figure
 
 
 %% Create figure:
-mean_figure = figure();
+single_trials_figure = figure();
 hold on;
 
 
@@ -149,9 +149,3 @@ xlim([1 peri_stim_frames]);
 leg_text = arrayfun(@(y, z) strcat([y.abbreviation, ', n=', num2str(z)]), Conditions, trials_per_condition, 'UniformOutput', false);
 legend(handles, leg_text);
 legend('boxoff');
-
-% Save figure:
-saveas(gcf, output_path);
-
-% Close figure;
-close(mean_figure);
