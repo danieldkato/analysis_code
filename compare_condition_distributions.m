@@ -240,7 +240,7 @@ save(stats_path, 'compare_conditions_within_session');
 
 %% Plot the distributions of each condition:
 title = {'Comparison of peak responses by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['Num ROIs = ' num2str(num_ROIs)]};
-f = plot_condition_histograms(Conditions, title);
+f = plot_condition_histograms(Conditions);
 fig_path = [output_directory filesep 'compare_conditions_within_session_hist.fig'];
 savefig(f, fig_path);
 

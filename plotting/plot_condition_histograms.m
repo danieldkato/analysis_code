@@ -1,4 +1,4 @@
-function hist_figure = plot_condition_histograms(Conditions, fig_title)
+function hist_figure = plot_condition_histograms(Conditions)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -39,7 +39,6 @@ function hist_figure = plot_condition_histograms(Conditions, fig_title)
 
 %% Create figure:
 hist_figure = figure();
-title(fig_title);
 num_conditions = length(Conditions);
 
 
