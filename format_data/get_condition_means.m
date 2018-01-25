@@ -1,4 +1,4 @@
-function Conditions_out = get_condition_means(Conditions_in)
+function Conditions = get_condition_means(Conditions)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -65,11 +65,11 @@ function Conditions_out = get_condition_means(Conditions_in)
 
 % Get the names of all fields for each element of the input conditions
 % struct:
-condition_fields = fieldnames(Conditions_in);
+condition_fields = fieldnames(Conditions);
 
-for c = 1:length(Conditions_in)
+for c = 1:length(Conditions)
     
-    curr_cond_trials = Conditions_in(c).Trials;
+    curr_cond_trials = Conditions(c).Trials;
     n_trials = length(curr_cond_trials);
     
     % Frist do some validation:
@@ -82,7 +82,7 @@ for c = 1:length(Conditions_in)
     if isequal(dFF_dim1, check_dim1)
         n_cells = size(curr_cond_trials(1).dFF, 1);
     else
-        error(['Different numbers of neurons observed in different trials of condition ' Conditions_in(c).Name '; without explicit identification of neurons between trials, cannot average across trials.']);
+        error(['Different numbers of neurons observed in different trials of condition ' Conditions(c).Name '; without explicit identification of neurons between trials, cannot average across trials.']);
     end
     
     % Verify that all observations for the current condition have the same
@@ -92,19 +92,14 @@ for c = 1:length(Conditions_in)
     if isequal(dFF_dim2, check_dim2)
         n_frames = size(curr_cond_trials(1).dFF, 2);
     else
-        error(['Different numbers of frames observed in different trials of condition ' Conditions_in(c).Name '; cannot compute mean peri-stimulus dFF trace.']);
-    end
-    
-    % Copy over all fields form Conditions_in to Conditions_out
-    for f = 1:length(condition_fields)
-        Conditions_out(c).(condition_fields{f}) = Conditions_in(c).(condition_fields{f});
+        error(['Different numbers of frames observed in different trials of condition ' Conditions(c).Name '; cannot compute mean peri-stimulus dFF trace.']);
     end
 
     % Compute the mean dFF trace and the SEM trace for the current condition for the current neuron:
     if n_cells == 1
         data = vertcat(curr_cond_trials.dFF);
         mean_dFF_trace = mean(data, 1);
-        sem_trace = std(data, 0) / sqrt(size(data,1));
+        sem_trace = std(data, 0, 2) / sqrt(size(data,1));
     elseif n_cells > 1
         data = NaN(n_cells, n_frames, n_trials);
         for t = 1:n_trials
@@ -115,6 +110,6 @@ for c = 1:length(Conditions_in)
     end
     
     % Copy mean dFF trace and SEM trace to output struct:
-    Conditions_out(c).Mean = mean_dFF_trace;
-    Conditions_out(c).SEM = sem_trace;
+    Conditions(c).Mean = mean_dFF_trace;
+    Conditions(c).SEM = sem_trace;
 end
