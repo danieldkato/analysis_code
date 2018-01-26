@@ -6,7 +6,7 @@ function compare_condition_distributions(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-25
+% Last updated DDK 2018-01-26
 
 
 %% OVERVIEW:
@@ -148,18 +148,15 @@ grab_metadata = loadjson(params.grab_metadata);
 mouse = grab_metadata.mouse;
 date = grab_metadata.date;
 
-% Load condition information like color codes, etc:
+% Load condition information like name, hardware parameters, color codes, etc:
 C_struct = loadjson(params.conditions_path);
-Conditions = C_struct.conditions;
-Conditions = cell2mat(Conditions); % format as an array of structs, rather than cell array
+Conditions = cell2mat(C_struct.conditions);
 
 % Compute some quantities that will be needed later on:
 frame_rate = grab_metadata.frame_rate;
-pre_frames = ceil(frame_rate * params.pre_sec);
-post_frames = ceil(frame_rate * params.post_sec);
 
 
-%% Trialize data and split by condition:
+%% Do initial processing:
 
 % Split data by trial:
 T = trialize_data(params.rawF_path, ... 
@@ -172,15 +169,11 @@ T = trialize_data(params.rawF_path, ...
     params.post_sec, ...
     params.show_inflection_points);
 
-% Split trials by condition:
-Conditions = split_trials_by_condition(T.Trials, Conditions); 
+Conditions = split_trials_by_condition(T.Trials, Conditions); % Split trials by condition
+Conditions = get_condition_means(Conditions); % Get the mean peristimulus dF/F trace of every neuron for every condition
 
 
-%% Get the mean peristimulus dF/F trace of every neuron for every condition:
-Conditions = get_condition_means(Conditions); 
-
-
-%% Format the data for fitlm() to test if the distributions corresponding to each condition are significantly different:
+%% Run linear regression to test if the distributions corresponding to each condition are significantly different:
 
 % Get the number of ROIs in the dataset:
 n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), T.Trials);
@@ -191,7 +184,7 @@ else
     error('Not all trials include observations from the same number of ROIs. Please check integrity of input data');
 end
 
-% Put data and conditions into matrices:
+% Write response data and condition info into matrices:
 total_observations = length(Conditions) * num_ROIs;
 response = nan(total_observations,1); % initialize response vector
 design_matrix = zeros(total_observations, length(Conditions)); % initialize design matrix
@@ -202,14 +195,12 @@ for c = 1:length(Conditions)
     end_idx = c * num_ROIs;
     
     % Populate response vector:
-    d = max(Conditions(c).Mean, [], 2);
-    response(start_idx:end_idx) = d;
-    Conditions(c).distribution = d; % this will be used later for plotting 
+    peaks = max(Conditions(c).Mean, [], 2);
+    response(start_idx:end_idx) = peaks;
+    Conditions(c).distribution = peaks; % this will be used later for plotting 
     
     % Populate design matrix:
     design_matrix(start_idx:end_idx, c) = 1;
-    
-    %groups(start_idx:end_idx) = repmat({Conditions(cc).name}, num_ROIs, 1);
 end
 
 % Convert data matrices to table; this will make the output easier to interpret:
@@ -218,19 +209,16 @@ cond_names = cellfun(@(x) strrep(x, ' ', '_'), cond_names, 'UniformOutput', fals
 Tbl = array2table(design_matrix, 'VariableNames', cond_names);
 Tbl.response = response; % fitlm by default assumes that last variable is response variable
 
-
-%% Run regression and capture output:
-
 % Define modelspec input argument to fitlm; this must include -1 to
-% specify that the model should not include an offset term (otherwise fitlm
-% will cause a rank deficiency error):
+% specify that the model should not include an intercept term (otherwise fitlm
+% will raise a rank deficiency error):
 model_spec = ['response ~ -1 + ' strjoin(cond_names, ' + ')];
 
 % Perform the regression:
 lm = fitlm(Tbl, model_spec);
 [p, F] = coefTest(lm);
 
-% Put the stats in a struct that can be saved to secondary storage:
+% Put the model and stats in a struct that can be saved to secondary storage:
 compare_conditions_within_session.linear_model = lm;
 compare_conditions_within_session.p = p;
 compare_conditions_within_session.F = F;
@@ -239,10 +227,41 @@ save(stats_path, 'compare_conditions_within_session');
 
 
 %% Plot the distributions of each condition:
-title = {'Comparison of peak responses by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['Num ROIs = ' num2str(num_ROIs)]};
 f = plot_condition_histograms(Conditions);
 fig_path = [output_directory filesep 'compare_conditions_within_session_hist.fig'];
 savefig(f, fig_path);
+
+
+%% Create scatterplots for selected pairs of conditions:
+
+% Create scatter plot figures and capture handles:
+h1_title = {'Peak dF/F response to W+T1 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
+h2_title = {'Peak dF/F response to W+T2 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
+h3_title = {'Peak dF/F response to W+T1 vs W+T2'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
+h1= scatter_conditions('stepper and test tone', 'stepper only', Conditions, h1_title); % Create scatter plot of W+T1 vs W
+h2 = scatter_conditions('stepper and control tone', 'stepper only', Conditions, h2_title); % Create scatter plot of W+T2 vs W
+h3 = scatter_conditions('stepper and test tone', 'stepper and control tone', Conditions, h3_title); % Create scatter plot of W+T1 vs W+T2
+H(1).fig_handle = h1;
+H(2).fig_handle = h2;
+H(3).fig_handle = h3;
+
+% Standardize the axes, etc:
+for a = 1:3
+    figure(H(a).fig_handle);
+    H(a).lims = [xlim ylim];
+end
+lowest = min([H.lims]);
+highest = max([H.lims]);
+for b = 1:3
+    figure(H(b).fig_handle);
+    xlim([lowest highest]);
+    ylim([lowest highest]);
+    hline = refline(1, 0);
+    hline.Color = [0.40 0.40 0.40];
+end
+
+% Save figures:
+h1_path = [output_directory filesep 'WT1_v_W.fig']; 
 
 
 %% Save metadata:
