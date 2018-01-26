@@ -227,7 +227,7 @@ save(stats_path, 'compare_conditions_within_session');
 
 
 %% Plot the distributions of each condition:
-fig_title = ['Mouse ' mouse ', session ' date ' peak dF/F responses by condition'];
+fig_title = ['Mouse ' mouse ', session ' date ', peak dF/F responses by condition'];
 f = plot_condition_histograms(Conditions, fig_title);
 fig_path = [output_directory filesep 'compare_conditions_within_session_hist.fig'];
 savefig(f, fig_path);
@@ -236,12 +236,14 @@ savefig(f, fig_path);
 %% Create scatterplots for selected pairs of conditions:
 
 % Create scatter plot figures and capture handles:
-h1_title = {'Peak dF/F response to W+T1 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
+%{
+h1_title = {'Peak dF/F response to \color[rgb]{1 0 0}W+T1 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
 h2_title = {'Peak dF/F response to W+T2 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
 h3_title = {'Peak dF/F response to W+T1 vs W+T2'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-h1= scatter_conditions('stepper and test tone', 'stepper only', Conditions, h1_title); % Create scatter plot of W+T1 vs W
-h2 = scatter_conditions('stepper and control tone', 'stepper only', Conditions, h2_title); % Create scatter plot of W+T2 vs W
-h3 = scatter_conditions('stepper and test tone', 'stepper and control tone', Conditions, h3_title); % Create scatter plot of W+T1 vs W+T2
+%}
+h1= scatter_conditions('stepper and test tone', 'stepper only', Conditions, mouse, date); % Create scatter plot of W+T1 vs W
+h2 = scatter_conditions('stepper and control tone', 'stepper only', Conditions, mouse, date); % Create scatter plot of W+T2 vs W
+h3 = scatter_conditions('stepper and test tone', 'stepper and control tone', Conditions, mouse, date); % Create scatter plot of W+T1 vs W+T2
 H(1).fig_handle = h1;
 H(2).fig_handle = h2;
 H(3).fig_handle = h3;
