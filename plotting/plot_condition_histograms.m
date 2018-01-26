@@ -45,13 +45,13 @@ num_conditions = length(Conditions);
 %% Plot each histogram:
 for c = 1:num_conditions
     subplot(num_conditions, 1, c);
-    h(c).handle = histogram(Conditions(c).distribution, 'FaceColor', Conditions(c).color);
+    h(c).handle = histogram(Conditions(c).distribution, 'FaceColor', Conditions(c).color, 'EdgeColor', 'none');
     h(c).axes = gca;
     h(c).xlim = xlim;
     h(c).ylim = ylim;
     h(c).nbins = h(c).handle.NumBins;
     h(c).bin_edges = h(c).handle.BinEdges;
-    title(Conditions(c).abbreviation, 'FontWeight', 'normal', 'FontSize', 10);
+    title(Conditions(c).abbreviation, 'FontWeight', 'normal', 'FontSize', 10, 'Color', Conditions(c).color);
     ylabel('Count', 'FontSize', 10);
     if c == num_conditions
         xlabel('dF/F (a.u.)', 'FontSize', 10);
