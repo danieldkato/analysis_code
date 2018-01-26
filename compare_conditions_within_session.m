@@ -11,11 +11,18 @@ function compare_conditions_within_session(params_file)
 
 %% OVERVIEW:
 % This function compares distributions of peak responses to each
-% stimulus/trial condition within a single imaging session by regressing
-% peak dF/F responses against condition (see OUTPUT for more detail). In
-% addition, this functions plots histograms of peak responses to each
-% condition side-by-side. It saves both the results of the regression and
-% the figure to secondary storage.
+% stimulus/trial condition within a single imaging session. This includes:
+%
+% 1) regressing peak dF/F responses against condition (equivalent to an
+%    ANOVA; see OUTPUT for more detail) to test whether distributions of
+%    peak responses to different conditions are significantly different.
+%    This function saves the resulting LinearModel object and associated
+%    F-statistic and p-value.
+%
+% 2) plotting histograms of peak responses to each condition side-by-side. 
+%
+% 3) plotting scatter plots of peak responses to selected pairs of
+%    conditions
 
 
 %% REQUIREMENTS:
