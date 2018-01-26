@@ -1,4 +1,4 @@
-function compare_condition_distributions(params_file)
+function compare_conditions_within_session(params_file)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
