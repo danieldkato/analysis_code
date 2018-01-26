@@ -1,4 +1,4 @@
-function stim_coeffs_within_session(params_file)
+function regress_neurons_v_trial_params(params_file)
 %% Load parameters and metadata:
 
 % Load params from params file:
