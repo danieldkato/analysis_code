@@ -227,7 +227,8 @@ save(stats_path, 'compare_conditions_within_session');
 
 
 %% Plot the distributions of each condition:
-f = plot_condition_histograms(Conditions);
+fig_title = ['Mouse ' mouse ', session ' date ' peak dF/F responses by condition'];
+f = plot_condition_histograms(Conditions, fig_title);
 fig_path = [output_directory filesep 'compare_conditions_within_session_hist.fig'];
 savefig(f, fig_path);
 
