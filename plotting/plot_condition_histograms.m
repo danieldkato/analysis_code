@@ -1,4 +1,4 @@
-function hist_figure = plot_condition_histograms(Conditions)
+function hist_figure = plot_condition_histograms(Conditions, fig_title)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -51,10 +51,10 @@ for c = 1:num_conditions
     h(c).ylim = ylim;
     h(c).nbins = h(c).handle.NumBins;
     h(c).bin_edges = h(c).handle.BinEdges;
-    title(Conditions(c).name);
-    ylabel('Count');
+    title(Conditions(c).abbreviation, 'FontWeight', 'normal', 'FontSize', 10);
+    ylabel('Count', 'FontSize', 10);
     if c == num_conditions
-        xlabel('dF/F (a.u.)');
+        xlabel('dF/F (a.u.)', 'FontSize', 10);
     end
 end
 
@@ -76,3 +76,11 @@ for c = 1:length(h)
     h(c).handle.BinEdges = bin_edges;
 end
 
+% Plot overall title if specified as input argument:
+if nargin > 1
+    text_box_width = 0.2; % normalized units
+    text_box_height = 0.1;
+    pos = get(gcf, 'Position');
+    set(gcf, 'Position', [pos(1) pos(2) pos(3) pos(4)*1.2]);
+    a = annotation('textbox', [(1-text_box_width)/2, 1-text_box_height , text_box_width, text_box_height], 'String', fig_title, 'HorizontalAlignment', 'center', 'FontSize', 11, 'LineStyle', 'none', 'FitBoxToText', 'on');
+end
