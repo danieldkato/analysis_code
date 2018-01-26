@@ -5,20 +5,9 @@ function regress_neurons_v_trial_params(params_file)
 params = loadjson(params_file);
 output_directory = params.output_directory;
 
-% Load some useful imaging session meadata:
-grab_metadata = loadjson(params.grab_metadata);
-mouse = grab_metadata.mouse;
-date = grab_metadata.date;
-
 % Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
-Conditions = C_struct.conditions;
-Conditions = cell2mat(Conditions); % format as an array of structs, rather than cell array
-
-% Compute some quantities that will be needed later on:
-frame_rate = grab_metadata.frame_rate;
-pre_frames = ceil(frame_rate * params.pre_sec);
-post_frames = ceil(frame_rate * params.post_sec);
+Conditions = cell2mat(C_struct.conditions);
 
 
 %% Trialize data:
