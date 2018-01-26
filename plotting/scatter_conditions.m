@@ -20,8 +20,8 @@ h = figure;
 scatter(X.distribution, Y.distribution, 80, '.k');
 
 % Add axis labels:
-X.label = xlabel([X.abbreviation ' peak dF/F (a.u.)'], 'FontSize', 12);
-Y.label = ylabel([Y.abbreviation ' peak dF/F (a.u.)'], 'FontSize', 12);
+X.label = xlabel([X.abbreviation ' peak dF/F (a.u.)'], 'FontSize', 11);
+Y.label = ylabel([Y.abbreviation ' peak dF/F (a.u.)'], 'FontSize', 11);
 
 % Add annotation with number of ROIs:
 annotation('textbox', [0.6 0.2 0.2 0.2], 'String', ['n = ' num2str(num_ROIs)], 'LineStyle', 'none');
@@ -48,5 +48,5 @@ end
 
 % Add title: 
 if nargin > 3
-    title(fig_title);
+    title(fig_title, 'FontWeight', 'normal');
 end
