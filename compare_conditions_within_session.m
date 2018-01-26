@@ -262,6 +262,11 @@ end
 
 % Save figures:
 h1_path = [output_directory filesep 'WT1_v_W.fig']; 
+h2_path = [output_directory filesep 'WT2_v_W.fig'];
+h3_path = [output_directory filesep 'WT1_v_WT2.fig'];
+savefig(h1, h1_path);
+savefig(h2, h2_path);
+savefig(h3, h3_path);
 
 
 %% Save metadata:
@@ -275,5 +280,8 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = stats_path;
 Metadata.outputs(2).path = fig_path;
+Metadata.outputs(3).path = h1_path;
+Metadata.outputs(4).path = h2_path;
+Metadata.outputs(5).path = h3_path;
 
 write_metadata(Metadata, 'compare_conditions_within_session.json');
