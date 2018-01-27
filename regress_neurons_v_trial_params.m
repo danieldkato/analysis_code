@@ -1,4 +1,4 @@
-function regress_neurons_v_trial_params(params_file)
+function Neurons = regress_neurons_v_trial_params(params_file)
 %% Load parameters and metadata:
 
 % Load params from params file:
@@ -8,6 +8,10 @@ output_directory = params.output_directory;
 % Load condition information like color codes, etc:
 C_struct = loadjson(params.conditions_path);
 Conditions = cell2mat(C_struct.conditions);
+
+% Get grab metadata:
+grab_metadata = loadjson(params.grab_metadata);
+pre_stim_frames = ceil(params.pre_sec * grab_metadata.frame_rate);
 
 
 %% Trialize data:
@@ -34,13 +38,13 @@ t2_idx = 3;
 w_t1_idx = 4;
 w_t2_idx = 5;
 
-regressor{w_idx} = 'whisker';
-regressor{t1_idx} = 'tone_1';
-regressor{t2_idx} = 'tone_2';
-regressor{w_t1_idx} = 'whisker:tone_1';
-regressor{w_t2_idx} = 'whisker:tone_2';
+regressors{w_idx} = 'W';
+regressors{t1_idx} = 'T1';
+regressors{t2_idx} = 'T2';
+regressors{w_t1_idx} = 'W:T1';
+regressors{w_t2_idx} = 'W:T2';
 
-model_spec = ['response ~ -1 + ' strjoin(regressor, ' + ')];
+model_spec = ['response ~ -1 + ' strjoin(regressors, ' + ')];
 disp(model_spec);
 
 % Get the number of ROIs in the dataset:
@@ -55,23 +59,58 @@ end
 % Regress peak dF/F response against trial parameters for each neuron:
 for n = 1:num_ROIs
     
+    disp(['Fitting linear model for ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
+    
     % Get data just for current neuron:
     C = get_neuron_from_trials(T, n);
     curr_neuron_trials = C.Trials;
     
     % Assemble response and parameter data into table:
-    Tbl.whisker = [curr_neuron_trials.STPRIDX]';
-    Tbl.tone_1 = ([curr_neuron_trials.SPKRIDX] == 1)';
-    Tbl.tone_2 = ([curr_neuron_trials.SPKRIDX] == 2)';
-    Tbl.response = max(vertcat(curr_neuron_trials.dFF), [], 2);
+    Tbl.(regressors{w_idx}) = [curr_neuron_trials.STPRIDX]';
+    Tbl.(regressors{t1_idx}) = ([curr_neuron_trials.SPKRIDX] == 1)';
+    Tbl.(regressors{t2_idx}) = ([curr_neuron_trials.SPKRIDX] == 2)';
+    trials_pre_stim_cropped = arrayfun(@(x) x.dFF(:, pre_stim_frames+1:end), curr_neuron_trials, 'UniformOutput', false)';
+    trials_pre_stim_cropped = cell2mat(trials_pre_stim_cropped);
+    disp(size(trials_pre_stim_cropped));
+    Tbl.response = mean(vertcat(trials_pre_stim_cropped), 2);
     
     % Fit linear model:
     Neurons(n).lm = fitlm(Tbl, model_spec); 
+    
+    %{
+    Neurons(n).w_pval = Neurons(n).lm.Coefficients{w_idx, 4};
+    Neurons(n).t1_pval = Neurons(n).lm.Coefficients{t1_idx, 4};
+    Neurons(n).t2_pval = Neurons(n).lm.Coefficients{t2_idx, 4};
+    Neurons(n).w_t1_pval = Neurons(n).lm.Coefficients{w_t1_idx, 4};
+    Neurons(n).w_t2_pval = Neurons(n).lm.Coefficients{w_t2_idx, 4};
+    %}
+    
 end
 
 % Save linear models to secondary storage:
 neurons_lms_path = ([output_directory filesep 'neurons_lms.mat']);
 save(neurons_lms_path, 'Neurons');
+
+
+%% Compute the percentage of cells that have significant coefficients for each regressor:
+
+for r = 1:length(regressors)
+    pvals = arrayfun(@(x) x.lm.Coefficients{r, 4}, Neurons);
+    R(r).num_sig_pvals = sum(pvals < 0.05);
+    R(r).pct_sig_pvals = (R(r).num_sig_pvals/num_ROIs)*100;
+    R(r).regressor_name = regressors{r};
+end
+
+%{
+pcts_table = table(R.pct_sig_pvals, 'VariableNames', regressors);
+disp(pcts_table);
+%}
+
+% Write to CSV:
+dat = cell(2, length(regressors));
+dat(1,:) = regressors;
+dat(2,:) = num2cell([R.pct_sig_pvals]);
+disp(dat);
 
 
 %% Save metadata:
