@@ -6,7 +6,7 @@ function hist_figure = plot_condition_histograms(Conditions, fig_title)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-25 
+% Last updated DDK 2018-01-26 
 
 
 %% I. OVERVIEW: 
@@ -20,10 +20,10 @@ function hist_figure = plot_condition_histograms(Conditions, fig_title)
 
 %% III. INPUTS: 
 % 1) Conditions - c x 1 array of structs, where c is the number of
-%    conditions in which the current neuron was observed. Each element
-%    of Conditions should minimally include the following fields:
+%    conditions being analyzed. Each element of Conditions should minimally
+%    include the following fields:
 %           
-%       Distribution - 1 x d vector specifying some distributuon associated
+%       Distribution - d x 1 vector specifying some distributuon associated
 %       with the corresponding condition, where d is the number of
 %       observations in the distribution.
 %
@@ -51,7 +51,12 @@ for c = 1:num_conditions
     h(c).ylim = ylim;
     h(c).nbins = h(c).handle.NumBins;
     h(c).bin_edges = h(c).handle.BinEdges;
-    title(Conditions(c).abbreviation, 'FontWeight', 'normal', 'FontSize', 10, 'Color', Conditions(c).color);
+    pos = get(gca, 'Position');
+    h(c).width = pos(3);
+    h(c).height = pos(4);
+    
+    % Create title and axis labels:
+    %title(Conditions(c).abbreviation, 'FontWeight', 'normal', 'FontSize', 10, 'Color', Conditions(c).color);
     ylabel('Count', 'FontSize', 10);
     if c == num_conditions
         xlabel('dF/F (a.u.)', 'FontSize', 10);
@@ -60,20 +65,41 @@ end
 
 
 %% Make axes, bin edges consistent:
+
+% Get axis limits in data units:
 max_x = max([h.xlim]);
 min_x = min([h.xlim]);
-
 max_y = max([h.ylim]);
 min_y = min([h.ylim]);
 
+% Get bin edges of histogram with greatest number of bins:
 [m, I] = max([h(c).nbins]);
 bin_edges = h(I).bin_edges;
 
-for c = 1:length(h)
+% Get max height and width of all axis objects:
+max_width = max([h.width]);
+max_height = max([h.height]);
+
+cumulative_y_shift = 0;
+for c = 1:length(Conditions)
     axes(h(c).axes);
     xlim([min_x max_x]);
     ylim([min_y max_y]);
     h(c).handle.BinEdges = bin_edges;
+    pos = get(gca, 'Position');
+    cumulative_y_shift = cumulative_y_shift + max_height - pos(4);
+    set(gca, 'Position', [pos(1), pos(2)-cumulative_y_shift, max_width, max_height]);
+    
+    % Add annotation with condition abbreviation and number of observations:
+    num_observations = size(Conditions(c).distribution, 1);
+    pos = get(gca, 'Position');
+    n_annotation_width = 0.1;
+    n_annotation_height = 0.1;
+    color_str = num2str(Conditions(c).color);
+    cond_str = ['\color[rgb]{' color_str '}' Conditions(c).abbreviation '\color[rgb]{0 0 0}'];
+    n_str = ['n = ' num2str(num_observations)];
+    total_str = {cond_str; n_str};
+    b = annotation('textbox', [pos(1)+pos(3)-n_annotation_width, pos(2)+pos(4)-n_annotation_height, n_annotation_width, n_annotation_height], 'String', total_str, 'LineStyle', 'none');
 end
 
 % Plot overall title if specified as input argument:
@@ -81,6 +107,6 @@ if nargin > 1
     text_box_width = 0.2; % normalized units
     text_box_height = 0.1;
     pos = get(gcf, 'Position');
-    set(gcf, 'Position', [pos(1) pos(2) pos(3) pos(4)*1.2]);
+    set(gcf, 'Position', [pos(1) pos(2)-cumulative_y_shift pos(3) pos(4)*1.2 + cumulative_y_shift]);
     a = annotation('textbox', [(1-text_box_width)/2, 1-text_box_height , text_box_width, text_box_height], 'String', fig_title, 'HorizontalAlignment', 'center', 'FontSize', 11, 'LineStyle', 'none', 'FitBoxToText', 'on');
 end
