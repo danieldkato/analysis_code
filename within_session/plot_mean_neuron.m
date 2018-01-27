@@ -208,4 +208,4 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = fig_full_path;
 
-write_metadata(Metadata, 'plot_mean_neuron_metadata.json');
+write_metadata(Metadata, [output_directory filesep 'plot_mean_neuron_metadata.json']);
