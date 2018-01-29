@@ -268,7 +268,13 @@ for n = 1:num_ROIs
     n_figures = n_figures + 1;
     Metadata.outputs(n_figures).path = individual_fig_full_path;
     close(single_trials_fig);
+    
+    
 end 
+
+
+%% Create scatterplots:
+
 
 
 %% Write metadata:
@@ -281,4 +287,4 @@ Metadata.inputs(6).path = params.grab_metadata;
 Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 
-write_metadata(Metadata, 'plot_every_cell_metadata.json');
+write_metadata(Metadata, [output_directory filesep 'plot_every_cell_metadata.json']);
