@@ -1,0 +1,229 @@
+{
+	"inputs": [
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/segmentation\/manual\/manual3\/raw_F.h5",
+			"sha1": "212ce475d6298b2e6948804b1c395a5f6c5c60d3"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/stim\/171218-02-galvo.dat",
+			"sha1": "62e5303d4584ea3455fc1aa8dc3ec89e4a28982d"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/stim\/171218-02-punish.dat",
+			"sha1": "84dfca1f0c6d71227f2a243a63e4aa7b10e641cb"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/stim\/ardulines.20171218213225",
+			"sha1": "7edf69dfeb77849d907d37e35e58d9e6f6e5cc74"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/condition_settings.json",
+			"sha1": "8fd11abbf91736c0ad976c47602b981afde5002d"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/2P_metadata.json",
+			"sha1": "97ee3da4bfb3459d43393f2220d27bcf12d2d0d6"
+		}
+	],
+	"params": {
+		"pre_onset_period": 2,
+		"post_onset_period": 4
+	},
+	"outputs": [
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/segmentation\/manual\/manual3\/plots4\/compare_conditions_within_session_stats.mat",
+			"sha1": "c21767ad1d104463688edf8cd1dff0c14d9aadaf"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/segmentation\/manual\/manual3\/plots4\/compare_conditions_within_session_hist.fig",
+			"sha1": "3ab6057361b41c908086994e1a02e2ce3f677ce2"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/segmentation\/manual\/manual3\/plots4\/WT1_v_W.fig",
+			"sha1": "ac0c0ed95b2f99c83605bf3a1b5170f1f443155b"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/segmentation\/manual\/manual3\/plots4\/WT2_v_W.fig",
+			"sha1": "9ffa1ffedf87807648374f3a6da9b869699fe34f"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/data\/5037-1\/2P\/2017-12-18\/site2\/grab01\/2P\/segmentation\/manual\/manual3\/plots4\/WT1_v_WT2.fig",
+			"sha1": "78a9f2ba24c611e24cafe6bed43babd725ddc225"
+		}
+	],
+	"dependencies": [
+		{
+			"path": "\/home\/dan\/Documents\/MATLAB\/pathdef.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/home)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/plotPerCell.m",
+			"warn": "Warning: uncommitted changes detected in plotPerCell.m. It is advised to commit or stash any changes before proceeding.",
+			"last_commit": " e0e774b4354f0a03a56523bd1ebf2c390c8df2a8"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/get_condition_means.m",
+			"warn": null,
+			"last_commit": " f82158ccd71581ec9aee7b55b87c3623b0e555a4"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/plot_mean_peristim_trace.m",
+			"warn": null,
+			"last_commit": " d3630d8940c68b2ef69a072ca05f85e7953f58de"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/plot_individual_peristim_traces.m",
+			"warn": null,
+			"last_commit": " d3630d8940c68b2ef69a072ca05f85e7953f58de"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/JSONlab_ a toolbox to encode_decode JSON files\/code\/jsonlab-1.5\/loadjson.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/trialize_data.m",
+			"warn": null,
+			"last_commit": " d59f17b753a2848c0381397fe9646467cb937f30"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/get_neuron_from_trials.m",
+			"warn": null,
+			"last_commit": " 7a405687b27f696c468c28fe2f44d4e5c783769e"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/split_trials_by_condition.m",
+			"warn": null,
+			"last_commit": " 23285148b408b50c3f8cc7213d74a1e97d1410e4"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/utilities_ddk\/metadata\/MATLAB\/write_metadata.m",
+			"warn": null,
+			"last_commit": " c9341664a02feb5ff5097df14804795a877715ba"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/JSONlab_ a toolbox to encode_decode JSON files\/code\/jsonlab-1.5\/varargin2struct.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/JSONlab_ a toolbox to encode_decode JSON files\/code\/jsonlab-1.5\/jsonopt.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/JSONlab_ a toolbox to encode_decode JSON files\/code\/jsonlab-1.5\/struct2jdata.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/JSONlab_ a toolbox to encode_decode JSON files\/code\/jsonlab-1.5\/mergestruct.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/read_ardulines.m",
+			"warn": null,
+			"last_commit": " 533ee0df511e7cc4c771c69ce28be8ee1cdd31ff"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/get_start_frames.m",
+			"warn": null,
+			"last_commit": " bec2304f87a189a307dcc5a66956c9077fc49d03"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/gp_behavior_analysis\/SkipHeader.m",
+			"warn": "error: pathspec 'SkipHeader.m' did not match any file(s) known to git.\nDid you forget to 'git add'?\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/gp_behavior_analysis\/readContinuousDAT.m",
+			"warn": null,
+			"last_commit": " 71b3a3c9835c405437fdbde8d64da5d185c3bb69"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/clay\/LocalMinima.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/match_trials_to_conditions.m",
+			"warn": null,
+			"last_commit": " 533ee0df511e7cc4c771c69ce28be8ee1cdd31ff"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/plot_mean_neuron.m",
+			"warn": null,
+			"last_commit": " d335a6dacef2cb62acb89dc52952c68e1c833782"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/utilities_ddk\/metadata\/MATLAB\/get_sha1.m",
+			"warn": null,
+			"last_commit": " 4a2cf31e173c79a6d946ae9dcab9fd1ace5347f8"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/utilities_ddk\/metadata\/MATLAB\/getLastCommit.m",
+			"warn": null,
+			"last_commit": " eece689d6af3ab0c56d6cf296f3955b632648d37"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/JSONlab_ a toolbox to encode_decode JSON files\/code\/jsonlab-1.5\/savejson.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/code_libraries\/Add-Ons\/Toolboxes\/manur-MATLAB-git-72c72b9\/manur-MATLAB-git-72c72b9\/git.m",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/mnt\/nas2\/homes)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/condition_histograms.m",
+			"warn": "Warning: uncommitted changes detected in condition_histograms.m. It is advised to commit or stash any changes before proceeding.",
+			"last_commit": " 36f3cf052ddfb3c913b54d86fd4b1c4420637ad4"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/plot_condition_histograms.m",
+			"warn": "Warning: uncommitted changes detected in plot_condition_histograms.m. It is advised to commit or stash any changes before proceeding.",
+			"last_commit": " ca31038b009994dbcb6bf83ae107708bfb797e40"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/regress_neuron_v_trial_params.m",
+			"warn": "error: pathspec 'regress_neuron_v_trial_params.m' did not match any file(s) known to git.\nDid you forget to 'git add'?\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/compare_conditions_per_neuron.m",
+			"warn": "error: pathspec 'compare_conditions_per_neuron.m' did not match any file(s) known to git.\nDid you forget to 'git add'?\n\n",
+			"last_commit": null
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/regress_neurons_v_trial_params.m",
+			"warn": null,
+			"last_commit": " 093d6193af6ced66a95f4b05979ee10bc4725ba5"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/plotting\/scatter_conditions.m",
+			"warn": null,
+			"last_commit": " c319083b00d174b0f903fd05f7510abe2597c498"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/compare_conditions_within_session.m",
+			"warn": null,
+			"last_commit": " 5643e87525ecae15b6899fabeea54b7b06004086"
+		},
+		{
+			"path": "\/mnt\/nas2\/homes\/dan\/MultiSens\/analysis\/format_data\/get_condition.m",
+			"warn": null,
+			"last_commit": " ca5fb2d361e1437a40b1d8801a92cb336887fa12"
+		},
+		{
+			"path": "\/home\/dan\/.matlab\/R2017b\/Editor\/LiveEditorEvaluationHelperESectionEval.mlx",
+			"warn": "fatal: Not a git repository (or any parent up to mount point \/home)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n\n",
+			"last_commit": null
+		}
+	],
+	"date": "2018-01-26",
+	"time": "19:27:16",
+	"host_name": "hs05bruno10"
+}
