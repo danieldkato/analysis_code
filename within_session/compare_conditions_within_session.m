@@ -150,6 +150,10 @@ function compare_conditions_within_session(params_file)
 params = loadjson(params_file);
 output_directory = params.output_directory;
 
+if ~exist(output_directory, 'dir')
+    mkdir(output_directory);
+end
+
 % Load some useful imaging session meadata:
 grab_metadata = loadjson(params.grab_metadata);
 mouse = grab_metadata.mouse;
@@ -161,6 +165,7 @@ Conditions = cell2mat(C_struct.conditions);
 
 % Compute some quantities that will be needed later on:
 frame_rate = grab_metadata.frame_rate;
+pre_stim_frames = ceil(frame_rate * params.pre_sec);
 
 
 %% Do initial processing:
@@ -202,9 +207,9 @@ for c = 1:length(Conditions)
     end_idx = c * num_ROIs;
     
     % Populate response vector:
-    peaks = max(Conditions(c).Mean, [], 2);
-    response(start_idx:end_idx) = peaks;
-    Conditions(c).distribution = peaks; % this will be used later for plotting 
+    responses = mean(Conditions(c).Mean(:, pre_stim_frames+1:end), 2);
+    response(start_idx:end_idx) = responses;
+    Conditions(c).distribution = responses; % this will be used later for plotting 
     
     % Populate design matrix:
     design_matrix(start_idx:end_idx, c) = 1;
@@ -223,18 +228,19 @@ model_spec = ['response ~ -1 + ' strjoin(cond_names, ' + ')];
 
 % Perform the regression:
 lm = fitlm(Tbl, model_spec);
-[p, F] = coefTest(lm);
+[p, F, r] = coefTest(lm);
 
 % Put the model and stats in a struct that can be saved to secondary storage:
 compare_conditions_within_session.linear_model = lm;
 compare_conditions_within_session.p = p;
 compare_conditions_within_session.F = F;
+compare_conditions_within_session.r = r;
 stats_path = [output_directory filesep 'compare_conditions_within_session_stats.mat'];
 save(stats_path, 'compare_conditions_within_session');
 
 
 %% Plot the distributions of each condition:
-fig_title = ['Mouse ' mouse ', session ' date ', peak dF/F responses by condition'];
+fig_title = ['Mouse ' mouse ', session ' date ', dF/F responses by condition'];
 f = plot_condition_histograms(Conditions, fig_title);
 fig_path = [output_directory filesep 'compare_conditions_within_session_hist.fig'];
 savefig(f, fig_path);
@@ -294,4 +300,4 @@ Metadata.outputs(3).path = h1_path;
 Metadata.outputs(4).path = h2_path;
 Metadata.outputs(5).path = h3_path;
 
-write_metadata(Metadata, 'compare_conditions_within_session.json');
+write_metadata(Metadata, [output_directory filesep 'compare_conditions_within_session.json']);
