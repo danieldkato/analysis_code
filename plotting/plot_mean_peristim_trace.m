@@ -107,7 +107,7 @@ for c = 1:n_conditions
         
         % Plot mean:
         hold on;
-        handles(c) = plot(Mean, 'Color', color, 'LineWidth', 1.25);
+        handles(c) = plot(Mean, 'Color', color, 'LineWidth', 1.9);
 
         % Plot SEM:
         sem_over = [Mean fliplr(Mean + SEM)];
