@@ -48,7 +48,7 @@ function Conditions = get_condition_amplitudes(Conditions, start, stop)
 %%
 for c = 1:length(Conditions)
     
-    mean_traces = Conditions(c).Means;
+    mean_traces = Conditions(c).Mean;
     baselines = mean(mean_traces(:, 1:start-1), 2);
     
     if nargin < 2
