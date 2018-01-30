@@ -19,9 +19,9 @@ function Conditions = get_condition_means(Conditions)
 
 
 %% III. INPUTS: 
-% 1) Conditions_in - c x 1 array of structs, where c is the number of
-%    conditions in which the current neuron was observed. Each element
-%    of Conditions must minimally include the following fields:
+% 1) Conditions - c x 1 array of structs, where c is the number of
+%    conditions being analyzed. Each element of Conditions must minimally
+%    include the following fields:
 %
 %       Name - a concise, human-readable condition name
 %
@@ -32,33 +32,17 @@ function Conditions = get_condition_means(Conditions)
 %           dFF - n x p matrix of a neuron or neural population's dFF
 %           activity over the current trial, where n is the number of
 %           neurons and p is the length of the peri-stimulus window in
-%           frames
+%           frames.
 %
 %
 %% IV. OUTPUTS:
-% 1) Conditions_in - c x 1 array of structs, where c is the number of
-%    conditions in which the current neuron was observed. Each element
-%    of Conditions includes the following fields:
+% 1) Conditions - same as the input, but each element has the following
+% additional field:
 %
-%       Name - a concise, human-readable condition name
-%
-%       Mean - n x p matrix of giving a neuron or neural population's mean
-%       dFF activity over the peri-stimulus period for the corresponding
-%       trial or stimulus condition, where n is the number of neurons and p
-%       is the length of the peri-stimulus window in frames
-%
-%       SEM - 1 x p vector of a neuron's SEM over the peri-stimulus period
-%       for the corresponding trial or stimulus condition, where p is the
-%       length of the peri-stimulus window in frames
-%
-%       Trials - u x 1 array of structs, where u is the number of trials
-%       of the correspinding condition delivered during the video. Each
-%       element must minimally include of the following fields:
-%
-%           dFF - n x p matrix of a neuron or neural population's dFF
-%           activity over the current trial, where n is the number of
-%           neurons and p is the length of the peri-stimulus window in
-%           frames
+%       Mean - n x p matrix giving mean peri-stimulus dF/F activity traces,
+%       where n is the number of neurons and p is the length of the
+%       peri-stimulus window in frames. Each row represents a single
+%       neuron's mean dF/F response to the corresponding condition.
 
 
 %%
