@@ -13,7 +13,7 @@ X = get_condition(x_cond_name, Conditions);
 Y = get_condition(y_cond_name, Conditions);
 
 % Get the number of ROIs for each condition, and validate that they are the same:
-if size(X.distribution, 1) == size(Y.(field_name), 1)
+if size(X.(field_name), 1) == size(Y.(field_name), 1)
     num_ROIs = size(X.(field_name), 1);
 else
     error(['Condition data for ' y_cond_name ' and ' x_cond_name ' include observations from different numbers of ROIs. Please verify that data are formatted correctly.']);
