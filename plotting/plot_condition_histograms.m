@@ -1,4 +1,4 @@
-function hist_figure = plot_condition_histograms(Conditions, fig_title)
+function hist_figure = plot_condition_histograms(Conditions, field_name, fig_title)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function hist_figure = plot_condition_histograms(Conditions, fig_title)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-26 
+% Last updated DDK 2018-01-29 
 
 
 %% I. OVERVIEW: 
@@ -22,19 +22,38 @@ function hist_figure = plot_condition_histograms(Conditions, fig_title)
 % 1) Conditions - c x 1 array of structs, where c is the number of
 %    conditions being analyzed. Each element of Conditions should minimally
 %    include the following fields:
-%           
-%       Distribution - d x 1 vector specifying some distributuon associated
-%       with the corresponding condition, where d is the number of
-%       observations in the distribution.
 %
 %       Name - char array specifying human-readable condition name 
 %
 %       Color - 1 x 3 RGB vector specifying the color code for the
 %       corresponding condition.
+%
+%       In addition, each element of `Conditions` should have a field
+%       consisting of a d x 1 vector to be plotted in a histogram, where d
+%       is the number of observations in the distribution. If the
+%       `field_name` input argument is specified, then the name of the
+%       field to be plotted should be specified by `field_name`. If
+%       `field_name` is not specified, then this function will look for a
+%       field simply called `distribution`.
+%
+% 2) field_name (optional)- char vector speciying the name of the field for
+%    which a histogram should be plotted for each condition. If this input
+%    argument is not specified, this function will look for a field simply
+%    called `distribution`.
+%
+% 3) fig_title (optional)- char vector or cell specifying the figure title.
 
 
 %% IV. OUTPUTS:
 % 1) mean_figure - handle to created figure
+
+
+%% Get the name of the field to plot:
+if nargin > 1
+    field_name = field_name;
+elseif nargin == 1 || isempty(field_name)
+    field_name = distribution;
+end
 
 
 %% Create figure:
@@ -45,7 +64,7 @@ num_conditions = length(Conditions);
 %% Plot each histogram:
 for c = 1:num_conditions
     subplot(num_conditions, 1, c);
-    h(c).handle = histogram(Conditions(c).distribution, 'FaceColor', Conditions(c).color, 'EdgeColor', 'none');
+    h(c).handle = histogram(Conditions(c).(field_name), 'FaceColor', Conditions(c).color, 'EdgeColor', 'none');
     h(c).axes = gca;
     h(c).xlim = xlim;
     h(c).ylim = ylim;
