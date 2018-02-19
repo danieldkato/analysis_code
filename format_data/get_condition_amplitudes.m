@@ -52,9 +52,9 @@ for c = 1:length(Conditions)
     baselines = mean(mean_traces(:, 1:start-1), 2);
     
     if nargin < 2
-        abs_peaks = max(Conditions(c).Means(:, start:stop), [], 2);
+        abs_peaks = max(mean_traces(:, start:stop), [], 2);
     else
-        abs_peaks = max(Conditions(c).Means(:, start:end), [], 2);
+        abs_peaks = max(mean_traces(:, start:end), [], 2);
     end
     
     Conditions(c).amplitudes = abs_peaks - baselines;
