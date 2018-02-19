@@ -110,7 +110,7 @@ for c = 1:length(Conditions)
     set(gca, 'Position', [pos(1), pos(2)-cumulative_y_shift, max_width, max_height]);
     
     % Add annotation with condition abbreviation and number of observations:
-    num_observations = size(Conditions(c).distribution, 1);
+    num_observations = size(Conditions(c).(field_name), 1);
     pos = get(gca, 'Position');
     n_annotation_width = 0.1;
     n_annotation_height = 0.1;
