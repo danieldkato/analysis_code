@@ -247,41 +247,6 @@ savefig(f, fig_path);
 
 %% Create scatterplots for selected pairs of conditions:
 
-% Create scatter plot figures and capture handles:
-%{
-h1_title = {'Peak dF/F response to \color[rgb]{1 0 0}W+T1 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-h2_title = {'Peak dF/F response to W+T2 vs W'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-h3_title = {'Peak dF/F response to W+T1 vs W+T2'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-%}
-h1= scatter_conditions('stepper and test tone', 'stepper only', Conditions, 'amplitudes'); % Create scatter plot of W+T1 vs W
-h2 = scatter_conditions('stepper and control tone', 'stepper only', Conditions, 'amplitudes'); % Create scatter plot of W+T2 vs W
-h3 = scatter_conditions('stepper and test tone', 'stepper and control tone', 'amplitudes'); % Create scatter plot of W+T1 vs W+T2
-H(1).fig_handle = h1;
-H(2).fig_handle = h2;
-H(3).fig_handle = h3;
-
-% Standardize the axes, etc:
-for a = 1:3
-    figure(H(a).fig_handle);
-    H(a).lims = [xlim ylim];
-end
-lowest = min([H.lims]);
-highest = max([H.lims]);
-for b = 1:3
-    figure(H(b).fig_handle);
-    xlim([lowest highest]);
-    ylim([lowest highest]);
-    hline = refline(1, 0);
-    hline.Color = [0.40 0.40 0.40];
-end
-
-% Save figures:
-h1_path = [output_directory filesep 'WT1_v_W.fig']; 
-h2_path = [output_directory filesep 'WT2_v_W.fig'];
-h3_path = [output_directory filesep 'WT1_v_WT2.fig'];
-savefig(h1, h1_path);
-savefig(h2, h2_path);
-savefig(h3, h3_path);
 
 
 %% Save metadata:
