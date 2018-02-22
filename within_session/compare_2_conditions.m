@@ -1,4 +1,4 @@
-function [f, S] = compare_2_conditions(params_file, cond1_name, cond2_name)
+function [f, S] = compare_2_conditions(params_file, cond1_name, cond2_name, paired)
 %% Load parameters and metadata:
 
 % Load params from params file:
@@ -50,24 +50,41 @@ Condition2 = get_condition(cond2_name, Conditions);
 
 %% Run a t-test on the 2 conditions of interest and plot a histogram:
 hist_fig_title = {['\color[rgb]{' num2str(Condition1.color) '}' Condition1.name ' \color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} Mouse ' mouse ', session ' date]};
-[f, p, stats] = ttest_and_histogram(Condition1, Condition2, true, hist_fig_title);
-S.stats = stats;
-S.p = p;
+[f, p, stats] = ttest_and_histogram(Condition1, Condition2, paired, hist_fig_title);
+S.ttest.stats = stats;
+S.ttest.p = p;
 
 
-%% Create a scatterplot of each cell's response to both conditions
+%% If the condition data are paired, do a regression and create a scatter plot:
 
-% Create scatter plot figures and capture handles:
-scatter_fig_title = {['Peak dF/F response to \color[rgb]{' num2str(Condition1.color) '}' Condition1.name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} \fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-scatter_handle = scatter_conditions(cond1_name, cond2_name, Conditions, 'amplitudes', scatter_fig_title); % Create scatter plot of W+T1 vs W
-lims = [xlim ylim];
-lowest = min(lims);
-highest = max(lims);
-xlim([lowest highest]);
-ylim([lowest highest]);
-hline = refline(1, 0);
-hline.Color = [0.40 0.40 0.40];
-lsline; % add least-squares line
+
+if paired
+    % Do a linear regression; we want to test whether the slope of the best fit
+    % line for Condition1 vs Condition2 is significantly different from 1, but
+    % MATLAB's fitlm function tests whether the slope of a best fit line is
+    % significantly different from 0. So instead of regressing Condition1 on
+    % Condition2, we'll regress (Condition1 - Condition2) on to condition
+    % Condition2; if Condition1 = Condition2, then the slope of
+    % (Condition1-Condition2) vs Condition2 should be 0:
+    Tbl = table();
+    Tbl.X = Condition2.amplitudes;
+    Tbl.Y = Condition1.amplitudes - Condition2.amplitudes;
+    lm = fitlm(Tbl, 'Y ~ X');    
+    disp(lm);
+    S.linear_model = lm;
+    
+    % Create a scatterplot of each cell's response to both conditions:
+    scatter_fig_title = {['Peak dF/F response to \color[rgb]{' num2str(Condition1.color) '}' Condition1.name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} \fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
+    scatter_handle = scatter_conditions(cond1_name, cond2_name, Conditions, 'amplitudes', scatter_fig_title); % Create scatter plot of W+T1 vs W
+    lims = [xlim ylim];
+    lowest = min(lims);
+    highest = max(lims);
+    xlim([lowest highest]);
+    ylim([lowest highest]);
+    hline = refline(1, 0);
+    hline.Color = [0.40 0.40 0.40];
+    lsline; % add least-squares line
+end
 
 
 %% Save figures and stats:
@@ -81,8 +98,10 @@ hist_fig_path = [output_directory filesep Condition1.name '_vs_' Condition2.name
 savefig(f, hist_fig_path);
 
 % Save scatterplot figure:
-scatter_fig_path = [output_directory filesep Condition1.abbreviation '_v_' Condition2.abbreviation '.fig']; 
-savefig(scatter_handle, scatter_fig_path);
+if paired
+    scatter_fig_path = [output_directory filesep Condition1.abbreviation '_v_' Condition2.abbreviation '.fig']; 
+    savefig(scatter_handle, scatter_fig_path);
+end
 
 
 %% Save metadata: 
@@ -96,6 +115,8 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = hist_fig_path;
 Metadata.outputs(2).path = stats_path;
-Metadata.outputs(3).path = scatter_fig_path;
+if paired
+    Metadata.outputs(3).path = scatter_fig_path;
+end 
 
 write_metadata(Metadata, [output_directory filesep 'regress_neurons_v_trial_params_within_session.json']);
