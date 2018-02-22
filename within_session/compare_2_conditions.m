@@ -49,8 +49,8 @@ Condition2 = get_condition(cond2_name, Conditions);
 
 
 %% Run a t-test on the 2 conditions of interest and plot a histogram:
-hist_fig_title = {['\color[rgb]{' num2str(Condition1.color) '}' Condition1.name ' \color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} Mouse ' mouse ', session ' date]};
-[f, p, stats] = ttest_and_histogram(Condition1, Condition2, paired, hist_fig_title);
+fig_title = {['Peak dF/F response for \color[rgb]{' num2str(Condition1.color) '}' Condition1.name ' \color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} Mouse ' mouse ', session ' date]};
+[f, p, stats] = ttest_and_histogram(Condition1, Condition2, paired, fig_title);
 S.ttest.stats = stats;
 S.ttest.p = p;
 
@@ -74,8 +74,8 @@ if paired
     S.linear_model = lm;
     
     % Create a scatterplot of each cell's response to both conditions:
-    scatter_fig_title = {['Peak dF/F response to \color[rgb]{' num2str(Condition1.color) '}' Condition1.name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} \fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-    scatter_handle = scatter_conditions(cond1_name, cond2_name, Conditions, 'amplitudes', scatter_fig_title); % Create scatter plot of W+T1 vs W
+    %scatter_fig_title = {['Peak dF/F response to \color[rgb]{' num2str(Condition1.color) '}' Condition1.name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} \fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
+    scatter_handle = scatter_conditions(cond1_name, cond2_name, Conditions, 'amplitudes', fig_title); % Create scatter plot of W+T1 vs W
     lims = [xlim ylim];
     lowest = min(lims);
     highest = max(lims);
