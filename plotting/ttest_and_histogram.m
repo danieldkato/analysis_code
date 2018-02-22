@@ -35,12 +35,12 @@ end
 %% Create title, labels, and annotation:
 %title_str = {'\color[rgb]{' num2str(Conditions(1).color) '}' Conditions(1).name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str() '}'};
 ylabel('count');
-xlabel('dF/F response');
+xlabel('Peak dF/F response');
 pos = get(gca, 'Position');
 %t = text('textbox', [pos(1)+pos(3)*0.8,  pos(2)+pos(4)*0.8, 0.1, 0.1], 'String', {['p = ' num2str(p)]}, 'LineStyle', 'none');
 legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
 legend('boxoff');
 
 if nargin > 3
-    title(fig_title);
+    title(fig_title, 'FontWeight', 'normal');
 end
