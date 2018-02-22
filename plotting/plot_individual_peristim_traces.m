@@ -119,7 +119,7 @@ if ~isempty(stim_duration)
     yl = ylim;
     recY = [yl fliplr(yl)];
     %h = fill([stimPeriod(1) stimPeriod(1) stimPeriod(2) stimPeriod(2)], recY, [0.01 0.01 0.01], 'FaceAlpha', 0.1, 'EdgeAlpha', 0.1);
-    p = patch([stim_period(1) stim_period(1) stim_period(2) stim_period(2)], recY, [0.75 0.75 0.75], 'FaceAlpha', 0.1, 'EdgeColor', 'none');
+    p = patch([stim_period(1) stim_period(1) stim_period(2) stim_period(2)], recY, [0.5 0.5 0.5], 'FaceAlpha', 0.2, 'EdgeColor', 'none');
     uistack(p, 'bottom');
     ylim(yl);
 end
