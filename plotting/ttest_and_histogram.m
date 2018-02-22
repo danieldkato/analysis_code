@@ -15,20 +15,20 @@ end
 %% Plot histograms:
 f = figure();
 hold on;
-
 for c = 1:length(Conditions)
     H(c).handle = histogram(Conditions(c).distribution, 'FaceColor', Conditions(c).color, 'EdgeColor', 'none');
     H(c).num_bins = H(c).handle.NumBins;
     H(c).bin_edges = H(c).handle.BinEdges;
 end
 
-
-% Go back and make bin edges consistent:
+% Go back and make bin edges consistent and plot means:
 [m, I] = max(H(c).num_bins);
 bin_edges = H(I).bin_edges;
-
+yl = ylim;
 for c = 1:length(H)
     H(c).handle.BinEdges = bin_edges;
+    condition_mean = mean(Conditions(c).distribution);
+    line([condition_mean condition_mean], [yl(1) yl(2)], 'Color', Conditions(c).color);
 end
 
 
@@ -38,7 +38,8 @@ ylabel('count');
 xlabel('dF/F response');
 pos = get(gca, 'Position');
 %t = text('textbox', [pos(1)+pos(3)*0.8,  pos(2)+pos(4)*0.8, 0.1, 0.1], 'String', {['p = ' num2str(p)]}, 'LineStyle', 'none');
-legend(Conditions(1).abbreviation, Conditions(2).abbreviation, 'boxoff');
+legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
+legend('boxoff');
 
 if nargin > 3
     title(fig_title);
