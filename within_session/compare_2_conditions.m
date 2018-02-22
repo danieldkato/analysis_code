@@ -96,5 +96,6 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = hist_fig_path;
 Metadata.outputs(2).path = stats_path;
+Metadata.outputs(3).path = scatter_fig_path;
 
 write_metadata(Metadata, [output_directory filesep 'regress_neurons_v_trial_params_within_session.json']);
