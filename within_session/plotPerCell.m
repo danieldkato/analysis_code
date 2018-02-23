@@ -230,6 +230,7 @@ if status == 0
     mkdir(output_directory);
 end
 old = cd(output_directory);
+mkdir('plot_each_ROI');
 
 
 %% For each ROI, create 2 figures: 
@@ -249,7 +250,7 @@ for n = 1:num_ROIs
     
     % Plot mean dFF trace and SEM for each condition for the current neuron:
     mean_fig_name =  [mouse '_' date '_ROI_', num_str, '_mean_traces.fig'];
-    mean_fig_full_path =  [output_directory filesep mean_fig_name];
+    mean_fig_full_path =  [output_directory filesep 'plot_each_ROI' filesep mean_fig_name];
     mean_fig_title = {'Mean dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
     mean_fig = plot_mean_peristim_trace(curr_n_conditions_means, pre_stim_frames, post_stim_frames, stim_dur, frame_rate, mean_fig_title);
     meanPaths{n} = mean_fig_full_path;
@@ -260,7 +261,7 @@ for n = 1:num_ROIs
     
     % Plot individual traces for each condition for the current neuron:
     individual_fig_name =  [mouse '_' date '_ROI_', num_str, '_individual_traces.fig'];
-    individual_fig_full_path =  [output_directory filesep individual_fig_name];
+    individual_fig_full_path =  [output_directory filesep 'plot_each_ROI' filesep individual_fig_name];
     individual_fig_title = {'Individual dF/F traces by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['ROI #', num2str(n)]};
     single_trials_fig = plot_individual_peristim_traces(curr_n_conditions, pre_stim_frames, post_stim_frames, stim_dur, frame_rate, individual_fig_title);
     rawPaths{n} = individual_fig_full_path;
