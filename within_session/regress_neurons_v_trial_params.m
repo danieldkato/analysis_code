@@ -87,10 +87,6 @@ for n = 1:num_ROIs
     
 end
 
-% Save linear models to secondary storage:
-neurons_lms_path = ([output_directory filesep 'fitlm_per_neuron.mat']);
-save(neurons_lms_path, 'Neurons');
-
 
 %% Compute the percentage of cells that have significant coefficients for each regressor:
 
@@ -113,6 +109,22 @@ dat(2,:) = num2cell([R.pct_sig_pvals]);
 disp(dat);
 
 
+%% Save output to secondary storage:
+
+% Create output directory if it doesn't exist and cd to it:
+if ~exist(output_directory, 'dir')
+    mkdir(output_directory)
+end
+old = cd(output_directory);
+
+% Create dedicated sub-directory for output of this function and cd to it:
+mkdir('fitlm_per_neuron');
+cd('fitlm_per_neuron');
+
+% Save stats:
+save('fitlm_per_neuron.mat', 'Neurons');
+
+
 %% Save metadata:
 Metadata.inputs(1).path = params.rawF_path;
 Metadata.inputs(2).path = params.galvo_path;
@@ -122,6 +134,7 @@ Metadata.inputs(5).path = params.conditions_path;
 Metadata.inputs(6).path = params.grab_metadata;
 Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
-Metadata.outputs(1).path = neurons_lms_path;
-
+Metadata.outputs(1).path = fitlm_per_neuron_path;
 write_metadata(Metadata, 'fitlm_per_neuron_metadata.json');
+
+cd(old);
