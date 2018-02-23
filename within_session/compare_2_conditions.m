@@ -89,17 +89,26 @@ end
 
 %% Save figures and stats:
 
+% Make output directory if it doesn't exist:
+if ~exist(output_directory, 'dir')
+    mkdir(output_directory);
+end
+old = cd(output_directory);
+output_basename = [Condition1.abbreviation '_vs_' Condition2.abbreviation];
+mkdir(output_basename);
+cd(output_basename);
+
 % Save stats:
-stats_path = [output_directory filesep Condition1.name '_vs_' Condition2.name '.mat'];
+stats_path = [output_basename '.mat'];
 save(stats_path, 'S');
 
 % Save histogram figure:
-hist_fig_path = [output_directory filesep Condition1.name '_vs_' Condition2.name '_distributions.fig'];
+hist_fig_path = [output_basename '_distributions.fig'];
 savefig(f, hist_fig_path);
 
 % Save scatterplot figure:
 if paired
-    scatter_fig_path = [output_directory filesep Condition1.abbreviation '_v_' Condition2.abbreviation '_scatter.fig']; 
+    scatter_fig_path = [output_basename '_scatter.fig']; 
     savefig(scatter_handle, scatter_fig_path);
 end
 
@@ -119,4 +128,5 @@ if paired
     Metadata.outputs(3).path = scatter_fig_path;
 end 
 
-write_metadata(Metadata, [output_directory filesep Condition1.name '_vs_' Condition2.name '.json']);
+write_metadata(Metadata, [output_basename '.json']);
+cd(old);
