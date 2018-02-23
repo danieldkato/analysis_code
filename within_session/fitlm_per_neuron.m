@@ -1,4 +1,4 @@
-function Neurons = regress_neurons_v_trial_params(params_file)
+function Neurons = fitlm_per_neuron(params_file)
 %% Load parameters and metadata:
 
 % Load params from params file:
