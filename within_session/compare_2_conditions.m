@@ -99,7 +99,7 @@ savefig(f, hist_fig_path);
 
 % Save scatterplot figure:
 if paired
-    scatter_fig_path = [output_directory filesep Condition1.abbreviation '_v_' Condition2.abbreviation '.fig']; 
+    scatter_fig_path = [output_directory filesep Condition1.abbreviation '_v_' Condition2.abbreviation '_scatter.fig']; 
     savefig(scatter_handle, scatter_fig_path);
 end
 
@@ -119,4 +119,4 @@ if paired
     Metadata.outputs(3).path = scatter_fig_path;
 end 
 
-write_metadata(Metadata, [output_directory filesep 'regress_neurons_v_trial_params_within_session.json']);
+write_metadata(Metadata, [output_directory filesep Condition1.name '_vs_' Condition2.name '.json']);
