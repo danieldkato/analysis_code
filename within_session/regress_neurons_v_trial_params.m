@@ -88,7 +88,7 @@ for n = 1:num_ROIs
 end
 
 % Save linear models to secondary storage:
-neurons_lms_path = ([output_directory filesep 'neurons_lms.mat']);
+neurons_lms_path = ([output_directory filesep 'fitlm_per_neuron.mat']);
 save(neurons_lms_path, 'Neurons');
 
 
@@ -124,4 +124,4 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = neurons_lms_path;
 
-write_metadata(Metadata, 'regress_neurons_v_trial_params.json');
+write_metadata(Metadata, 'fitlm_per_neuron_metadata.json');
