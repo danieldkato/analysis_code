@@ -234,19 +234,26 @@ compare_conditions_within_session.linear_model = lm;
 compare_conditions_within_session.p = p;
 compare_conditions_within_session.F = F;
 compare_conditions_within_session.r = r;
-stats_path = [output_directory filesep 'compare_conditions_within_session_stats.mat'];
-save(stats_path, 'compare_conditions_within_session');
 
 
 %% Plot the distributions of each condition:
 fig_title = ['Mouse ' mouse ', session ' date ', dF/F responses by condition'];
 f = plot_condition_histograms(Conditions, 'amplitudes', fig_title);
-fig_path = [output_directory filesep 'compare_conditions_within_session_hist.fig'];
+
+
+%% Save outputs to secondary storage:
+if ~exist(output_directory, 'dir')
+    mkdir(output_directory);
+end
+mkdir([output_directory filesep 'compare_conditions_within_session']);
+
+% Save stats:
+stats_path = [output_directory filesep 'compare_conditions_within_session' filesep 'compare_conditions_within_session_stats.mat'];
+save(stats_path, 'compare_conditions_within_session');
+
+% Save figure:
+fig_path = [output_directory filesep 'compare_conditions_within_session' filesep 'compare_conditions_within_session_hist.fig'];
 savefig(f, fig_path);
-
-
-%% Create scatterplots for selected pairs of conditions:
-
 
 
 %% Save metadata:
@@ -260,8 +267,4 @@ Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = stats_path;
 Metadata.outputs(2).path = fig_path;
-Metadata.outputs(3).path = h1_path;
-Metadata.outputs(4).path = h2_path;
-Metadata.outputs(5).path = h3_path;
-
-write_metadata(Metadata, [output_directory filesep 'compare_conditions_within_session.json']);
+write_metadata(Metadata, [output_directory filesep 'compare_conditions_within_session' filesep 'compare_conditions_within_session.json']);
