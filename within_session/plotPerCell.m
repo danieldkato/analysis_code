@@ -288,4 +288,4 @@ Metadata.inputs(6).path = params.grab_metadata;
 Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 
-write_metadata(Metadata, [output_directory filesep 'plot_every_cell_metadata.json']);
+write_metadata(Metadata, [output_directory filesep 'plot_each_ROI' filesep 'plot_every_cell_metadata.json']);
