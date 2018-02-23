@@ -1,4 +1,4 @@
-function [f, S] = compare_2_conditions(params_file, cond1_name, cond2_name, paired)
+function [f, S] = compare_2_conditions_within_session(params_file, cond1_name, cond2_name, paired)
 %% Load parameters and metadata:
 
 % Load params from params file:
