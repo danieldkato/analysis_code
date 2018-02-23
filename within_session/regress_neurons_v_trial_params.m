@@ -92,9 +92,9 @@ end
 
 for r = 1:length(regressors)
     pvals = arrayfun(@(x) x.lm.Coefficients{r, 4}, Neurons);
-    Rregressors(r).num_sig_pvals = sum(pvals < 0.05);
-    Rregressors(r).pct_sig_pvals = (Rregressors(r).num_sig_pvals/num_ROIs)*100;
-    Rregressors(r).regressor_name = regressors{r};
+    Regressors(r).num_sig_pvals = sum(pvals < 0.05);
+    Regressors(r).pct_sig_pvals = (Regressors(r).num_sig_pvals/num_ROIs)*100;
+    Regressors(r).regressor_name = regressors{r};
 end
 
 %{
@@ -105,7 +105,7 @@ disp(pcts_table);
 % Write to CSV:
 dat = cell(2, length(regressors));
 dat(1,:) = regressors;
-dat(2,:) = num2cell([Rregressors.pct_sig_pvals]);
+dat(2,:) = num2cell([Regressors.pct_sig_pvals]);
 disp(dat);
 
 
@@ -122,7 +122,8 @@ mkdir('fitlm_per_neuron');
 cd('fitlm_per_neuron');
 
 % Save stats:
-save('fitlm_per_neuron.mat', 'Neurons', 'R');
+fitlm_per_neuron_path = [output_directory filesep 'fitlm_per_neuron' filesep 'fitlm_per_neuron.mat'];
+save(fitlm_per_neuron_path, 'Neurons', 'Regressors');
 
 
 %% Save metadata:
