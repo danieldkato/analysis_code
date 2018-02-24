@@ -1,4 +1,4 @@
-function [f, S] = compare_2_conditions_within_session(params_file, cond1_name, cond2_name, paired)
+function [Stats, hist_fig_handle, scatter_handle] = compare_2_conditions_within_session(params_file, cond1_name, cond2_name, paired)
 %% Load parameters and metadata:
 
 % Load params from params file:
@@ -48,43 +48,11 @@ Condition1 = get_condition(cond1_name, Conditions);
 Condition2 = get_condition(cond2_name, Conditions);
 
 
-%% Run a t-test on the 2 conditions of interest and plot a histogram:
+%% Perform ttest and regression on the 2 conditions:
 fig_title = {['Peak dF/F response for \color[rgb]{' num2str(Condition1.color) '}' Condition1.name ' \color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} Mouse ' mouse ', session ' date]};
-[f, p, stats] = ttest_and_histogram(Condition1, Condition2, paired, fig_title);
-S.ttest.stats = stats;
-S.ttest.p = p;
-
-
-%% If the condition data are paired, do a regression and create a scatter plot:
-
-
-if paired
-    % Do a linear regression; we want to test whether the slope of the best fit
-    % line for Condition1 vs Condition2 is significantly different from 1, but
-    % MATLAB's fitlm function tests whether the slope of a best fit line is
-    % significantly different from 0. So instead of regressing Condition1 on
-    % Condition2, we'll regress (Condition1 - Condition2) on to condition
-    % Condition2; if Condition1 = Condition2, then the slope of
-    % (Condition1-Condition2) vs Condition2 should be 0:
-    Tbl = table();
-    Tbl.X = Condition2.amplitudes;
-    Tbl.Y = Condition1.amplitudes - Condition2.amplitudes;
-    lm = fitlm(Tbl, 'Y ~ X');    
-    disp(lm);
-    S.linear_model = lm;
-    
-    % Create a scatterplot of each cell's response to both conditions:
-    %scatter_fig_title = {['Peak dF/F response to \color[rgb]{' num2str(Condition1.color) '}' Condition1.name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} \fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-    scatter_handle = scatter_conditions(cond1_name, cond2_name, Conditions, 'amplitudes', fig_title); % Create scatter plot of W+T1 vs W
-    lims = [xlim ylim];
-    lowest = min(lims);
-    highest = max(lims);
-    xlim([lowest highest]);
-    ylim([lowest highest]);
-    hline = refline(1, 0);
-    hline.Color = [0.40 0.40 0.40];
-    lsline; % add least-squares line
-end
+[ttest_results, hist_fig_handle, regression_results, scatter_handle] = compare_2_conditions(Condition1, Condition2, 'amplitudes', true, fig_title);
+Stats.ttest = ttest_results;
+Stats.linear_model = regression_results;
 
 
 %% Save figures and stats:
@@ -98,11 +66,11 @@ mkdir([output_directory filesep output_basename]);
 
 % Save stats:
 stats_path = [output_directory filesep output_basename filesep output_basename '.mat'];
-save(stats_path, 'S');
+save(stats_path, 'Stats');
 
 % Save histogram figure:
 hist_fig_path = [output_directory filesep output_basename filesep output_basename '_distributions.fig'];
-savefig(f, hist_fig_path);
+savefig(hist_fig_handle, hist_fig_path);
 
 % Save scatterplot figure:
 if paired
