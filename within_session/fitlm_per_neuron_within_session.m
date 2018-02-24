@@ -1,4 +1,4 @@
-function Neurons = fitlm_per_neuron(params_file)
+function Neurons = fitlm_per_neuron_within_session(params_file)
 %% Load parameters and metadata:
 
 % Load params from params file:
