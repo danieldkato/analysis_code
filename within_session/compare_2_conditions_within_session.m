@@ -88,6 +88,7 @@ Metadata.inputs(5).path = params.conditions_path;
 Metadata.inputs(6).path = params.grab_metadata;
 Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
+Metadata.params.compared_variable = field_name;
 Metadata.outputs(1).path = hist_fig_path;
 Metadata.outputs(2).path = stats_path;
 if paired
