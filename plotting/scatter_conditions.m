@@ -1,7 +1,7 @@
-function h = scatter_conditions(Condition1, Condition2, field_name, fig_title)
+function h = scatter_conditions(Condition_Y, Condition_X, field_name, fig_title)
 
 
-% Get field name:
+% Get field name
 if nargin > 3
     field_name = field_name;
 else
@@ -9,10 +9,10 @@ else
 end
 
 % Get the number of ROIs for each condition, and validate that they are the same:
-if size(Condition1.(field_name), 1) == size(Condition2.(field_name), 1)
-    num_ROIs = size(Condition1.(field_name), 1);
+if size(Condition_X.(field_name), 1) == size(Condition_Y.(field_name), 1)
+    num_ROIs = size(Condition_X.(field_name), 1);
 else
-    error(['Condition data for ' y_cond_name ' and ' x_cond_name ' include observations from different numbers of ROIs. Please verify that data are formatted correctly.']);
+    error(['Condition data for ' Condition_Y ' and ' Condition_X ' include observations from different numbers of ROIs. Please verify that data are formatted correctly.']);
 end
 
 % Define figure size:
@@ -21,11 +21,18 @@ height = width; % Both axes measure the same quantity so I think it's clearest i
 
 % Create scatterplot:
 h = figure;
-scatter(Condition1.(field_name), Condition2.(field_name), 80, '.k');
+scatter(Condition_X.(field_name), Condition_Y.(field_name), 80, '.k');
 
 % Add axis labels:
-Condition1.label = xlabel([Condition1.abbreviation ' peak dF/F (a.u.)'], 'FontSize', 11);
-Condition2.label = ylabel([Condition2.abbreviation ' peak dF/F (a.u.)'], 'FontSize', 11);
+if strcmp(field_name, 'amplitudes')
+    axis_description = ' peak dF/F (a.u.)';
+elseif strcmp(field_name, 'Mean')
+    axis_description = ' mean dF/F (a.u.)';
+else
+    axis_description = field_name;
+end
+Condition_X.label = xlabel([Condition_X.abbreviation axis_description], 'FontSize', 11);
+Condition_Y.label = ylabel([Condition_Y.abbreviation axis_description], 'FontSize', 11);
 
 % Add annotation with number of ROIs:
 annotation('textbox', [0.6 0.2 0.2 0.2], 'String', ['n = ' num2str(num_ROIs)], 'LineStyle', 'none');
@@ -39,18 +46,18 @@ curr_pos = get(gcf, 'position');
 set(gcf, 'units', 'points', 'position', [curr_pos(1) curr_pos(2) width height]);
 
 % Color-code axis labels if possible:
-X_fields = fieldnames(Condition1);
+X_fields = fieldnames(Condition_X);
 defines_color = find(cellfun(@(c) strcmp(c, 'color'), X_fields));
 if defines_color
-    Condition1.label.Color = Condition1.color;
+    Condition_X.label.Color = Condition_X.color;
 end
-Y_fields = fieldnames(Condition2);
+Y_fields = fieldnames(Condition_Y);
 defines_color = find(cellfun(@(c) strcmp(c, 'color'), Y_fields));
 if defines_color
-    Condition2.label.Color = Condition2.color;
+    Condition_Y.label.Color = Condition_Y.color;
 end
 
 % Add title: 
-if nargin > 4
+if nargin > 3
     title(fig_title, 'FontWeight', 'normal');
 end
