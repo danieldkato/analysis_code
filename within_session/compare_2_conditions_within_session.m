@@ -49,7 +49,12 @@ Condition2 = get_condition(cond2_name, Conditions);
 
 
 %% Perform ttest and regression on the 2 conditions:
-fig_title = {['Peak dF/F response for \color[rgb]{' num2str(Condition1.color) '}' Condition1.name ' \color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} Mouse ' mouse ', session ' date]};
+if strcmp(field_name, 'amplitudes')
+    title_root = 'Peak';
+elseif strcmp(field_name, 'Mean')
+    title_root = 'Mean';
+end
+fig_title = {[title_root ' dF/F response for \color[rgb]{' num2str(Condition1.color) '}' Condition1.name ' \color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} Mouse ' mouse ', session ' date]};
 [ttest_results, hist_fig_handle, regression_results, scatter_handle] = compare_2_conditions(Condition1, Condition2, field_name, true, fig_title);
 Stats.ttest = ttest_results;
 Stats.linear_model = regression_results;
