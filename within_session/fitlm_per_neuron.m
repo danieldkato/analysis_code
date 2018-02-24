@@ -12,10 +12,11 @@ Conditions = cell2mat(C_struct.conditions);
 % Get grab metadata:
 grab_metadata = loadjson(params.grab_metadata);
 pre_stim_frames = ceil(params.pre_sec * grab_metadata.frame_rate);
+mouse = grab_metadata.mouse;
+date = grab_metadata.date;
 
 
 %% Trialize data:
-
 T = trialize_data(params.rawF_path, ... 
     params.galvo_path, ...
     params.timer_path, ...
@@ -66,9 +67,9 @@ for n = 1:num_ROIs
     curr_neuron_trials = C.Trials;
     
     % Assemble response and parameter data into table:
-    Tbl.(regressors{w_idx}) = [curr_neuron_trials.STPRIDX]';
-    Tbl.(regressors{t1_idx}) = ([curr_neuron_trials.SPKRIDX] == 1)';
-    Tbl.(regressors{t2_idx}) = ([curr_neuron_trials.SPKRIDX] == 2)';
+    Tbl.W = [curr_neuron_trials.STPRIDX]';
+    Tbl.T1 = ([curr_neuron_trials.SPKRIDX] == 1)';
+    Tbl.T2 = ([curr_neuron_trials.SPKRIDX] == 2)';
     trials_pre_stim_cropped = arrayfun(@(x) x.dFF(:, pre_stim_frames+1:end), curr_neuron_trials, 'UniformOutput', false)';
     trials_pre_stim_cropped = cell2mat(trials_pre_stim_cropped);
     disp(size(trials_pre_stim_cropped));
@@ -89,12 +90,16 @@ end
 
 
 %% Compute the percentage of cells that have significant coefficients for each regressor:
-
 for r = 1:length(regressors)
     pvals = arrayfun(@(x) x.lm.Coefficients{r, 4}, Neurons);
     Regressors(r).num_sig_pvals = sum(pvals < 0.05);
     Regressors(r).pct_sig_pvals = (Regressors(r).num_sig_pvals/num_ROIs)*100;
     Regressors(r).regressor_name = regressors{r};
+    
+    % hack for plotting purposes later:
+    Regressors(r).abbreviation = Conditions(r).abbreviation;
+    Regressors(r).color = Conditions(r).color;
+    
 end
 
 %{
@@ -107,6 +112,18 @@ dat = cell(2, length(regressors));
 dat(1,:) = regressors;
 dat(2,:) = num2cell([Regressors.pct_sig_pvals]);
 disp(dat);
+
+
+%% Plot bar graph of percentages of neurons with significant coefficients for each regressor:
+bar_fig = figure();
+hold on;
+for r = 1:length(Regressors)
+    c = categorical({Regressors(r).abbreviation});
+    bar(c, Regressors(r).pct_sig_pvals, 'FaceColor', Regressors(r).color, 'EdgeColor', 'none');
+end
+yl = ylim;
+ylim([yl(1) yl(2)*1.1]);
+title({'Percentage neurons with significant coefficients'; ['Mouse ' mouse ', session ' date]});
 
 
 %% Save output to secondary storage:
@@ -124,6 +141,10 @@ cd('fitlm_per_neuron');
 % Save stats:
 fitlm_per_neuron_path = [output_directory filesep 'fitlm_per_neuron' filesep 'fitlm_per_neuron.mat'];
 save(fitlm_per_neuron_path, 'Neurons', 'Regressors');
+
+% Save figure:
+bar_fig_path = [output_directory filesep 'fitlm_per_neuron' filesep 'pct_neurons_sig_coeffs.fig'];
+savefig(bar_fig, bar_fig_path);
 
 
 %% Save metadata:
