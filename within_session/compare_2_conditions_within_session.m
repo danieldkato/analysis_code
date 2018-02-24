@@ -73,10 +73,9 @@ hist_fig_path = [output_directory filesep output_basename filesep output_basenam
 savefig(hist_fig_handle, hist_fig_path);
 
 % Save scatterplot figure:
-if paired
-    scatter_fig_path = [output_directory filesep output_basename filesep output_basename '_scatter.fig']; 
-    savefig(scatter_handle, scatter_fig_path);
-end
+scatter_fig_path = [output_directory filesep output_basename filesep output_basename '_scatter.fig']; 
+savefig(scatter_handle, scatter_fig_path);
+
 
 
 %% Save metadata: 
