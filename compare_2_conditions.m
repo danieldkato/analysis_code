@@ -38,11 +38,11 @@ for c = 1:length(H)
 end
 
 % Create title, labels, and annotation:
-ylabel('count');
+ylabel('Count');
 if strcmp(field_name, 'amplitudes')
-    xlabel('peak dF/F (a.u.)');
+    xlabel('Peak dF/F (a.u.)');
 elseif strcmp(field_name, 'Mean')
-    xlabel('mean dF/F (a.u.)');
+    xlabel('Mean dF/F (a.u.)');
 end
 pos = get(gca, 'Position');
 legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
