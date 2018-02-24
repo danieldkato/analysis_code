@@ -157,6 +157,7 @@ Metadata.inputs(6).path = params.grab_metadata;
 Metadata.params.pre_onset_period = params.pre_sec;
 Metadata.params.post_onset_period = params.post_sec;
 Metadata.outputs(1).path = fitlm_per_neuron_path;
+Metadata.outputs(2).path = bar_fig_path;
 write_metadata(Metadata, 'fitlm_per_neuron_metadata.json');
 
 cd(old);
