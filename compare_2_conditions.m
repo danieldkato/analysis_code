@@ -1,4 +1,4 @@
-function [ttest_results, hist_fig_handle, regression_results, scatter_handle] = compare_2_conditions(Condition1, Condition2, field, paired, fig_title)
+function [ttest_results, hist_fig_handle, regression_results, scatter_handle] = compare_2_conditions(Condition1, Condition2, field_name, paired, fig_title)
 
 Conditions(1) = Condition1;
 Conditions(2) = Condition2;
@@ -6,10 +6,10 @@ Conditions(2) = Condition2;
 
 %% Do t-test:
 if paired
-    [h, p, ci, stats] = ttest(Conditions(1).(field), Conditions(2).(field));
+    [h, p, ci, stats] = ttest(Conditions(1).(field_name), Conditions(2).(field_name));
     disp(p);
 else
-    [h, p, ci, stats] = ttest2(Conditions(1).(field), Conditions(2).(field));
+    [h, p, ci, stats] = ttest2(Conditions(1).(field_name), Conditions(2).(field_name));
 end
 
 ttest_results.h = h;
@@ -22,7 +22,7 @@ ttest_results.stats = stats;
 hist_fig_handle = figure();
 hold on;
 for c = 1:length(Conditions)
-    H(c).handle = histogram(Conditions(c).(field), 'FaceColor', Conditions(c).color, 'EdgeColor', 'none');
+    H(c).handle = histogram(Conditions(c).(field_name), 'FaceColor', Conditions(c).color, 'EdgeColor', 'none');
     H(c).num_bins = H(c).handle.NumBins;
     H(c).bin_edges = H(c).handle.BinEdges;
 end
@@ -33,11 +33,17 @@ bin_edges = H(I).bin_edges;
 yl = ylim;
 for c = 1:length(H)
     H(c).handle.BinEdges = bin_edges;
-    condition_mean = mean(Conditions(c).(field));
+    condition_mean = mean(Conditions(c).(field_name));
     line([condition_mean condition_mean], [yl(1) yl(2)], 'Color', Conditions(c).color);
 end
 
 % Create title, labels, and annotation:
+ylabel('count');
+if strcmp(field_name, 'amplitudes')
+    xlabel('peak dF/F (a.u.)');
+elseif strcmp(field_name, 'Mean')
+    xlabel('mean dF/F (a.u.)');
+end
 pos = get(gca, 'Position');
 legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
 legend('boxoff');
@@ -52,8 +58,8 @@ end
 if paired
     % Do a linear regression to get the slope:
     Tbl = table();
-    Tbl.X = Condition2.(field);
-    Tbl.Y = Condition1.(field) - Condition2.(field);
+    Tbl.X = Condition2.(field_name);
+    Tbl.Y = Condition1.(field_name) - Condition2.(field_name);
     regression_results.lm = fitlm(Tbl, 'Y ~ X');    
     
     % Do a separate linear regression to get the p-value; we want to test
@@ -65,14 +71,14 @@ if paired
     % Condition2, then the slope of (Condition1-Condition2) vs Condition2
     % should be 0:
     Tbl2 = table();
-    Tbl2.X = Condition2.(field);
-    Tbl2.Y = Condition1.(field) - Condition2.(field);
+    Tbl2.X = Condition2.(field_name);
+    Tbl2.Y = Condition1.(field_name) - Condition2.(field_name);
     lm2 = fitlm(Tbl2, 'Y ~ X');    
     regression_results.p = lm2.Coefficients{2, 4};
     
     % Create a scatterplot of each cell's response to both conditions:
     %scatter_fig_title = {['Peak dF/F response to \color[rgb]{' num2str(Condition1.color) '}' Condition1.name '\color[rgb]{0 0 0} vs \color[rgb]{' num2str(Condition2.color) '}' Condition2.name]; ['\color[rgb]{0 0 0} \fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]};
-    scatter_handle = scatter_conditions(Conditions1, Condition2, field, fig_title); % Create scatter plot of W+T1 vs W
+    scatter_handle = scatter_conditions(Condition1, Condition2, field_name, fig_title); % Create scatter plot of W+T1 vs W
     lims = [xlim ylim];
     lowest = min(lims);
     highest = max(lims);
