@@ -65,7 +65,7 @@ for n = 1:n_ROIs
     curr_neuron_trials = C.Trials;
     
     % Put response variable for current neuron into table:
-    Tbl.(response_var) = [curr_neuron_trials.(response_var)]';
+    Tbl.(response_var) = [curr_neuron_trials.dFF]';
     
     % Fit linear model:
     Neurons(n).lm = fitlm(Tbl, modelspec);
