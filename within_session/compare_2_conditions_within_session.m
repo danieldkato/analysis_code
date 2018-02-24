@@ -1,4 +1,4 @@
-function [Stats, hist_fig_handle, scatter_handle] = compare_2_conditions_within_session(params_file, cond1_name, cond2_name, paired)
+function [Stats, hist_fig_handle, scatter_handle] = compare_2_conditions_within_session(params_file, cond1_name, cond2_name)
 %% Load parameters and metadata:
 
 % Load params from params file:
