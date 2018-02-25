@@ -70,15 +70,15 @@ output_basename = [Condition1.abbreviation '_vs_' Condition2.abbreviation];
 mkdir([output_directory filesep output_basename]);
 
 % Save stats:
-stats_path = [output_directory filesep output_basename filesep output_basename '.mat'];
+stats_path = [output_directory filesep output_basename filesep output_basename '_' field_name '.mat'];
 save(stats_path, 'Stats');
 
 % Save histogram figure:
-hist_fig_path = [output_directory filesep output_basename filesep output_basename '_distributions.fig'];
+hist_fig_path = [output_directory filesep output_basename filesep output_basename '_' field_name '_distributions.fig'];
 savefig(hist_fig_handle, hist_fig_path);
 
 % Save scatterplot figure:
-scatter_fig_path = [output_directory filesep output_basename filesep output_basename '_scatter.fig']; 
+scatter_fig_path = [output_directory filesep output_basename filesep output_basename '_' field_name '_scatter.fig']; 
 savefig(scatter_handle, scatter_fig_path);
 
 
