@@ -97,4 +97,4 @@ Metadata.outputs(1).path = hist_fig_path;
 Metadata.outputs(2).path = stats_path;
 Metadata.outputs(3).path = scatter_fig_path;
 
-write_metadata(Metadata, [output_basename '.json']);
+write_metadata(Metadata, [output_directory filesep output_basename filesep output_basename '_' field_name '.json']);
