@@ -33,7 +33,7 @@ T = trialize_data(params.rawF_path, ...
     params.show_inflection_points);
 
 stim_duration = T.Trials(1).STIMDUR;
-end_frame = pre_stim_frames + frame_rate * stim_duration;
+end_frame = pre_stim_frames + floor(frame_rate * stim_duration);
 
 Conditions = split_trials_by_condition(T.Trials, Conditions); % Split trials by condition
 Conditions = get_condition_means(Conditions); % Get the mean peristimulus dF/F trace of every neuron for every condition;
