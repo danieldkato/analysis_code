@@ -95,8 +95,6 @@ Metadata.params.post_onset_period = params.post_sec;
 Metadata.params.compared_variable = field_name;
 Metadata.outputs(1).path = hist_fig_path;
 Metadata.outputs(2).path = stats_path;
-if paired
-    Metadata.outputs(3).path = scatter_fig_path;
-end 
+Metadata.outputs(3).path = scatter_fig_path;
 
 write_metadata(Metadata, [output_basename '.json']);
