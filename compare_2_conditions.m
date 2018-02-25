@@ -4,6 +4,12 @@ Conditions(1) = Condition1;
 Conditions(2) = Condition2;
 
 
+%% Compute means:
+for c = 1:2
+    Conditions(c).mean = mean(Conditions(c).(field_name));
+end
+
+
 %% Do t-test:
 if paired
     [h, p, ci, stats] = ttest(Conditions(1).(field_name), Conditions(2).(field_name));
@@ -12,6 +18,7 @@ else
     [h, p, ci, stats] = ttest2(Conditions(1).(field_name), Conditions(2).(field_name));
 end
 
+ttest_results.means = [Conditions.mean];
 ttest_results.h = h;
 ttest_results.p = p;
 ttest_results.ci = ci;
