@@ -1,4 +1,4 @@
-function T_out = get_neuron_from_trials(T_in, n)
+function T_out = get_neuron_from_trials(T_in, n, field)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -83,19 +83,26 @@ function T_out = get_neuron_from_trials(T_in, n)
 
 
 %%
+
+if nargin < 3
+    field = 'dFF';
+end
+
 T_out.frame_rate = T_in.frame_rate;
 T_out.pre_frames = T_in.pre_frames;
 T_out.post_frames = T_in.post_frames;
 
 for t = 1:length(T_in.Trials)
     
-    % Copy dFF just for selected neuron to output struct:
-    T_out.Trials(t).dFF = T_in.Trials(t).dFF(n, :);
+    % Copy data just for selected neuron to output struct:
+    data_matrix = T_in.Trials(t).(field);
+    T_out.Trials(t).(field) = data_matrix(n, :);
     
     % Find all non-dFF trial params:
     trial_fields = fieldnames(T_in.Trials(t));
     not_dFF = cellfun(@(c) ~strcmp(c, 'dFF'), trial_fields);
-    trial_fields = trial_fields(not_dFF);
+    not_field = cellfun(@(c) ~strcmp(c, field), trial_fields);
+    trial_fields = trial_fields(not_dFF & not_field);
     
     % Copy all non-dF trial params to T_out.Trials(t):
     for p = 1:length(trial_fields)
