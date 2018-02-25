@@ -39,9 +39,9 @@ Conditions = split_trials_by_condition(T.Trials, Conditions); % Split trials by 
 Conditions = get_condition_means(Conditions); % Get the mean peristimulus dF/F trace of every neuron for every condition;
 Conditions = get_condition_amplitudes(Conditions, pre_stim_frames, end_frame);
 
-% Get the mean of the trace post-stim onset:
+% Mean-project the mean traces post-stim onset:
 for c = 1:length(Conditions)
-	Conditions(c).distribution = mean(Conditions(c).Mean(:, pre_stim_frames+1:end), 2);
+	Conditions(c).Mean = mean(Conditions(c).Mean(:, pre_stim_frames+1:end), 2);
 end
 
 Condition1 = get_condition(cond1_name, Conditions);
