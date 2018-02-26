@@ -1,4 +1,4 @@
-function plot_mean_neuron(params_file)
+function mean_neuron_fig = plot_mean_neuron(params_file)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
