@@ -34,16 +34,28 @@ for c = 1:length(Conditions)
     H(c).bin_edges = H(c).handle.BinEdges;
 end
 
-% Go back through histograms and a) make bin edges consistent and b) plot means:
+% Go back through histograms and make bin edges consistent:
+%{
 [m, I] = max(H(c).num_bins);
 bin_edges = H(I).bin_edges;
-yl = ylim;
 for c = 1:length(H)
     H(c).handle.BinEdges = bin_edges;
+end
+%}
+
+pause(2);
+
+% Go back through histograms and plot means:
+yl = ylim;
+disp('ylim 1');
+disp(ylim)
+for c = 1:length(H)
     condition_mean = mean(Conditions(c).(field_name));
     line([condition_mean condition_mean], [yl(1) yl(2)], 'Color', Conditions(c).color);
 end
 
+disp('ylim 2');
+disp(ylim)
 % Create title, labels, and annotation:
 ylabel('Count');
 if strcmp(field_name, 'amplitudes')
@@ -52,8 +64,13 @@ elseif strcmp(field_name, 'Mean')
     xlabel('Mean dF/F (a.u.)');
 end
 pos = get(gca, 'Position');
-legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
-legend('boxoff');
+
+disp('ylim 3');
+disp(ylim)
+
+%legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
+%legend('boxoff');
+
 
 if nargin > 3
     title(fig_title, 'FontWeight', 'normal');
