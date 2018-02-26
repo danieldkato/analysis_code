@@ -194,7 +194,6 @@ fig_full_path = [output_directory filesep mouse '_' date '_mean_neuron_dFF_respo
 fig_full_title = {'Mean neuron dF/F response by condition'; ['\fontsize{10}Mouse ' mouse]; ['\fontsize{10}Session ' date]; ['\fontsize{10}Num ROIS = ' num2str(num_ROIs)]};
 mean_neuron_fig= plot_mean_peristim_trace(Conditions, pre_frames, post_frames, stim_dur, frame_rate, fig_full_title);
 savefig(mean_neuron_fig, fig_full_path);
-close(mean_neuron_fig);
 
 
 %% Write metadata:
