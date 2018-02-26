@@ -35,13 +35,15 @@ for c = 1:length(Conditions)
 end
 
 % Go back through histograms and make bin edges consistent:
-%{
-[m, I] = max(H(c).num_bins);
+disp('[H.num_bins] = ');
+disp([H.num_bins]);
+[m, I] = max([H.num_bins]);
+disp('I');
+disp(I);
 bin_edges = H(I).bin_edges;
 for c = 1:length(H)
     H(c).handle.BinEdges = bin_edges;
 end
-%}
 
 pause(2);
 
