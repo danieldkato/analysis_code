@@ -69,6 +69,26 @@ function Conditions = split_trials_by_condition(Trials, Conditions)
 Conditions = match_trials_to_conditions(Trials, Conditions);
 
 for c = 1:length(Conditions)
-    matching_trials = Conditions(c).matching_trials;
+    
+    % Initialize empty vector of matching trial indices and filter
+    matching_trials = [];
+    filter = ones(1, length(Trials));
+    
+    % Go through every trial parameter that defines the current condition
+    % and find the trials that match ~all~ of them:
+    params = fieldnames(Conditions(c).params);  
+    for p = 1:length(params) 
+        param_name = params{p};
+        param_value = Conditions(c).params.(param_name);
+        filter_update = [Trials.(param_name)] == param_value;
+        filter = filter & filter_update;
+    end
+    matching_trials = find(filter);
+    
+    % Warn the user if no trials of the current condition are found:
+    if isempty(matching_trials)
+        warning(['No trials of condition ' Conditions(c).name ' found.']);
+    end
+    
     Conditions(c).Trials = Trials(matching_trials);
 end
