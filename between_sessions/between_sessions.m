@@ -1,8 +1,11 @@
 C_struct = loadjson('/mnt/nas2/homes/dan/MultiSens/analysis/condition_settings.json');
 Conditions = cell2mat(C_struct.conditions);
 
-Sessions(1).params_path = 'pre2.json';
-Sessions(2).params_path = 'post1.json';
+%Sessions(1).params_path = 'pre2.json';
+%Sessions(2).params_path = 'post1.json';
+
+Sessions(1).params_path = '5037-5_pre1.json';
+Sessions(2).params_path = '5037-5_post1.json';
 
 for s = 1:length(Sessions)
     Sessions(s).params = loadjson(Sessions(s).params_path);
@@ -20,19 +23,26 @@ for s = 1:length(Sessions)
     Conditions = split_trials_by_condition(T.Trials, Conditions); % Split trials by condition
     Conditions = get_condition_means(Conditions); % Get the mean peristimulus dF/F trace of every neuron for every condition
     
-    for c = 1:length(Conditions)
-        Conditions(c).distribution = mean(Conditions(c).Mean(:, T.pre_frames + 1:end), 2);
-    end
-    
-    Sessions(s).Conditions = Conditions;
-    Sessions(s).Coeffs = C;
-    
     % hack:
     grab_metadata = loadjson(Sessions(s).params.grab_metadata);
     mouse = grab_metadata.mouse;
+    frame_rate = grab_metadata.frame_rate;
+    stim_duration = T.Trials(1).STIMDUR;
+    end_frame = T.pre_frames + floor(stim_duration*frame_rate);
+    
+    Conditions = get_condition_amplitudes(Conditions, T.pre_frames + 1, end_frame);
+    Conditions = get_condition_AUC(Conditions, T.pre_frames + 1, end_frame);
+
+
+    for c = 1:length(Conditions)
+        Conditions(c).Mean = mean(Conditions(c).Mean(:, T.pre_frames + 1:end), 2);
+    end
+    
+    Sessions(s).Conditions = Conditions;
+    %Sessions(s).Coeffs = C;
 end
 
-output_directory = ['/mnt/nas2/homes/dan/MultiSens/data/' mouse '/2P/between_sessions_analysis/'];
+output_directory = ['/mnt/nas2/homes/dan/MultiSens/data/' mouse '/2P/between_sessions_analysis2/'];
 if ~exist(output_directory, 'dir')
     mkdir(output_directory);
 end
@@ -44,21 +54,32 @@ w_t1_idx = find(arrayfun(@(x) strcmp(x.name, 'stepper and test tone'), Condition
 % Compare distributions:
 
 % Compare test tone:
-Pre_pairing_test_tone = get_condition('test tone only', Sessions(1).Conditions);
-Post_pairing_test_tone = get_condition('test tone only', Sessions(2).Conditions);
+Pre_pairing_test_tone = get_condition('control tone only', Sessions(1).Conditions);
+Post_pairing_test_tone = get_condition('control tone only', Sessions(2).Conditions);
 fig1_title = ['\color[rgb]{' num2str(Conditions(t1_idx).color) '}' Conditions(t1_idx).name '\color[rgb]{0 0 0} pre vs. post'];
 Pre_pairing_test_tone.abbreviation = 'T1 pre';
 Post_pairing_test_tone.abbreviation = 'T1 post';
 Pre_pairing_test_tone.color = [0.5 0.5 0.5];
 %Post_pairing_test_tone.color = 'green';
-[f1, p1, stats1] = ttest_and_histogram(Pre_pairing_test_tone, Post_pairing_test_tone, false, fig1_title);
-figname1 = [output_directory filesep 'T1_pre_vs_post.fig'];
-savefig(f1, figname1);
+%[f1, p1, stats1] = ttest_and_histogram(Pre_pairing_test_tone, Post_pairing_test_tone, false, fig1_title);
+[means_ttest, means_hist_handle] = compare_2_conditions(Pre_pairing_test_tone, Post_pairing_test_tone, 'Mean', false, fig1_title);
+[amps_ttest, amps_hist_handle] = compare_2_conditions(Pre_pairing_test_tone, Post_pairing_test_tone, 'amplitudes', false, fig1_title);
+[auc_ttest, auc_ttest_handle] = compare_2_conditions(Pre_pairing_test_tone, Post_pairing_test_tone, 'AUC', false, fig1_title);
+figname1 = [output_directory filesep 'T1_pre_vs_post_means.fig'];
+figname2 = [output_directory filesep 'T1_pre_vs_post_amplitudes.fig'];
+figname3 = [output_directory filesep 'T1_pre_vs_post_AUC.fig'];
+savefig(means_hist_handle, figname1);
+savefig(amps_hist_handle, figname2);
+savefig(auc_ttest_handle, figname3);
+
+%{
 S.p = p1;
 S.stats = stats1;
 fname1 = [output_directory filesep 'T1_pre_vs_post_stats.mat'];
 save(fname1, 'S');
+%}
 
+%{
 % Compare control tone:
 Pre_pairing_control_tone = get_condition('control tone only', Sessions(1).Conditions);
 Post_pairing_control_tone = get_condition('control tone only', Sessions(2).Conditions);
@@ -117,3 +138,4 @@ Metadata.outputs(4).path = fname1;
 Metadata.outputs(5).path = fname2;
 Metadata.outputs(6).path = fname3;
 write_metadata(Metadata, [output_directory filesep 'between_sessions.json']);
+%}
