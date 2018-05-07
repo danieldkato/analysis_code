@@ -125,7 +125,8 @@ end
 % If we know the stimulus duration and it's the same for every stimulus delivery, draw a rectangle covering the stimulus period:
 if ~isempty(stim_duration)
     yl = ylim;
-    recY = [yl fliplr(yl)];
+    %recY = [yl fliplr(yl)];
+    recY = [-10 10 10 -10];
     %h = fill([stimPeriod(1) stimPeriod(1) stimPeriod(2) stimPeriod(2)], recY, [0.01 0.01 0.01], 'FaceAlpha', 0.1, 'EdgeAlpha', 0.1);
     p = patch([stim_period(1) stim_period(1) stim_period(2) stim_period(2)], recY, [0.5 0.5 0.5], 'FaceAlpha', 0.2, 'EdgeColor', 'none');
     uistack(p, 'bottom');
