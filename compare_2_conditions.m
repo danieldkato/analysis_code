@@ -70,8 +70,8 @@ pos = get(gca, 'Position');
 disp('ylim 3');
 disp(ylim)
 
-%legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
-%legend('boxoff');
+legend(Conditions(1).abbreviation, Conditions(2).abbreviation);
+legend('boxoff');
 
 
 if nargin > 3
