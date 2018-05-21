@@ -1,4 +1,4 @@
-function T_out = get_neuron_from_trials(T_in, n, field)
+function Trials_out = get_neuron_from_trials(Trials_in, n, field)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function T_out = get_neuron_from_trials(T_in, n, field)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-22
+% Last updated DDK 2018-05-21
 
 
 %% I. OVERVIEW: 
@@ -19,20 +19,11 @@ function T_out = get_neuron_from_trials(T_in, n, field)
 
 
 %% III. INPUTS: 
-% 1) T_in - struct containing trialized data for a session. T includes the
-% following fields:
-
-%   frame_rate - frame rate of the movie in frames per second
-%
-%   pre_frames - number of frames before trial start included in trial window
-%
-%   post_frames - number of frames after trial start included in trial window
-%
-%   Trials - t x 1 array of structs, where t is the number of analyzable
-%   trials delivered during the movie (where analyzable means the
-%   pre-stimulus period does not extend before the start of the movie and
-%   the post-stimulus period does not extend beyond the end of the movie).
-%   Each element of Trials must minimally include the following fields:
+% 1) Trials_in - t x 1 array of structs, where t is the number of analyzable
+%    trials delivered during the movie (where analyzable means the
+%    pre-stimulus period does not extend before the start of the movie and
+%    the post-stimulus period does not extend beyond the end of the movie).
+%    Each element of Trials must minimally include the following fields:
 
 %       dFF - an n x p matrix containing the population neural activity
 %       during the corresponding peri-stimulus period, where n is the
@@ -52,14 +43,8 @@ function T_out = get_neuron_from_trials(T_in, n, field)
 
 
 %% IV. OUTPUTS:
-% 1) T_out - struct containing trialized data for a session. T includes the
+% 1) Trials_out - struct containing trialized data for a session. T includes the
 % following fields:
-
-%   frame_rate - frame rate of the movie in frames per second
-%
-%   pre_frames - number of frames before trial start included in trial window
-%
-%   post_frames - number of frames after trial start included in trial window
 %
 %   Trials - t x 1 array of structs, where t is the number of analyzable
 %   trials delivered during the movie (where analyzable means the
@@ -83,31 +68,12 @@ function T_out = get_neuron_from_trials(T_in, n, field)
 
 
 %%
-
 if nargin < 3
     field = 'dFF';
 end
 
-T_out.frame_rate = T_in.frame_rate;
-T_out.pre_frames = T_in.pre_frames;
-T_out.post_frames = T_in.post_frames;
-
-for t = 1:length(T_in.Trials)
-    
-    % Copy data just for selected neuron to output struct:
-    data_matrix = T_in.Trials(t).(field);
-    T_out.Trials(t).(field) = data_matrix(n, :);
-    
-    % Find all non-dFF trial params:
-    trial_fields = fieldnames(T_in.Trials(t));
-    not_dFF = cellfun(@(c) ~strcmp(c, 'dFF'), trial_fields);
-    not_field = cellfun(@(c) ~strcmp(c, field), trial_fields);
-    trial_fields = trial_fields(not_dFF & not_field);
-    
-    % Copy all non-dF trial params to T_out.Trials(t):
-    for p = 1:length(trial_fields)
-        param_name = trial_fields{p};
-        T_out.Trials(t).(param_name) = T_in.Trials(t).(param_name);
-    end
-    
+for t = 1:length(Trials)
+    % Replace data matrix for all cells with data matrix just for selected neuron:
+    data_matrix = Trials_in(t).(field);
+    Trials_out(t).(field) = data_matrix(n, :);
 end
