@@ -1,4 +1,4 @@
-function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditions_path, grab_metadata, pre_sec, post_sec, show_inflection_points)
+function [Trials, Meta] = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditions_path, grab_metadata, pre_sec, post_sec, show_inflection_points)
 % DOCUMENTATION TABLE OF CONTENTS:
 
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-25
+% Last updated DDK 2018-05-21
 
 
 %% I. OVERVIEW: 
@@ -86,27 +86,16 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 
 
 %% IV. OUTPUTS:
-% 1) T - struct containing trialized data for a session. T includes the
-% following fields:
-
-%   frame_rate - frame rate of the movie in frames per second
-%
-%   pre_frames - number of frames before trial start included in trial window
-%
-%   post_frames - number of frames after trial start included in trial window
-%
-%   Trials - t x 1 array of structs, where t is the number of analyzable
-%   trials delivered during the movie (where analyzable means the
-%   pre-stimulus period does not extend before the start of the movie and
-%   the post-stimulus period does not extend beyond the end of the movie).
-%   Each element of Trials has the following fields:
+% 1) Trials - t x 1 array of structs, where t is the number of analyzable
+%    trials delivered during the movie (where analyzable means the
+%    pre-stimulus period does not extend before the start of the movie and
+%    the post-stimulus period does not extend beyond the end of the movie).
+%    Each element of Trials has the following fields:
 
 %       dFF - an n x p matrix containing the population neural activity
 %       during the corresponding peri-stimulus period, where n is the
 %       number of neurons and p is the number of frames in the
 %       peri-stimulus period.
-%
-%       Condition - char vector giving the name of the stimulus condition.
 
 %       In addition, each element of Trials includes one field
 %       corresponding to each trial parameter, reported in the Arduino
@@ -116,6 +105,12 @@ function T = trialize_data(rawF_path, galvo_path, timer_path, ardu_path, conditi
 
 %           Trials(t).STPRIDX = 1;
 %           Trials(t).SPKRIDX = 0;
+
+
+% 2) Meta - struct containing trial timing metadata, including:
+%   frame_rate - frame rate of the movie in frames per second
+%   pre_frames - number of frames before trial start included in trial window
+%   post_frames - number of frames after trial start included in trial window
 
 
 %% Load data and metadata:
@@ -156,9 +151,9 @@ pre_frames = ceil(pre_sec * frame_rate);
 post_frames = ceil(post_sec * frame_rate);
 
 % Add peri-stim window params to T:
-T.frame_rate = frame_rate;
-T.pre_frames = pre_frames;
-T.post_frames = post_frames;
+Meta.frame_rate = frame_rate;
+Meta.pre_frames = pre_frames;
+Meta.post_frames = post_frames;
 disp(['Frame rate = ' num2str(frame_rate)]);
 disp(['Frames before stim onset = ' num2str(pre_frames)]);
 disp(['Frames after stim onset = ' num2str(post_frames)]);
@@ -233,5 +228,3 @@ for t = 1:length(Trials)
     Trials(t).dFF = dFF;
     Trials(t).Condition = [];
 end
-
-T.Trials = Trials;
