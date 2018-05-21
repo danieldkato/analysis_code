@@ -17,7 +17,7 @@ date = grab_metadata.date;
 
 
 %% Trialize data:
-T = trialize_data(params.rawF_path, ... 
+[Trials, Meta] = trialize_data(params.rawF_path, ... 
     params.galvo_path, ...
     params.timer_path, ...
     params.ardu_path, ...
@@ -49,7 +49,7 @@ model_spec = ['response ~ -1 + ' strjoin(regressors, ' + ')];
 disp(model_spec);
 
 % Get the number of ROIs in the dataset:
-n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), T.Trials);
+n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), Trials);
 check_n_ROIs = circshift(n_ROIs_each_trial, 1);
 if isequal(n_ROIs_each_trial, check_n_ROIs)
     num_ROIs = n_ROIs_each_trial(1);
@@ -63,8 +63,7 @@ for n = 1:num_ROIs
     disp(['Fitting linear model for ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
     % Get data just for current neuron:
-    C = get_neuron_from_trials(T, n);
-    curr_neuron_trials = C.Trials;
+    curr_neuron_trials = get_neuron_from_trials(Trials, n);
     
     % Assemble response and parameter data into table:
     Tbl.W = [curr_neuron_trials.STPRIDX]';
