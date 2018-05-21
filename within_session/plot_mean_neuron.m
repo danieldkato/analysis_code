@@ -6,7 +6,7 @@ function mean_neuron_fig = plot_mean_neuron(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-25
+% Last updated DDK 2018-05-25
 
 
 %% OVERVIEW:
@@ -141,7 +141,7 @@ post_frames = ceil(frame_rate * params.post_sec);
 %% Trialize data and split by condition:
 
 % Split all the data up by trial:
-T = trialize_data(params.rawF_path, ... 
+[Trials, Meta] = trialize_data(params.rawF_path, ... 
     params.galvo_path, ...
     params.timer_path, ...
     params.ardu_path, ...
@@ -153,7 +153,7 @@ T = trialize_data(params.rawF_path, ...
 
 % Validate that the stimulus duration is the same for every trial, and if
 % not, throw a warning and skip drawing stimulus window:
-all_trial_durations = [T.Trials.STIMDUR];
+all_trial_durations = [Trials.STIMDUR];
 all_trial_durations_check = circshift(all_trial_durations, 1);
 if isequal(all_trial_durations, all_trial_durations_check)
     equal_stimdurs = true;
@@ -167,7 +167,7 @@ end
 
 % Validate that all trials include measurements from same number of ROIs;
 % if so, define the number of ROIs:
-n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), T.Trials);
+n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), Trials);
 check_n_ROIs = circshift(n_ROIs_each_trial, 1);
 if isequal(n_ROIs_each_trial, check_n_ROIs)
     num_ROIs = n_ROIs_each_trial(1);
@@ -175,7 +175,7 @@ else
     error('Not all trials include observations from the same number of ROIs. Please check integrity of input data');
 end
 
-Conditions = split_trials_by_condition(T.Trials, Conditions); % Split trials by condition
+Conditions = split_trials_by_condition(Trials, Conditions); % Split trials by condition
 
 
 %% Compute the "mean neuron" for each condition:
