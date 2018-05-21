@@ -1,7 +1,5 @@
-function [Neurons, Regressors] = fitlm_per_neuron(T, modelspec)
+function [Neurons, Regressors] = fitlm_per_neuron(Trials, modelspec)
 %% Identify regressors and validate modelspec and Trials:
-
-Trials = T.Trials;
 
 split = strsplit(modelspec);
 term_indices = cellfun(@(c) ~isempty(regexp(c, '\w*', 'ONCE')), split); % find all 'words' (i.e., elements containing alphanumeric characters) in modelspec
@@ -46,7 +44,7 @@ for r = 1:length(basic_regressors)
 end
 
 
-%% Do regressions for each neuron:
+%% Do regression for each neuron:
 
 % Validate that all trials include observations from the same number of neurons:
 n_ROIs_each_trial = arrayfun(@(x) size(x.(response_var), 1), T.Trials);
