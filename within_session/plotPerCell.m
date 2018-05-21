@@ -170,7 +170,7 @@ Conditions = cell2mat(Conditions);
 %% Trialize data for each neuron:
 
 % Split all the data up by trial:
-T = trialize_data(params.rawF_path, ... 
+[Trials, Meta] = trialize_data(params.rawF_path, ... 
     params.galvo_path, ...
     params.timer_path, ...
     params.ardu_path, ...
@@ -181,7 +181,7 @@ T = trialize_data(params.rawF_path, ...
     params.show_inflection_points);
 
 % Validate that all trials include measurements from same number of ROIs; if so, define the number of ROIs:
-n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), T.Trials);
+n_ROIs_each_trial = arrayfun(@(x) size(x.dFF, 1), Trials);
 check_n_ROIs = circshift(n_ROIs_each_trial, 1);
 if isequal(n_ROIs_each_trial, check_n_ROIs)
     num_ROIs = n_ROIs_each_trial(1);
@@ -205,7 +205,7 @@ peri_stim_frames = pre_stim_frames + post_stim_frames;
 
 % Confirm that the stimulus duration is the same for every trial, and if
 % not, throw a warning and skip drawing stimulus window:
-all_trial_durations = [T.Trials.STIMDUR];
+all_trial_durations = [Trials.STIMDUR];
 all_trial_durations_check = circshift(all_trial_durations, 1);
 if isequal(all_trial_durations, all_trial_durations_check)
     equal_stimdurs = true;
@@ -242,8 +242,8 @@ for n = 1:num_ROIs
     
     disp(['Plotting ROI ' num2str(n) ' out of ' num2str(num_ROIs)]);
     
-    curr_n_trials = get_neuron_from_trials(T, n); % Get trialized data just for current neuron:
-    curr_n_conditions = split_trials_by_condition(curr_n_trials.Trials, Conditions); % split trialized data for current neuron by condition
+    curr_n_trials = get_neuron_from_trials(Trials, n); % Get trialized data just for current neuron:
+    curr_n_conditions = split_trials_by_condition(curr_n_trials, Conditions); % split trialized data for current neuron by condition
     curr_n_conditions_means = get_condition_means(curr_n_conditions);
     
     num_str = pad(num2str(n), 3, 'left', '0');
