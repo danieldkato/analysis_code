@@ -6,7 +6,7 @@ function [meanPaths, rawPaths] = plotPerCell(params_file)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2018-01-25
+% Last updated DDK 2018-05-21
 
 
 %% OVERVIEW:
